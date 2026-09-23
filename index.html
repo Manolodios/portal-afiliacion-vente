@@ -249,8 +249,9 @@
   <script>
     const SUPABASE_URL = 'https://kgnajywtscxujwdmskbb.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_BxIjQWYPclf9Ptx6zZjeTw_XDF7R4nI';
-
     const $ = (id) => document.getElementById(id);
+    window.$ = $;
+
     let step = 1;
 
     function notify(message, type = 'info') {
@@ -281,6 +282,7 @@
         ? 'flex-1 rounded-lg bg-white py-2.5 text-sm font-bold shadow-sm'
         : 'flex-1 rounded-lg py-2.5 text-sm font-bold text-slate-600';
     }
+    window.switchTab = switchTab;
 
     function renderStep() {
       for (let i = 1; i <= 3; i++) {
@@ -302,6 +304,7 @@
       if (next) next.classList.toggle('hidden', step === 3);
       if (submit) submit.classList.toggle('hidden', step !== 3);
     }
+    window.renderStep = renderStep;
 
     function validateStep() {
       if (step === 1) {
@@ -339,12 +342,14 @@
 
       return true;
     }
+    window.validateStep = validateStep;
 
     function changeStep(delta) {
       if (delta > 0 && !validateStep()) return;
       step = Math.min(3, Math.max(1, step + delta));
       renderStep();
     }
+    window.changeStep = changeStep;
 
     function toggleLocation() {
       const residencia = $('residencia');
@@ -356,6 +361,7 @@
       countryFields.classList.toggle('hidden', !outside);
       venezuelaFields.classList.toggle('hidden', outside);
     }
+    window.toggleLocation = toggleLocation;
 
     async function register(event) {
       event.preventDefault();
@@ -401,6 +407,7 @@
       notify('Cuenta creada. Revisa tu correo para confirmar.', 'success');
       console.log('signup ok:', data);
     }
+    window.register = register;
 
     async function login(event) {
       event.preventDefault();
@@ -427,11 +434,12 @@
       notify('Acceso correcto.', 'success');
       console.log('login ok:', data);
     }
+    window.login = login;
 
     document.addEventListener('DOMContentLoaded', () => {
       renderStep();
       toggleLocation();
-      lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
       console.log('Supabase client ready:', SUPABASE_URL);
     });
   </script>
