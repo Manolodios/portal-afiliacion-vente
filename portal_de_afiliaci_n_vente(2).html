@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vente Venezuela - Portal de Afiliación y Registro</title>
-    <!-- Tailwind CSS -->
+    <meta name="description" content="Portal de afiliación de Vente Venezuela. Registra tu solicitud, accede a tu cuenta y consulta tu credencial de afiliado.">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Font Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
@@ -31,14 +31,17 @@
             }
         }
     </script>
+
     <style>
+        html { scroll-behavior: smooth; }
         body {
             -webkit-tap-highlight-color: transparent;
+            background: #f8fafc;
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
         .gradient-vente {
@@ -47,6 +50,10 @@
         .gradient-cyan {
             background: linear-gradient(135deg, #00A8E8 0%, #00E5FF 100%);
         }
+        .field-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
+        }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -54,282 +61,323 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Navigation Bar -->
     <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md text-white border-b border-slate-800 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a href="#" class="flex items-center group">
-                <!-- LOGO ACTUALIZADO AQUÍ -->
-                <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 sm:h-12 object-contain group-hover:scale-105 transition-transform" onerror="this.outerHTML='<div class=\'flex items-baseline font-black tracking-tighter\'><span class=\'text-2xl sm:text-3xl text-vente-cyan\'>Vente</span><span class=\'text-white text-sm sm:text-base ml-1 tracking-normal\'>CABIMAS</span></div>'">
+            <a href="#inicio" class="flex items-center group" aria-label="Inicio">
+                <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 sm:h-12 object-contain group-hover:scale-105 transition-transform" onerror="this.style.display='none'">
             </a>
 
-            <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
                 <a href="#inicio" class="hover:text-vente-cyan transition-colors">Inicio</a>
                 <a href="#principios" class="hover:text-vente-cyan transition-colors">Principios</a>
                 <a href="#preguntas" class="hover:text-vente-cyan transition-colors">FAQ</a>
             </nav>
 
-            <!-- Actions CTA -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <button onclick="switchTab('login')" class="text-slate-300 hover:text-white px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors">
+                <button type="button" onclick="switchTab('login')" class="text-slate-300 hover:text-white px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors">
                     Entrar
                 </button>
-                <button onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">
+                <button type="button" onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-sm hover:shadow-md">
                     Únete
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="inicio" class="relative gradient-vente text-white pt-8 sm:pt-12 pb-16 sm:pb-24 overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        
-        <!-- Marca de agua de fondo con el logo actualizado -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.06] z-0">
-            <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Marca de agua" class="w-[250%] md:w-[120%] object-contain -rotate-[15deg] blur-[1px]" onerror="this.style.display='none'">
-        </div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                
-                <!-- Hero Left Column -->
-                <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-vente-cyan text-[10px] sm:text-xs font-semibold tracking-wide uppercase">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                        Portal Oficial de Afiliación
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-                        Forma parte del movimiento por la <span class="text-transparent bg-clip-text bg-gradient-to-r from-vente-cyan to-vente-accent">Libertad</span>
-                    </h1>
-                    <p class="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        Súmate a la red de afiliados y voluntarios que construyen activamente una república próspera, libre e institucional.
-                    </p>
+    <main>
+        <section id="inicio" class="relative gradient-vente text-white pt-8 sm:pt-12 pb-16 sm:pb-24 overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
-                    <div class="hidden sm:grid pt-4 grid-cols-3 gap-4 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
-                        <div>
-                            <div class="text-xl lg:text-2xl font-bold text-white">24</div>
-                            <div class="text-[10px] lg:text-xs text-slate-400">Estados</div>
-                        </div>
-                        <div>
-                            <div class="text-xl lg:text-2xl font-bold text-vente-cyan">100%</div>
-                            <div class="text-[10px] lg:text-xs text-slate-400">Compromiso</div>
-                        </div>
-                        <div>
-                            <div class="text-xl lg:text-2xl font-bold text-white">Global</div>
-                            <div class="text-[10px] lg:text-xs text-slate-400">Diáspora</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.06] z-0">
+                <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Marca de agua" class="w-[250%] md:w-[120%] object-contain -rotate-[15deg] blur-[1px]" onerror="this.style.display='none'">
+            </div>
 
-                <!-- Hero Right Column: Authentication Forms -->
-                <div class="lg:col-span-6">
-                    <div class="glass-card rounded-2xl p-5 sm:p-8 shadow-2xl text-slate-800 relative z-20">
-                        
-                        <!-- Nav Tabs -->
-                        <div class="flex rounded-xl bg-slate-200/80 p-1 mb-5">
-                            <button id="tab-btn-login" onclick="switchTab('login')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
-                                Iniciar Sesión
-                            </button>
-                            <button id="tab-btn-register" onclick="switchTab('register')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">
-                                Afiliarse
-                            </button>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                    <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-vente-cyan text-[10px] sm:text-xs font-semibold tracking-wide uppercase">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            Portal Oficial de Afiliación
                         </div>
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                            Forma parte del movimiento por la <span class="text-transparent bg-clip-text bg-gradient-to-r from-vente-cyan to-vente-accent">Libertad</span>
+                        </h1>
+                        <p class="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                            Súmate a la red de afiliados y voluntarios que construyen activamente una república próspera, libre e institucional.
+                        </p>
 
-                        <!-- ================= INICIAR SESION FORM ================= -->
-                        <div id="login-form-container" class="hidden space-y-4">
-                            <div class="text-center lg:text-left mb-2">
-                                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
-                                <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tus credenciales de afiliado</p>
+                        <div class="hidden sm:grid pt-4 grid-cols-3 gap-4 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
+                            <div>
+                                <div class="text-xl lg:text-2xl font-bold text-white">24</div>
+                                <div class="text-[10px] lg:text-xs text-slate-400">Estados</div>
                             </div>
+                            <div>
+                                <div class="text-xl lg:text-2xl font-bold text-vente-cyan">100%</div>
+                                <div class="text-[10px] lg:text-xs text-slate-400">Compromiso</div>
+                            </div>
+                            <div>
+                                <div class="text-xl lg:text-2xl font-bold text-white">Global</div>
+                                <div class="text-[10px] lg:text-xs text-slate-400">Diáspora</div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3 sm:space-y-4">
-                                <div>
-                                    <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Nombre o Usuario</label>
-                                    <div class="relative">
-                                        <i data-lucide="user" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                        <input type="text" id="login-nombre" required placeholder="Ej. Carlos Mendoza" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Cédula o Correo</label>
-                                    <div class="relative">
-                                        <i data-lucide="mail" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                        <input type="text" id="login-id" required placeholder="V-12345678" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase">Contraseña</label>
-                                        <a href="#" onclick="showNotification('Enlace de recuperación enviado.', 'info')" class="text-[10px] sm:text-xs text-vente-cyan font-medium hover:underline">¿Olvidaste tu clave?</a>
-                                    </div>
-                                    <div class="relative">
-                                        <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                        <input type="password" required placeholder="••••••••" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="w-full py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mt-2">
-                                    <span>Ingresar</span>
-                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <div class="lg:col-span-6">
+                        <div class="glass-card rounded-2xl p-5 sm:p-8 shadow-2xl text-slate-800 relative z-20">
+                            <div class="flex rounded-xl bg-slate-200/80 p-1 mb-5">
+                                <button id="tab-btn-login" type="button" onclick="switchTab('login')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">
+                                    Iniciar Sesión
                                 </button>
-                            </form>
-                        </div>
-
-                        <!-- ================= REGISTRO / AFILIACIÓN FORM ================= -->
-                        <div id="register-form-container" class="space-y-4">
-                            
-                            <!-- Wizard Progress -->
-                            <div class="mb-3">
-                                <div class="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
-                                    <span id="step-label" class="truncate pr-2">Paso 1: Datos</span>
-                                    <span id="step-counter" class="text-vente-cyan whitespace-nowrap">1 / 4</span>
-                                </div>
-                                <div class="w-full bg-slate-200 h-1.5 sm:h-2 rounded-full overflow-hidden">
-                                    <div id="progress-bar" class="bg-vente-cyan h-full transition-all duration-300" style="width: 25%"></div>
-                                </div>
+                                <button id="tab-btn-register" type="button" onclick="switchTab('register')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                                    Afiliarse
+                                </button>
                             </div>
 
-                            <form id="register-wizard-form" onsubmit="handleRegisterSubmit(event)">
-                                
-                                <!-- STEP 1: Datos Personales -->
-                                <div id="wizard-step-1" class="wizard-step space-y-2.5 sm:space-y-3">
-                                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                                        <div>
-                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Nombre</label>
-                                            <input type="text" id="reg-nombre" required placeholder="María" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Apellido</label>
-                                            <input type="text" id="reg-apellido" required placeholder="Corina" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
-                                        </div>
-                                    </div>
+                            <div id="login-form-container" class="space-y-4">
+                                <div class="text-center lg:text-left mb-2">
+                                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
+                                    <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tus credenciales de afiliado</p>
+                                </div>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                        <div>
-                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Cédula</label>
-                                            <div class="flex gap-1">
-                                                <select id="reg-tipo-id" class="px-1.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan">
-                                                    <option value="V">V-</option>
-                                                    <option value="E">E-</option>
-                                                </select>
-                                                <input type="number" id="reg-cedula" required placeholder="12345678" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">F. Nacimiento</label>
-                                            <input type="date" required class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none text-slate-600">
+                                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3 sm:space-y-4" novalidate>
+                                    <div>
+                                        <label for="login-user" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Usuario o correo</label>
+                                        <div class="relative">
+                                            <i data-lucide="user" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                            <input id="login-user" type="text" required placeholder="Ej. Carlos Mendoza o correo@ejemplo.com" class="w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
-                                        <input type="email" id="reg-email" required placeholder="afiliado@ejemplo.com" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label for="login-password" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase">Contraseña</label>
+                                            <button type="button" onclick="showNotification('Enlace de recuperación enviado.', 'info')" class="text-[10px] sm:text-xs text-vente-cyan font-medium hover:underline">¿Olvidaste tu contraseña?</button>
+                                        </div>
+                                        <div class="relative">
+                                            <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                            <input id="login-password" type="password" required placeholder="••••••••" class="w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="w-full py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                                        <span>Ingresar</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div id="register-form-container" class="hidden space-y-4">
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
+                                        <span id="step-label" class="truncate pr-2">Paso 1: Datos</span>
+                                        <span id="step-counter" class="text-vente-cyan whitespace-nowrap">1 / 4</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-1.5 sm:h-2 rounded-full overflow-hidden">
+                                        <div id="progress-bar" class="bg-vente-cyan h-full transition-all duration-300" style="width: 25%"></div>
                                     </div>
                                 </div>
 
-                                <!-- STEP 2: Ubicación -->
-                                <div id="wizard-step-2" class="wizard-step hidden space-y-2.5 sm:space-y-3">
-                                    <div>
-                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Residencia</label>
-                                        <select id="reg-residencia" onchange="toggleUbicacionCampos(this.value)" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
-                                            <option value="venezuela">Venezuela</option>
-                                            <option value="exterior">En el Exterior</option>
-                                        </select>
-                                    </div>
-
-                                    <div id="campos-venezuela" class="space-y-2.5 sm:space-y-3">
+                                <form id="register-wizard-form" onsubmit="handleRegisterSubmit(event)" novalidate>
+                                    <div id="wizard-step-1" class="wizard-step space-y-2.5 sm:space-y-3">
                                         <div class="grid grid-cols-2 gap-2 sm:gap-3">
                                             <div>
-                                                <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Estado</label>
-                                                <select id="reg-estado" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
-                                                    <option value="Distrito Capital">Distrito Capital</option>
-                                                    <option value="Miranda">Miranda</option>
-                                                    <option value="Zulia">Zulia</option>
-                                                    <option value="Carabobo">Carabobo</option>
-                                                    <option value="Otro">Otro...</option>
-                                                </select>
+                                                <label for="reg-nombre" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Nombre</label>
+                                                <input id="reg-nombre" type="text" required placeholder="María" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
                                             </div>
                                             <div>
-                                                <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Municipio</label>
-                                                <input type="text" placeholder="Ej. Chacao" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
+                                                <label for="reg-apellido" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Apellido</label>
+                                                <input id="reg-apellido" type="text" required placeholder="Corina" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                            <div>
+                                                <label for="reg-cedula" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Cédula</label>
+                                                <div class="flex gap-1">
+                                                    <select id="reg-tipo-id" class="px-1.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                                        <option value="V">V-</option>
+                                                        <option value="E">E-</option>
+                                                    </select>
+                                                    <input id="reg-cedula" type="number" min="1000000" required placeholder="12345678" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label for="reg-fecha-nac" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">F. Nacimiento</label>
+                                                <input id="reg-fecha-nac" type="date" required class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="reg-email" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                                            <input id="reg-email" type="email" required placeholder="afiliado@ejemplo.com" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                        </div>
+                                    </div>
+
+                                    <div id="wizard-step-2" class="wizard-step hidden space-y-2.5 sm:space-y-3">
+                                        <div>
+                                            <label for="reg-residencia" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Residencia</label>
+                                            <select id="reg-residencia" onchange="toggleUbicacionCampos(this.value)" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                                <option value="venezuela">Venezuela</option>
+                                                <option value="exterior">En el Exterior</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="campos-venezuela" class="space-y-2.5 sm:space-y-3">
+                                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                                <div>
+                                                    <label for="reg-estado" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Estado</label>
+                                                    <select id="reg-estado" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                                        <option value="Distrito Capital">Distrito Capital</option>
+                                                        <option value="Miranda">Miranda</option>
+                                                        <option value="Zulia">Zulia</option>
+                                                        <option value="Carabobo">Carabobo</option>
+                                                        <option value="Otro">Otro...</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label for="reg-municipio" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Municipio</label>
+                                                    <input id="reg-municipio" type="text" placeholder="Ej. Chacao" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="campos-exterior" class="hidden space-y-2.5 sm:space-y-3">
+                                            <div>
+                                                <label for="reg-pais" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">País</label>
+                                                <input id="reg-pais" type="text" placeholder="Ej. España" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div id="campos-exterior" class="hidden space-y-2.5 sm:space-y-3">
-                                        <div>
-                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">País</label>
-                                            <input type="text" placeholder="Ej. España" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
+                                    <div id="wizard-step-3" class="wizard-step hidden space-y-2 sm:space-y-3">
+                                        <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-tight">¿En qué área quieres colaborar?</p>
+                                        <div class="space-y-1.5 sm:space-y-2 max-h-40 overflow-y-auto pr-1">
+                                            <label class="flex items-center p-2 bg-slate-50 border border-slate-200 rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                                <input type="checkbox" checked class="rounded border-slate-300 text-vente-cyan mr-2">
+                                                Activismo de Calle
+                                            </label>
+                                            <label class="flex items-center p-2 bg-slate-50 border border-slate-200 rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                                <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
+                                                Comando Digital (Redes)
+                                            </label>
+                                            <label class="flex items-center p-2 bg-slate-50 border border-slate-200 rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                                <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
+                                                Defensores del Voto
+                                            </label>
+                                            <label class="flex items-center p-2 bg-slate-50 border border-slate-200 rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                                <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
+                                                Organización Comunitaria
+                                            </label>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- STEP 3: Voluntariado -->
-                                <div id="wizard-step-3" class="wizard-step hidden space-y-2 sm:space-y-3">
-                                    <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-tight">¿En qué área quieres colaborar?</p>
-                                    
-                                    <div class="space-y-1.5 sm:space-y-2 max-h-40 overflow-y-auto pr-1">
-                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
-                                            <input type="checkbox" checked class="rounded border-slate-300 text-vente-cyan mr-2">
-                                            Activismo de Calle
-                                        </label>
-                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
-                                            <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
-                                            Comando Digital (Redes)
-                                        </label>
-                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
-                                            <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
-                                            Defensores del Voto
-                                        </label>
-                                    </div>
-                                </div>
+                                    <div id="wizard-step-4" class="wizard-step hidden space-y-2.5 sm:space-y-3">
+                                        <div class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-[10px] sm:text-xs text-slate-600 leading-relaxed">
+                                            <p class="font-bold text-slate-800 mb-0.5">Adhesión Liberal:</p>
+                                            Declaro mi adhesión a los principios republicanos, el respeto a la propiedad privada y la libertad impulsados por Vente Venezuela.
+                                        </div>
 
-                                <!-- STEP 4: Confirmación -->
-                                <div id="wizard-step-4" class="wizard-step hidden space-y-2.5 sm:space-y-3">
-                                    <div class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-[10px] sm:text-xs text-slate-600 leading-relaxed">
-                                        <p class="font-bold text-slate-800 mb-0.5">Adhesión Liberal:</p>
-                                        Declaro mi adhesión a los principios republicanos, el respeto a la propiedad privada y la libertad impulsados por Vente Venezuela.
+                                        <div>
+                                            <label for="reg-password" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Crea tu Contraseña</label>
+                                            <input id="reg-password" type="password" required placeholder="Mínimo 8 caracteres" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                        </div>
+
+                                        <div>
+                                            <label for="reg-confirm-password" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Confirmar Contraseña</label>
+                                            <input id="reg-confirm-password" type="password" required placeholder="Repite tu contraseña" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:border-vente-cyan outline-none transition">
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Crea tu Contraseña</label>
-                                        <input type="password" required placeholder="Mínimo 8 caracteres" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan">
+                                    <div class="flex justify-between items-center gap-2 pt-3 sm:pt-4 border-t border-slate-200 mt-3 sm:mt-4">
+                                        <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs sm:text-sm transition-all">
+                                            Atrás
+                                        </button>
+                                        <button type="button" id="btn-next" onclick="changeStep(1)" class="ml-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-vente-cyan hover:bg-vente-hover text-slate-950 font-bold rounded-lg text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+                                            <span>Siguiente</span>
+                                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                        </button>
+                                        <button type="submit" id="btn-submit" class="hidden ml-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+                                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                            <span>Completar</span>
+                                        </button>
                                     </div>
-                                </div>
-
-                                <!-- Wizard Controls -->
-                                <div class="flex justify-between items-center gap-2 pt-3 sm:pt-4 border-t border-slate-200 mt-3 sm:mt-4">
-                                    <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs transition-all">
-                                        Atrás
-                                    </button>
-                                    <button type="button" id="btn-next" onclick="changeStep(1)" class="ml-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-vente-cyan hover:bg-vente-hover text-slate-950 font-bold rounded-lg text-xs transition-all shadow-md flex items-center gap-1">
-                                        <span>Siguiente</span>
-                                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                                    </button>
-                                    <button type="submit" id="btn-submit" class="hidden ml-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-all shadow-md flex items-center gap-1">
-                                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                                        <span>Completar</span>
-                                    </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- MEMBER DASHBOARD MODAL -->
+        <section id="principios" class="py-12 bg-white border-t border-slate-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8">
+                    <p class="text-xs font-bold uppercase tracking-[0.2em] text-vente-cyan mb-2">Principios</p>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Valores de Vente Venezuela</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 sm:gap-6">
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-100 text-vente-cyan flex items-center justify-center mb-4">
+                            <i data-lucide="shield" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 mb-2">Estado de Derecho</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Defendemos la institucionalidad, la legalidad y la convivencia basada en la libertad y la responsabilidad ciudadana.</p>
+                    </article>
+
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
+                            <i data-lucide="landmark" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 mb-2">República y Libertad</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Promovemos una república fuerte, abierta y moderna, con respeto a la propiedad privada y a la participación democrática.</p>
+                    </article>
+
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-4">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 mb-2">Voluntariado</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">La acción colectiva y el compromiso comunitario son el motor para transformar la realidad y fortalecer la red nacional.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="preguntas" class="py-12 bg-white border-t border-slate-200">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">Preguntas Frecuentes</h2>
+                </div>
+                <div class="space-y-3">
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
+                            <span>¿Puedo afiliarme desde el extranjero?</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Sí, al registrarte elige "En el Exterior" para conectarte con la red global.</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
+                            <span>¿Es gratuito el registro?</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Completamente gratuito. Tu participación es nuestro mayor valor.</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
+                            <span>¿Qué pasa después de completar mi afiliación?</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Tu solicitud queda registrada en el sistema y puedes acceder a tu credencial y panel de afiliado desde la misma plataforma.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <div id="member-dashboard-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-2xl w-full max-w-md sm:max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[95vh]">
-            
-            <!-- Modal Header -->
             <div class="bg-slate-900 text-white p-3 sm:p-4 flex justify-between items-center border-b border-slate-800 shrink-0">
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="w-8 h-8 rounded-lg gradient-cyan text-slate-900 font-black flex items-center justify-center">V</div>
@@ -338,14 +386,12 @@
                         <p class="text-[9px] sm:text-[10px] text-vente-cyan">Sistema de Credenciales</p>
                     </div>
                 </div>
-                <button onclick="closeDashboard()" class="text-slate-400 hover:text-white p-1 sm:p-2 rounded-lg hover:bg-slate-800">
+                <button type="button" onclick="closeDashboard()" class="text-slate-400 hover:text-white p-1 sm:p-2 rounded-lg hover:bg-slate-800">
                     <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                 </button>
             </div>
 
-            <!-- Modal Body -->
             <div class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
-                
                 <div class="text-center bg-gradient-to-r from-sky-50 to-cyan-50 p-3 sm:p-4 rounded-xl border border-cyan-100 flex flex-col items-center gap-1.5 sm:gap-2">
                     <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] sm:text-xs font-bold rounded-full">
                         ✓ Identidad Verificada
@@ -353,29 +399,23 @@
                     <h2 id="dash-welcome-heading" class="text-lg sm:text-xl font-black text-slate-900 leading-tight">¡Bienvenido!</h2>
                 </div>
 
-                <!-- Digital ID Card -->
-                <div class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
-                    
+                <div class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950">
                     <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
 
-                    <!-- Marca de agua carnet con el logo nuevo -->
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0">
                         <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" class="w-[150%] object-contain -rotate-[20deg]" onerror="this.style.display='none'">
                     </div>
 
-                    <!-- Card Header -->
                     <div class="flex justify-between items-start z-10 relative">
                         <div class="flex items-center gap-2">
-                            <!-- Logo nuevo en el carnet -->
-                            <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-6 sm:h-8 object-contain drop-shadow-md" onerror="this.outerHTML='<span class=\'text-lg font-black text-vente-cyan tracking-tighter drop-shadow-md\'>Vente<span class=\'text-white text-[10px] ml-1\'>CABIMAS</span></span>'">
+                            <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-6 sm:h-8 object-contain drop-shadow-md" onerror="this.style.display='none'">
                         </div>
-                        <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900 shadow-sm">
+                        <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900">
                             CHIP
                         </div>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="flex items-center gap-3 sm:gap-4 z-10">
+                    <div class="flex items-center gap-3 sm:gap-4 z-10 relative">
                         <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-800 border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-vente-cyan">
                             <i data-lucide="user" class="w-8 h-8 sm:w-10 sm:h-10"></i>
                         </div>
@@ -387,8 +427,7 @@
                         </div>
                     </div>
 
-                    <!-- Card Footer -->
-                    <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                    <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10 relative">
                         <div>
                             <div class="text-[7px] sm:text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
                             <div class="text-[10px] sm:text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
@@ -399,7 +438,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div onclick="copyAffiliationCode()" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg bg-cyan-100 text-vente-cyan flex items-center justify-center">
@@ -420,44 +458,16 @@
                 </div>
             </div>
 
-            <!-- Modal Footer -->
             <div class="bg-slate-100 p-3 sm:p-4 flex justify-end border-t border-slate-200 shrink-0">
-                <button onclick="closeDashboard()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition-all">
+                <button type="button" onclick="closeDashboard()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition-all">
                     Cerrar Sesión
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- FAQ Section -->
-    <section id="preguntas" class="py-12 bg-white border-t border-slate-200">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <h2 class="text-xl sm:text-2xl font-black text-slate-900">Preguntas Frecuentes</h2>
-            </div>
-            <div class="space-y-3">
-                <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
-                    <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
-                        <span>¿Puedo afiliarme desde el extranjero?</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Sí, al registrarte elige "En el Exterior" para conectarte con la red global.</p>
-                </div>
-                <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
-                    <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
-                        <span>¿Es gratuito el registro?</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Completamente gratuito. Tu participación es nuestro mayor valor.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Notification Toast Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
-    <!-- Footer -->
     <footer id="contacto" class="bg-slate-950 text-slate-400 py-10 border-t border-slate-800 text-xs relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center gap-3">
             <p>© 2026 Vente Venezuela • Todos los derechos reservados</p>
@@ -467,71 +477,75 @@
         </div>
     </footer>
 
-    <!-- Firebase Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        
-        let app, db, auth, currentUser;
-
-        try {
-            if (Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                const initAuth = async () => {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined') {
-                            const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-                            currentUser = userCredential.user;
-                        } else {
-                            const userCredential = await signInAnonymously(auth);
-                            currentUser = userCredential.user;
-                        }
-                    } catch (error) {
-                        console.error("Error en autenticación a base de datos:", error);
-                    }
-                };
-                initAuth();
-            }
-        } catch (e) {
-            console.error("Fallo al conectar con la base de datos:", e);
-        }
-
-        window.guardarRegistroEnBD = async (datosUsuario) => {
-            if (!currentUser || !db) return true; // Simulación si no hay BD configurada
-            try {
-                const userId = currentUser.uid;
-                const docRef = doc(db, 'artifacts', appId, 'users', userId, 'afiliaciones', datosUsuario.cedula);
-                await setDoc(docRef, { ...datosUsuario, fechaRegistro: new Date().toISOString() });
-                return true;
-            } catch (error) {
-                console.error("Error guardando el registro:", error);
-                return false;
-            }
-        };
-    </script>
-
-    <!-- JavaScript Base Logic -->
     <script>
+        const STORAGE_KEY = 'vente_afiliados';
+        const SESSION_KEY = 'vente_session';
         let currentStep = 1;
         const totalSteps = 4;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-        });
-
-        function generateUniqueID() {
-            const num = Math.floor(1000 + Math.random() * 9000);
-            return `VV-${num}-X9`;
+        function getStoredUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch (error) {
+                return [];
+            }
         }
 
-        window.switchTab = function(tab) {
+        function saveStoredUsers(users) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+        }
+
+        function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            return crypto.subtle.digest('SHA-256', data).then(buffer => {
+                return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            });
+        }
+
+        function displayError(inputId, message) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.classList.add('field-error');
+            input.setAttribute('data-error', message || '');
+            input.setAttribute('aria-invalid', 'true');
+        }
+
+        function clearError(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.classList.remove('field-error');
+            input.removeAttribute('data-error');
+            input.setAttribute('aria-invalid', 'false');
+        }
+
+        function clearAllFormErrors() {
+            ['reg-nombre','reg-apellido','reg-cedula','reg-fecha-nac','reg-email','reg-estado','reg-municipio','reg-pais','reg-password','reg-confirm-password','login-user','login-password']
+                .forEach(clearError);
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function updateWizardUI() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const el = document.getElementById(`wizard-step-${i}`);
+                if (el) el.classList.add('hidden');
+            }
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            document.getElementById('step-counter').textContent = `${currentStep} / ${totalSteps}`;
+            document.getElementById('progress-bar').style.width = `${(currentStep / totalSteps) * 100}%`;
+
+            const labels = ['Paso 1: Datos', 'Paso 2: Ubicación', 'Paso 3: Voluntariado', 'Paso 4: Confirmación'];
+            document.getElementById('step-label').textContent = labels[currentStep - 1];
+
+            document.getElementById('btn-prev').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('btn-next').classList.toggle('hidden', currentStep === totalSteps);
+            document.getElementById('btn-submit').classList.toggle('hidden', currentStep !== totalSteps);
+        }
+
+        function switchTab(tab) {
             const loginBtn = document.getElementById('tab-btn-login');
             const regBtn = document.getElementById('tab-btn-register');
             const loginForm = document.getElementById('login-form-container');
@@ -552,106 +566,99 @@
                 regForm.classList.remove('hidden');
                 loginForm.classList.add('hidden');
             }
-        };
+        }
 
-        window.updateWizardUI = function() {
-            for (let i = 1; i <= totalSteps; i++) {
-                const el = document.getElementById(`wizard-step-${i}`);
-                if (el) el.classList.add('hidden');
-            }
-            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
-            document.getElementById('step-counter').textContent = `${currentStep} / ${totalSteps}`;
-            document.getElementById('progress-bar').style.width = `${(currentStep / totalSteps) * 100}%`;
+        function toggleUbicacionCampos(val) {
+            const venezuela = document.getElementById('campos-venezuela');
+            const exterior = document.getElementById('campos-exterior');
+            venezuela.classList.toggle('hidden', val !== 'venezuela');
+            exterior.classList.toggle('hidden', val !== 'exterior');
+        }
 
-            const labels = ['Paso 1: Datos', 'Paso 2: Ubicación', 'Paso 3: Voluntariado', 'Paso 4: Confirmación'];
-            document.getElementById('step-label').textContent = labels[currentStep - 1];
+        function changeStep(delta) {
+            const stepValidationMap = {
+                1: () => {
+                    const nombre = document.getElementById('reg-nombre').value.trim();
+                    const apellido = document.getElementById('reg-apellido').value.trim();
+                    const cedula = document.getElementById('reg-cedula').value.trim();
+                    const fechaNac = document.getElementById('reg-fecha-nac').value;
+                    const email = document.getElementById('reg-email').value.trim();
 
-            document.getElementById('btn-prev').classList.toggle('hidden', currentStep === 1);
-            document.getElementById('btn-next').classList.toggle('hidden', currentStep === totalSteps);
-            document.getElementById('btn-submit').classList.toggle('hidden', currentStep !== totalSteps);
-        };
-
-        window.changeStep = function(delta) {
-            if (delta > 0 && currentStep === 1) {
-                const nombre = document.getElementById('reg-nombre').value.trim();
-                const cedula = document.getElementById('reg-cedula').value.trim();
-                if (!nombre || !cedula) {
-                    showNotification('Completa Nombre y Cédula.', 'warning');
-                    return;
+                    if (!nombre || !apellido || !cedula || !fechaNac || !email) {
+                        showNotification('Completa los datos personales.', 'warning');
+                        return false;
+                    }
+                    if (!validateEmail(email)) {
+                        showNotification('El correo electrónico no es válido.', 'warning');
+                        document.getElementById('reg-email').classList.add('field-error');
+                        return false;
+                    }
+                    return true;
+                },
+                2: () => {
+                    const residencia = document.getElementById('reg-residencia').value;
+                    if (residencia === 'venezuela') {
+                        const estado = document.getElementById('reg-estado').value;
+                        if (!estado) {
+                            showNotification('Selecciona tu estado.', 'warning');
+                            return false;
+                        }
+                    } else {
+                        const pais = document.getElementById('reg-pais').value.trim();
+                        if (!pais) {
+                            showNotification('Ingresa tu país de residencia.', 'warning');
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                3: () => true,
+                4: () => {
+                    const password = document.getElementById('reg-password').value;
+                    const confirm = document.getElementById('reg-confirm-password').value;
+                    if (password.length < 8) {
+                        showNotification('La contraseña debe tener al menos 8 caracteres.', 'warning');
+                        return false;
+                    }
+                    if (password !== confirm) {
+                        showNotification('Las contraseñas no coinciden.', 'warning');
+                        return false;
+                    }
+                    return true;
                 }
+            };
+
+            if (delta > 0 && currentStep < totalSteps && !stepValidationMap[currentStep]()) {
+                return;
             }
-            const next = currentStep + delta;
-            if (next >= 1 && next <= totalSteps) {
-                currentStep = next;
+
+            const nextStep = currentStep + delta;
+            if (nextStep >= 1 && nextStep <= totalSteps) {
+                currentStep = nextStep;
                 updateWizardUI();
             }
-        };
+        }
 
-        window.toggleUbicacionCampos = function(val) {
-            document.getElementById('campos-venezuela').classList.toggle('hidden', val !== 'venezuela');
-            document.getElementById('campos-exterior').classList.toggle('hidden', val !== 'exterior');
-        };
+        function generateUniqueID() {
+            const num = Math.floor(1000 + Math.random() * 9000);
+            return `VV-${num}-X9`;
+        }
 
-        window.handleLogin = function(e) {
-            e.preventDefault();
-            const nombreInput = document.getElementById('login-nombre').value.trim() || 'Afiliado';
-            const idInput = document.getElementById('login-id').value.trim() || 'V-00000000';
-            showNotification('Validando credenciales...', 'info');
-            
-            setTimeout(() => {
-                document.getElementById('dash-welcome-heading').textContent = `¡Hola, ${nombreInput}!`;
-                document.getElementById('dash-user-name').textContent = nombreInput.toUpperCase();
-                document.getElementById('dash-user-id').textContent = idInput.toUpperCase();
-                document.getElementById('dash-user-code').textContent = generateUniqueID();
-                openDashboard();
-            }, 500);
-        };
-
-        window.handleRegisterSubmit = async function(e) {
-            e.preventDefault();
-            
-            const nombre = document.getElementById('reg-nombre').value.trim() || 'Ciudadano';
-            const apellido = document.getElementById('reg-apellido').value.trim() || 'Liberal';
-            const tipo = document.getElementById('reg-tipo-id').value;
-            const cedula = document.getElementById('reg-cedula').value.trim() || '00000000';
-            const estado = document.getElementById('reg-estado').value;
-            const email = document.getElementById('reg-email').value.trim();
-            const fullName = `${nombre} ${apellido}`;
-
-            showNotification('Procesando datos...', 'info');
-
-            if (window.guardarRegistroEnBD) {
-                const datosUsuario = { nombre, apellido, tipo_documento: tipo, cedula, estado, email };
-                await window.guardarRegistroEnBD(datosUsuario);
-                showNotification('¡Afiliación guardada exitosamente!', 'success');
-            }
-
-            setTimeout(() => {
-                document.getElementById('dash-welcome-heading').textContent = `¡Bienvenido, ${nombre}!`;
-                document.getElementById('dash-user-name').textContent = fullName.toUpperCase();
-                document.getElementById('dash-user-id').textContent = `${tipo}-${cedula}`;
-                document.getElementById('dash-user-state').textContent = estado;
-                document.getElementById('dash-user-code').textContent = generateUniqueID();
-                openDashboard();
-            }, 800);
-        };
-
-        window.openDashboard = function() {
+        function openDashboard() {
             document.getElementById('member-dashboard-modal').classList.remove('hidden');
             lucide.createIcons();
-        };
+        }
 
-        window.closeDashboard = function() {
+        function closeDashboard() {
             document.getElementById('member-dashboard-modal').classList.add('hidden');
-        };
+            localStorage.removeItem(SESSION_KEY);
+            document.getElementById('login-form').reset();
+        }
 
-        window.copyAffiliationCode = function() {
-            showNotification('¡Credencial compartida!', 'info');
-        };
-
-        window.showNotification = function(msg, type = 'info') {
+        function showNotification(msg, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
+
             let bg = 'bg-slate-900 border-slate-700 text-white';
             if (type === 'success') bg = 'bg-emerald-900/95 border-emerald-500 text-emerald-100';
             if (type === 'warning') bg = 'bg-amber-900/95 border-amber-500 text-amber-100';
@@ -667,14 +674,145 @@
                 toast.classList.add('opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
-        };
+        }
 
-        window.toggleFaq = function(el) {
+        function toggleFaq(el) {
             const p = el.querySelector('p');
             const icon = el.querySelector('svg') || el.querySelector('i');
             if (p) p.classList.toggle('hidden');
             if (icon) icon.classList.toggle('rotate-180');
-        };
+        }
+
+        function copyAffiliationCode() {
+            const code = document.getElementById('dash-user-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('Código copiado al portapapeles.', 'success');
+            }).catch(() => {
+                showNotification('No se pudo copiar el código.', 'warning');
+            });
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('login-user').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            clearAllFormErrors();
+
+            if (!identifier || !password) {
+                showNotification('Usuario y contraseña son obligatorios.', 'warning');
+                if (!identifier) displayError('login-user', 'Requerido');
+                if (!password) displayError('login-password', 'Requerido');
+                return;
+            }
+
+            showNotification('Validando credenciales...', 'info');
+            const users = getStoredUsers();
+            const passwordHash = await hashPassword(password);
+
+            const user = users.find(u => {
+                const matchesField = u.email === identifier || u.usuario === identifier || `${u.tipo_documento}-${u.cedula}` === identifier.toUpperCase() || `${u.cedula}` === identifier;
+                return matchesField && u.passwordHash === passwordHash;
+            });
+
+            if (!user) {
+                showNotification('Credenciales inválidas o usuario no encontrado.', 'warning');
+                return;
+            }
+
+            localStorage.setItem(SESSION_KEY, JSON.stringify({
+                username: user.usuario || `${user.nombre} ${user.apellido}`,
+                fullName: `${user.nombre} ${user.apellido}`,
+                identifier: `${user.tipo_documento}-${user.cedula}`
+            }));
+
+            setTimeout(() => {
+                document.getElementById('dash-welcome-heading').textContent = `¡Hola, ${user.nombre}!`;
+                document.getElementById('dash-user-name').textContent = `${user.nombre} ${user.apellido}`.toUpperCase();
+                document.getElementById('dash-user-id').textContent = `${user.tipo_documento}-${user.cedula}`;
+                document.getElementById('dash-user-state').textContent = user.estado || 'Venezuela';
+                document.getElementById('dash-user-code').textContent = generateUniqueID();
+                openDashboard();
+                showNotification('Acceso correcto.', 'success');
+            }, 400);
+        }
+
+        async function handleRegisterSubmit(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            const apellido = document.getElementById('reg-apellido').value.trim();
+            const tipo = document.getElementById('reg-tipo-id').value;
+            const cedula = document.getElementById('reg-cedula').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const residencia = document.getElementById('reg-residencia').value;
+            const estado = document.getElementById('reg-estado').value;
+            const pais = document.getElementById('reg-pais').value.trim();
+            const municipio = document.getElementById('reg-municipio').value.trim();
+
+            if (!nombre || !apellido || !cedula || !email) {
+                showNotification('Completa todos los campos obligatorios.', 'warning');
+                return;
+            }
+            if (!validateEmail(email)) {
+                showNotification('Correo inválido.', 'warning');
+                return;
+            }
+            if (password.length < 8) {
+                showNotification('La contraseña debe tener al menos 8 caracteres.', 'warning');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showNotification('Las contraseñas no coinciden.', 'warning');
+                return;
+            }
+
+            const users = getStoredUsers();
+            const existing = users.some(u => u.email === email || u.cedula === cedula);
+            if (existing) {
+                showNotification('Este correo o cédula ya están registrados.', 'warning');
+                return;
+            }
+
+            const passwordHash = await hashPassword(password);
+            const newUser = {
+                nombre,
+                apellido,
+                tipo_documento: tipo,
+                cedula,
+                email,
+                usuario: `${nombre.toLowerCase()}.${apellido.toLowerCase()}`,
+                residencia,
+                estado: residencia === 'venezuela' ? estado : pais,
+                municipio,
+                pais: residencia === 'exterior' ? pais : 'Venezuela',
+                passwordHash,
+                fechaRegistro: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveStoredUsers(users);
+
+            showNotification('¡Afiliación guardada exitosamente!', 'success');
+
+            setTimeout(() => {
+                document.getElementById('dash-welcome-heading').textContent = `¡Bienvenido, ${nombre}!`;
+                document.getElementById('dash-user-name').textContent = `${nombre} ${apellido}`.toUpperCase();
+                document.getElementById('dash-user-id').textContent = `${tipo}-${cedula}`;
+                document.getElementById('dash-user-state').textContent = residencia === 'venezuela' ? `${estado}, Venezuela` : `${pais}`;
+                document.getElementById('dash-user-code').textContent = generateUniqueID();
+                openDashboard();
+            }, 600);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateWizardUI();
+            toggleUbicacionCampos('venezuela');
+            clearAllFormErrors();
+        });
     </script>
 </body>
 </html>
