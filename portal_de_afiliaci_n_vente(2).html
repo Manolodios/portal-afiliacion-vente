@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vente Venezuela - Portal de Afiliación y Registro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        vente: {
+                            cyan: '#00A8E8',
+                            hover: '#0090C8',
+                            navy: '#0A192F',
+                            dark: '#030811',
+                            light: '#F4F9FC',
+                            accent: '#00E5FF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .gradient-vente {
+            background: linear-gradient(135deg, #0A192F 0%, #004E89 50%, #00A8E8 100%);
+        }
+        .gradient-cyan {
+            background: linear-gradient(135deg, #00A8E8 0%, #00E5FF 100%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md text-white border-b border-slate-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center group">
+                <!-- LOGO ACTUALIZADO AQUÍ -->
+                <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 sm:h-12 object-contain group-hover:scale-105 transition-transform" onerror="this.outerHTML='<div class=\'flex items-baseline font-black tracking-tighter\'><span class=\'text-2xl sm:text-3xl text-vente-cyan\'>Vente</span><span class=\'text-white text-sm sm:text-base ml-1 tracking-normal\'>CABIMAS</span></div>'">
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#inicio" class="hover:text-vente-cyan transition-colors">Inicio</a>
+                <a href="#principios" class="hover:text-vente-cyan transition-colors">Principios</a>
+                <a href="#preguntas" class="hover:text-vente-cyan transition-colors">FAQ</a>
+            </nav>
+
+            <!-- Actions CTA -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button onclick="switchTab('login')" class="text-slate-300 hover:text-white px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors">
+                    Entrar
+                </button>
+                <button onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">
+                    Únete
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative gradient-vente text-white pt-8 sm:pt-12 pb-16 sm:pb-24 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <!-- Marca de agua de fondo con el logo actualizado -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.06] z-0">
+            <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Marca de agua" class="w-[250%] md:w-[120%] object-contain -rotate-[15deg] blur-[1px]" onerror="this.style.display='none'">
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                
+                <!-- Hero Left Column -->
+                <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-vente-cyan text-[10px] sm:text-xs font-semibold tracking-wide uppercase">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        Portal Oficial de Afiliación
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                        Forma parte del movimiento por la <span class="text-transparent bg-clip-text bg-gradient-to-r from-vente-cyan to-vente-accent">Libertad</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        Súmate a la red de afiliados y voluntarios que construyen activamente una república próspera, libre e institucional.
+                    </p>
+
+                    <div class="hidden sm:grid pt-4 grid-cols-3 gap-4 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
+                        <div>
+                            <div class="text-xl lg:text-2xl font-bold text-white">24</div>
+                            <div class="text-[10px] lg:text-xs text-slate-400">Estados</div>
+                        </div>
+                        <div>
+                            <div class="text-xl lg:text-2xl font-bold text-vente-cyan">100%</div>
+                            <div class="text-[10px] lg:text-xs text-slate-400">Compromiso</div>
+                        </div>
+                        <div>
+                            <div class="text-xl lg:text-2xl font-bold text-white">Global</div>
+                            <div class="text-[10px] lg:text-xs text-slate-400">Diáspora</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Column: Authentication Forms -->
+                <div class="lg:col-span-6">
+                    <div class="glass-card rounded-2xl p-5 sm:p-8 shadow-2xl text-slate-800 relative z-20">
+                        
+                        <!-- Nav Tabs -->
+                        <div class="flex rounded-xl bg-slate-200/80 p-1 mb-5">
+                            <button id="tab-btn-login" onclick="switchTab('login')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                                Iniciar Sesión
+                            </button>
+                            <button id="tab-btn-register" onclick="switchTab('register')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">
+                                Afiliarse
+                            </button>
+                        </div>
+
+                        <!-- ================= INICIAR SESION FORM ================= -->
+                        <div id="login-form-container" class="hidden space-y-4">
+                            <div class="text-center lg:text-left mb-2">
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
+                                <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tus credenciales de afiliado</p>
+                            </div>
+
+                            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3 sm:space-y-4">
+                                <div>
+                                    <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Nombre o Usuario</label>
+                                    <div class="relative">
+                                        <i data-lucide="user" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                        <input type="text" id="login-nombre" required placeholder="Ej. Carlos Mendoza" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Cédula o Correo</label>
+                                    <div class="relative">
+                                        <i data-lucide="mail" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                        <input type="text" id="login-id" required placeholder="V-12345678" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase">Contraseña</label>
+                                        <a href="#" onclick="showNotification('Enlace de recuperación enviado.', 'info')" class="text-[10px] sm:text-xs text-vente-cyan font-medium hover:underline">¿Olvidaste tu clave?</a>
+                                    </div>
+                                    <div class="relative">
+                                        <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                        <input type="password" required placeholder="••••••••" class="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mt-2">
+                                    <span>Ingresar</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- ================= REGISTRO / AFILIACIÓN FORM ================= -->
+                        <div id="register-form-container" class="space-y-4">
+                            
+                            <!-- Wizard Progress -->
+                            <div class="mb-3">
+                                <div class="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
+                                    <span id="step-label" class="truncate pr-2">Paso 1: Datos</span>
+                                    <span id="step-counter" class="text-vente-cyan whitespace-nowrap">1 / 4</span>
+                                </div>
+                                <div class="w-full bg-slate-200 h-1.5 sm:h-2 rounded-full overflow-hidden">
+                                    <div id="progress-bar" class="bg-vente-cyan h-full transition-all duration-300" style="width: 25%"></div>
+                                </div>
+                            </div>
+
+                            <form id="register-wizard-form" onsubmit="handleRegisterSubmit(event)">
+                                
+                                <!-- STEP 1: Datos Personales -->
+                                <div id="wizard-step-1" class="wizard-step space-y-2.5 sm:space-y-3">
+                                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                        <div>
+                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Nombre</label>
+                                            <input type="text" id="reg-nombre" required placeholder="María" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Apellido</label>
+                                            <input type="text" id="reg-apellido" required placeholder="Corina" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                        <div>
+                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Cédula</label>
+                                            <div class="flex gap-1">
+                                                <select id="reg-tipo-id" class="px-1.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan">
+                                                    <option value="V">V-</option>
+                                                    <option value="E">E-</option>
+                                                </select>
+                                                <input type="number" id="reg-cedula" required placeholder="12345678" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">F. Nacimiento</label>
+                                            <input type="date" required class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none text-slate-600">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                                        <input type="email" id="reg-email" required placeholder="afiliado@ejemplo.com" class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <!-- STEP 2: Ubicación -->
+                                <div id="wizard-step-2" class="wizard-step hidden space-y-2.5 sm:space-y-3">
+                                    <div>
+                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Residencia</label>
+                                        <select id="reg-residencia" onchange="toggleUbicacionCampos(this.value)" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
+                                            <option value="venezuela">Venezuela</option>
+                                            <option value="exterior">En el Exterior</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="campos-venezuela" class="space-y-2.5 sm:space-y-3">
+                                        <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                            <div>
+                                                <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Estado</label>
+                                                <select id="reg-estado" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
+                                                    <option value="Distrito Capital">Distrito Capital</option>
+                                                    <option value="Miranda">Miranda</option>
+                                                    <option value="Zulia">Zulia</option>
+                                                    <option value="Carabobo">Carabobo</option>
+                                                    <option value="Otro">Otro...</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Municipio</label>
+                                                <input type="text" placeholder="Ej. Chacao" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="campos-exterior" class="hidden space-y-2.5 sm:space-y-3">
+                                        <div>
+                                            <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">País</label>
+                                            <input type="text" placeholder="Ej. España" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 3: Voluntariado -->
+                                <div id="wizard-step-3" class="wizard-step hidden space-y-2 sm:space-y-3">
+                                    <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-tight">¿En qué área quieres colaborar?</p>
+                                    
+                                    <div class="space-y-1.5 sm:space-y-2 max-h-40 overflow-y-auto pr-1">
+                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                            <input type="checkbox" checked class="rounded border-slate-300 text-vente-cyan mr-2">
+                                            Activismo de Calle
+                                        </label>
+                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                            <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
+                                            Comando Digital (Redes)
+                                        </label>
+                                        <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
+                                            <input type="checkbox" class="rounded border-slate-300 text-vente-cyan mr-2">
+                                            Defensores del Voto
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 4: Confirmación -->
+                                <div id="wizard-step-4" class="wizard-step hidden space-y-2.5 sm:space-y-3">
+                                    <div class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-[10px] sm:text-xs text-slate-600 leading-relaxed">
+                                        <p class="font-bold text-slate-800 mb-0.5">Adhesión Liberal:</p>
+                                        Declaro mi adhesión a los principios republicanos, el respeto a la propiedad privada y la libertad impulsados por Vente Venezuela.
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Crea tu Contraseña</label>
+                                        <input type="password" required placeholder="Mínimo 8 caracteres" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan">
+                                    </div>
+                                </div>
+
+                                <!-- Wizard Controls -->
+                                <div class="flex justify-between items-center gap-2 pt-3 sm:pt-4 border-t border-slate-200 mt-3 sm:mt-4">
+                                    <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs transition-all">
+                                        Atrás
+                                    </button>
+                                    <button type="button" id="btn-next" onclick="changeStep(1)" class="ml-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-vente-cyan hover:bg-vente-hover text-slate-950 font-bold rounded-lg text-xs transition-all shadow-md flex items-center gap-1">
+                                        <span>Siguiente</span>
+                                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                    </button>
+                                    <button type="submit" id="btn-submit" class="hidden ml-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-all shadow-md flex items-center gap-1">
+                                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                        <span>Completar</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MEMBER DASHBOARD MODAL -->
+    <div id="member-dashboard-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md sm:max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[95vh]">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white p-3 sm:p-4 flex justify-between items-center border-b border-slate-800 shrink-0">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-8 h-8 rounded-lg gradient-cyan text-slate-900 font-black flex items-center justify-center">V</div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base leading-tight">Portal Afiliado</h3>
+                        <p class="text-[9px] sm:text-[10px] text-vente-cyan">Sistema de Credenciales</p>
+                    </div>
+                </div>
+                <button onclick="closeDashboard()" class="text-slate-400 hover:text-white p-1 sm:p-2 rounded-lg hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
+                
+                <div class="text-center bg-gradient-to-r from-sky-50 to-cyan-50 p-3 sm:p-4 rounded-xl border border-cyan-100 flex flex-col items-center gap-1.5 sm:gap-2">
+                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] sm:text-xs font-bold rounded-full">
+                        ✓ Identidad Verificada
+                    </span>
+                    <h2 id="dash-welcome-heading" class="text-lg sm:text-xl font-black text-slate-900 leading-tight">¡Bienvenido!</h2>
+                </div>
+
+                <!-- Digital ID Card -->
+                <div class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
+                    
+                    <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <!-- Marca de agua carnet con el logo nuevo -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0">
+                        <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" class="w-[150%] object-contain -rotate-[20deg]" onerror="this.style.display='none'">
+                    </div>
+
+                    <!-- Card Header -->
+                    <div class="flex justify-between items-start z-10 relative">
+                        <div class="flex items-center gap-2">
+                            <!-- Logo nuevo en el carnet -->
+                            <img src="202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-6 sm:h-8 object-contain drop-shadow-md" onerror="this.outerHTML='<span class=\'text-lg font-black text-vente-cyan tracking-tighter drop-shadow-md\'>Vente<span class=\'text-white text-[10px] ml-1\'>CABIMAS</span></span>'">
+                        </div>
+                        <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900 shadow-sm">
+                            CHIP
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="flex items-center gap-3 sm:gap-4 z-10">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-800 border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-vente-cyan">
+                            <i data-lucide="user" class="w-8 h-8 sm:w-10 sm:h-10"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
+                            <div class="text-sm sm:text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                            <div class="text-[11px] sm:text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                        <div>
+                            <div class="text-[7px] sm:text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                            <div class="text-[10px] sm:text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
+                        </div>
+                        <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white p-1 rounded flex items-center justify-center">
+                            <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div onclick="copyAffiliationCode()" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-100 text-vente-cyan flex items-center justify-center">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-[11px] sm:text-sm text-slate-800">Compartir Credencial</div>
+                        </div>
+                    </div>
+                    <div onclick="showNotification('Carnet descargado.', 'info')" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-[11px] sm:text-sm text-slate-800">Guardar Imagen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-100 p-3 sm:p-4 flex justify-end border-t border-slate-200 shrink-0">
+                <button onclick="closeDashboard()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition-all">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section id="preguntas" class="py-12 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900">Preguntas Frecuentes</h2>
+            </div>
+            <div class="space-y-3">
+                <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
+                        <span>¿Puedo afiliarme desde el extranjero?</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Sí, al registrarte elige "En el Exterior" para conectarte con la red global.</p>
+                </div>
+                <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
+                        <span>¿Es gratuito el registro?</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Completamente gratuito. Tu participación es nuestro mayor valor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-slate-950 text-slate-400 py-10 border-t border-slate-800 text-xs relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center gap-3">
+            <p>© 2026 Vente Venezuela • Todos los derechos reservados</p>
+            <div class="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-[10px] sm:text-xs text-slate-500 italic shadow-inner">
+                Diseñado y desarrollado por <span class="font-bold text-vente-cyan not-italic tracking-wide ml-1">Yhojan Suarez</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        
+        let app, db, auth, currentUser;
+
+        try {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const initAuth = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined') {
+                            const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                            currentUser = userCredential.user;
+                        } else {
+                            const userCredential = await signInAnonymously(auth);
+                            currentUser = userCredential.user;
+                        }
+                    } catch (error) {
+                        console.error("Error en autenticación a base de datos:", error);
+                    }
+                };
+                initAuth();
+            }
+        } catch (e) {
+            console.error("Fallo al conectar con la base de datos:", e);
+        }
+
+        window.guardarRegistroEnBD = async (datosUsuario) => {
+            if (!currentUser || !db) return true; // Simulación si no hay BD configurada
+            try {
+                const userId = currentUser.uid;
+                const docRef = doc(db, 'artifacts', appId, 'users', userId, 'afiliaciones', datosUsuario.cedula);
+                await setDoc(docRef, { ...datosUsuario, fechaRegistro: new Date().toISOString() });
+                return true;
+            } catch (error) {
+                console.error("Error guardando el registro:", error);
+                return false;
+            }
+        };
+    </script>
+
+    <!-- JavaScript Base Logic -->
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
+        function generateUniqueID() {
+            const num = Math.floor(1000 + Math.random() * 9000);
+            return `VV-${num}-X9`;
+        }
+
+        window.switchTab = function(tab) {
+            const loginBtn = document.getElementById('tab-btn-login');
+            const regBtn = document.getElementById('tab-btn-register');
+            const loginForm = document.getElementById('login-form-container');
+            const regForm = document.getElementById('register-form-container');
+
+            if (tab === 'login') {
+                loginBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+                loginBtn.classList.remove('text-slate-600');
+                regBtn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+                regBtn.classList.add('text-slate-600');
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+            } else {
+                regBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+                regBtn.classList.remove('text-slate-600');
+                loginBtn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+                loginBtn.classList.add('text-slate-600');
+                regForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        };
+
+        window.updateWizardUI = function() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const el = document.getElementById(`wizard-step-${i}`);
+                if (el) el.classList.add('hidden');
+            }
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            document.getElementById('step-counter').textContent = `${currentStep} / ${totalSteps}`;
+            document.getElementById('progress-bar').style.width = `${(currentStep / totalSteps) * 100}%`;
+
+            const labels = ['Paso 1: Datos', 'Paso 2: Ubicación', 'Paso 3: Voluntariado', 'Paso 4: Confirmación'];
+            document.getElementById('step-label').textContent = labels[currentStep - 1];
+
+            document.getElementById('btn-prev').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('btn-next').classList.toggle('hidden', currentStep === totalSteps);
+            document.getElementById('btn-submit').classList.toggle('hidden', currentStep !== totalSteps);
+        };
+
+        window.changeStep = function(delta) {
+            if (delta > 0 && currentStep === 1) {
+                const nombre = document.getElementById('reg-nombre').value.trim();
+                const cedula = document.getElementById('reg-cedula').value.trim();
+                if (!nombre || !cedula) {
+                    showNotification('Completa Nombre y Cédula.', 'warning');
+                    return;
+                }
+            }
+            const next = currentStep + delta;
+            if (next >= 1 && next <= totalSteps) {
+                currentStep = next;
+                updateWizardUI();
+            }
+        };
+
+        window.toggleUbicacionCampos = function(val) {
+            document.getElementById('campos-venezuela').classList.toggle('hidden', val !== 'venezuela');
+            document.getElementById('campos-exterior').classList.toggle('hidden', val !== 'exterior');
+        };
+
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const nombreInput = document.getElementById('login-nombre').value.trim() || 'Afiliado';
+            const idInput = document.getElementById('login-id').value.trim() || 'V-00000000';
+            showNotification('Validando credenciales...', 'info');
+            
+            setTimeout(() => {
+                document.getElementById('dash-welcome-heading').textContent = `¡Hola, ${nombreInput}!`;
+                document.getElementById('dash-user-name').textContent = nombreInput.toUpperCase();
+                document.getElementById('dash-user-id').textContent = idInput.toUpperCase();
+                document.getElementById('dash-user-code').textContent = generateUniqueID();
+                openDashboard();
+            }, 500);
+        };
+
+        window.handleRegisterSubmit = async function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('reg-nombre').value.trim() || 'Ciudadano';
+            const apellido = document.getElementById('reg-apellido').value.trim() || 'Liberal';
+            const tipo = document.getElementById('reg-tipo-id').value;
+            const cedula = document.getElementById('reg-cedula').value.trim() || '00000000';
+            const estado = document.getElementById('reg-estado').value;
+            const email = document.getElementById('reg-email').value.trim();
+            const fullName = `${nombre} ${apellido}`;
+
+            showNotification('Procesando datos...', 'info');
+
+            if (window.guardarRegistroEnBD) {
+                const datosUsuario = { nombre, apellido, tipo_documento: tipo, cedula, estado, email };
+                await window.guardarRegistroEnBD(datosUsuario);
+                showNotification('¡Afiliación guardada exitosamente!', 'success');
+            }
+
+            setTimeout(() => {
+                document.getElementById('dash-welcome-heading').textContent = `¡Bienvenido, ${nombre}!`;
+                document.getElementById('dash-user-name').textContent = fullName.toUpperCase();
+                document.getElementById('dash-user-id').textContent = `${tipo}-${cedula}`;
+                document.getElementById('dash-user-state').textContent = estado;
+                document.getElementById('dash-user-code').textContent = generateUniqueID();
+                openDashboard();
+            }, 800);
+        };
+
+        window.openDashboard = function() {
+            document.getElementById('member-dashboard-modal').classList.remove('hidden');
+            lucide.createIcons();
+        };
+
+        window.closeDashboard = function() {
+            document.getElementById('member-dashboard-modal').classList.add('hidden');
+        };
+
+        window.copyAffiliationCode = function() {
+            showNotification('¡Credencial compartida!', 'info');
+        };
+
+        window.showNotification = function(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            let bg = 'bg-slate-900 border-slate-700 text-white';
+            if (type === 'success') bg = 'bg-emerald-900/95 border-emerald-500 text-emerald-100';
+            if (type === 'warning') bg = 'bg-amber-900/95 border-amber-500 text-amber-100';
+
+            toast.className = `p-3 rounded-xl border shadow-xl text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-4 opacity-0 ${bg}`;
+            toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 shrink-0"></i> <span class="truncate">${msg}</span>`;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => toast.classList.remove('translate-y-4', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        window.toggleFaq = function(el) {
+            const p = el.querySelector('p');
+            const icon = el.querySelector('svg') || el.querySelector('i');
+            if (p) p.classList.toggle('hidden');
+            if (icon) icon.classList.toggle('rotate-180');
+        };
+    </script>
+</body>
+</html>
