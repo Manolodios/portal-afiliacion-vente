@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" role="img" aria-labelledby="title desc">
+  <title id="title">Vente Cabimas</title>
+  <desc id="desc">Logotipo azul de Vente Cabimas</desc>
+  <g fill="#27A9E0">
+    <!-- Stylized Vente mark -->
+    <path d="M4 12h20v24H4zM4 48h20v32H4zM4 88h20v34H4zM4 130h20v58H4z"/>
+    <path d="M28 20h46L44 188H20z"/>
+    <path d="M112 68c-35 0-67 24-67 62 0 38 29 61 70 61 21 0 40-5 54-14l-15-28c-10 6-21 9-33 9-17 0-28-7-31-21h84v-12c0-34-23-57-62-57zm-22 43c4-12 12-18 24-18 12 0 20 7 22 18z"/>
+    <path d="M174 72h40v12c12-10 25-16 39-16 28 0 45 18 45 51v69h-43v-60c0-15-6-22-18-22-12 0-20 8-20 25v57h-43z"/>
+    <path d="M324 32h44v40h31l-8 36h-23v80h-44v-80h-22l8-36h14z"/>
+    <path d="M458 68c-35 0-67 24-67 62 0 38 29 61 70 61 21 0 40-5 54-14l-15-28c-10 6-21 9-33 9-17 0-28-7-31-21h84v-12c0-34-23-57-62-57zm-22 43c4-12 12-18 24-18 12 0 20 7 22 18z"/>
+    <path d="M15 227h280v10H15z"/>
+  </g>
+  <text x="320" y="270" fill="#27A9E0" font-family="Arial,Helvetica,sans-serif" font-size="57" font-style="italic" font-weight="700" letter-spacing="-2">CABIMAS</text>
+</svg>
