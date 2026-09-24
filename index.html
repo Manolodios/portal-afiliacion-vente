@@ -30,71 +30,71 @@ function showDashboard(p,id='DEMO-VV1410X9'){ $('main-content').classList.add('h
 function goToDemoDashboard(){showDashboard({nombre:'sdasd',apellido:'sdasd',tipo_documento:'V',cedula:'1212121',email:'demo@prueba.local',estado:'Zulia',municipio:'Cabimas',areas:['Comando Digital (Redes)']});notify('Modo prueba activado.','success')}
 async function logout(){if(supabaseClient)await supabaseClient.auth.signOut();$('dashboard').classList.add('hidden');$('main-content').classList.remove('hidden');switchTab('login')}
 async function login(e) {
-    e.preventDefault();
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: $('login-email').value.trim().toLowerCase(),
-        password: $('login-password').value
-    });
-    
-    if (error) {
-        notify(error.message, 'error');
-        return;
-    }
-    
-    const u = data.user;
-    
-    // Buscamos el perfil en la tabla afiliados
-    const { data: p, error: pe } = await supabaseClient.from('afiliados').select('*').eq('id', u.id).maybeSingle();
-    
-    if (pe) {
-        notify(pe.message, 'error');
-        return;
-    }
-    
-    if (!p) {
-        notify('Tu cuenta no tiene un perfil guardado. Completa el registro para crear la credencial.', 'error');
-        return;
-    }
-    
-    // Mostramos la credencial
-    showDashboard(p, u.id);
-    notify('Acceso correcto.', 'success');
+    e.preventDefault();
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: $('login-email').value.trim().toLowerCase(),
+        password: $('login-password').value
+    });
+    
+    if (error) {
+        notify(error.message, 'error');
+        return;
+    }
+    
+    const u = data.user;
+    
+    // Buscamos el perfil en la tabla afiliados
+    const { data: p, error: pe } = await supabaseClient.from('afiliados').select('*').eq('id', u.id).maybeSingle();
+    
+    if (pe) {
+        notify(pe.message, 'error');
+        return;
+    }
+    
+    if (!p) {
+        notify('Tu cuenta no tiene un perfil guardado. Completa el registro para crear la credencial.', 'error');
+        return;
+    }
+    
+    // Mostramos la credencial
+    showDashboard(p, u.id);
+    notify('Acceso correcto.', 'success');
 }
 
 async function register(e){
-    e.preventDefault();
-    if(!validateStep()||!$('consent').checked)return;
-    
-    const p = profileFromForm();
-    
-    // 1. Creamos el usuario en Authentication
-    const { data, error } = await supabaseClient.auth.signUp({
-        email: p.email,
-        password: $('password').value,
-        options: { data: p } 
-    });
-    
-    if(error){
-        notify(error.message, 'error');
-        return;
-    }
-    
-    if(data?.user) {
-        // 2. Vinculamos el ID y guardamos todo en la base de datos
-        p.id = data.user.id;
-        const { error: insertError } = await supabaseClient.from('afiliados').insert(p);
-        
-        if(insertError) {
-            notify('Error al guardar en la tabla: ' + insertError.message, 'error');
-            console.error(insertError);
-            return;
-        }
-        
-        notify('Registro completado con éxito.', 'success');
-        showDashboard(p, data.user.id);
-    } else {
-        notify('No se pudo crear la cuenta.', 'error');
-    }
+    e.preventDefault();
+    if(!validateStep()||!$('consent').checked)return;
+    
+    const p = profileFromForm();
+    
+    // 1. Creamos el usuario en Authentication
+    const { data, error } = await supabaseClient.auth.signUp({
+        email: p.email,
+        password: $('password').value,
+        options: { data: p } 
+    });
+    
+    if(error){
+        notify(error.message, 'error');
+        return;
+    }
+    
+    if(data?.user) {
+        // 2. Vinculamos el ID y guardamos todo en la base de datos
+        p.id = data.user.id;
+        const { error: insertError } = await supabaseClient.from('afiliados').insert(p);
+        
+        if(insertError) {
+            notify('Error al guardar en la tabla: ' + insertError.message, 'error');
+            console.error(insertError);
+            return;
+        }
+        
+        notify('Registro completado con éxito.', 'success');
+        showDashboard(p, data.user.id);
+    } else {
+        notify('No se pudo crear la cuenta.', 'error');
+    }
 }
 
 async function shareCredential(){const text=`Mi credencial digital de Vente Cabimas. ID: ${$('dash-unique').textContent}`;if(navigator.share)await navigator.share({title:'Credencial Vente Cabimas',text});else{await navigator.clipboard?.writeText(text);notify('Credencial copiada.','success')}}
