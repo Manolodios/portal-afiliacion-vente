@@ -38,7 +38,7 @@ function showDashboard(p,id='DEMO-VV1410X9'){
     
     const uniqueId = id.startsWith('DEMO') ? id : `VV-${id.replace(/[^a-z0-9]/gi,'').slice(0,8).toUpperCase()}`;
     $('dash-unique').textContent = uniqueId;
-    $('dash-email').textContent=p.email\vert{}\vert{}'';$('dash-location').textContent=p.residencia==='exterior'?`Exterior: ${p.pais||''}`:`${p.estado||'Venezuela'}${p.municipio?', '+p.municipio:''}`;
+    $('dash-email').textContent=p.email||'';$('dash-location').textContent=p.residencia==='exterior'?`Exterior: ${p.pais||''}`:`${p.estado||'Venezuela'}${p.municipio?', '+p.municipio:''}`;
     $('dash-area').textContent=p.areas?.join(', ')||'Por definir';
     
     // Generar el código QR usando el ID único correcto
