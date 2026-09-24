@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vente Cabimas | Portal de Afiliación</title>
 <script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Librería para generar el código QR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{vente:{cyan:'#00A8E8',hover:'#0090C8',accent:'#00E5FF',navy:'#061827'}}}}}</script>
@@ -114,11 +113,11 @@ html{scroll-behavior:smooth}body{font-family:Inter,sans-serif}.gradient-vente{ba
 <footer class="bg-slate-950 py-8 text-center text-xs text-slate-400">© 2026 Vente Cabimas • Todos los derechos reservados</footer>
 
 <script>
-const SUPABASE_URL = 'https://kgnajywtscxujwdmskbb.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_BxIjQWYPclf9Ptx6zZjeTw_XDF7R4nI';
-const $ = id => document.getElementById(id);
-let step = 1;
-let supabaseClient = null;
+var SUPABASE_URL = 'https://kgnajywtscxujwdmskbb.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_BxIjQWYPclf9Ptx6zZjeTw_XDF7R4nI';
+var $ = function(id) { return document.getElementById(id); };
+var step = 1;
+var supabaseClient = null;
 
 function initSupabase() {
     if (!supabaseClient && typeof supabase !== 'undefined') {
@@ -127,23 +126,33 @@ function initSupabase() {
     return supabaseClient;
 }
 
-function notify(m, type = 'info') {
-    const t = $('toast');
+function notify(m, type) {
+    var t = $('toast');
     if(!t) return;
     t.textContent = m;
-    t.className = `toast fixed bottom-5 right-5 z-50 rounded-xl px-4 py-3 text-white shadow-xl ${type === 'error' ? 'bg-red-700' : type === 'success' ? 'bg-emerald-700' : 'bg-slate-900'}`;
+    var bgClass = 'bg-slate-900';
+    if (type === 'error') bgClass = 'bg-red-700';
+    if (type === 'success') bgClass = 'bg-emerald-700';
+    
+    t.className = 'toast fixed bottom-5 right-5 z-50 rounded-xl px-4 py-3 text-white shadow-xl ' + bgClass;
     t.classList.remove('hidden');
-    setTimeout(() => t.classList.add('hidden'), 4000);
+    setTimeout(function() { t.classList.add('hidden'); }, 4000);
 }
 
 function switchTab(tab) {
-    $('login-panel').classList.add('hidden');$('register-panel').classList.add('hidden');
-    $('recovery-panel').classList.add('hidden');$('update-password-panel').classList.add('hidden');
+    $('login-panel').classList.add('hidden');
+    $('register-panel').classList.add('hidden');
+    $('recovery-panel').classList.add('hidden');
+    $('update-password-panel').classList.add('hidden');
 
     if (tab === 'login') {
-        $('login-panel').classList.remove('hidden');$('tab-login').className = 'flex-1 rounded-lg bg-white px-3 py-2 text-sm font-bold shadow-sm';
-        $('tab-register').className = 'flex-1 rounded-lg px-3 py-2 text-sm font-bold text-slate-600';     } else if (tab === 'register') {$('register-panel').classList.remove('hidden');
-        $('tab-login').className = 'flex-1 rounded-lg px-3 py-2 text-sm font-bold text-slate-600';$('tab-register').className = 'flex-1 rounded-lg bg-white px-3 py-2 text-sm font-bold shadow-sm';
+        $('login-panel').classList.remove('hidden');
+        $('tab-login').className = 'flex-1 rounded-lg bg-white px-3 py-2 text-sm font-bold shadow-sm';
+        $('tab-register').className = 'flex-1 rounded-lg px-3 py-2 text-sm font-bold text-slate-600';
+    } else if (tab === 'register') {
+        $('register-panel').classList.remove('hidden');
+        $('tab-login').className = 'flex-1 rounded-lg px-3 py-2 text-sm font-bold text-slate-600';
+        $('tab-register').className = 'flex-1 rounded-lg bg-white px-3 py-2 text-sm font-bold shadow-sm';
     } else if (tab === 'recovery') {
         $('recovery-panel').classList.remove('hidden');
     } else if (tab === 'update-password') {
@@ -152,33 +161,40 @@ function switchTab(tab) {
 }
 
 function renderStep() {
-    for (let i = 1; i <= 3; i++) {
-        const el = $(`step-${i}`);
-        if(el) el.classList.toggle('hidden', i !== step);
+    for (var i = 1; i <= 3; i++) {
+        var el = $('step-' + i);
+        if(el) {
+            if (i === step) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        }
     }
-    $('step-label').textContent = ['Paso 1: Datos personales', 'Paso 2: Ubicación', 'Paso 3: Voluntariado y seguridad'][step - 1];
-    $('step-count').textContent = `${step} / 3`;
-    $('progress').style.width = `${step * 33.33}%`;
-    $('prev').classList.toggle('hidden', step === 1);
-    $('next').classList.toggle('hidden', step === 3);$('submit').classList.toggle('hidden', step !== 3);
+    var labels = ['Paso 1: Datos personales', 'Paso 2: Ubicación', 'Paso 3: Voluntariado y seguridad'];
+    $('step-label').textContent = labels[step - 1];
+    $('step-count').textContent = step + ' / 3';
+    $('progress').style.width = (step * 33.33) + '%';
+    
+    if (step === 1) $('prev').classList.add('hidden'); else $('prev').classList.remove('hidden');
+    if (step === 3) $('next').classList.add('hidden'); else $('next').classList.remove('hidden');
+    if (step !== 3) $('submit').classList.add('hidden'); else $('submit').classList.remove('hidden');
 }
 
 function validateStep() {
     if (step === 1) {
-        let ok = true;
-        ['nombre', 'apellido', 'cedula', 'fecha', 'email'].forEach(id => {
-            const e = $(id);
+        var ok = true;
+        var fields = ['nombre', 'apellido', 'cedula', 'fecha', 'email'];
+        for (var i = 0; i < fields.length; i++) {
+            var e = $(fields[i]);
             if(e) {
                 e.classList.remove('field-error');
                 if (!e.value.trim()) { e.classList.add('field-error'); ok = false; }
             }
-        });
+        }
         if (!ok) { notify('Completa todos los datos personales.', 'error'); return false; }
     }
     if (step === 2 && $('residencia').value === 'exterior' && !$('pais').value.trim()) {
         notify('Indica tu país.', 'error'); return false;
     }
-    if (step === 3 && $('password').value !==$('password2').value) {
+    if (step === 3 && $('password').value !== $('password2').value) {
         notify('Las contraseñas no coinciden.', 'error'); return false;
     }
     return true;
@@ -191,11 +207,23 @@ function changeStep(d) {
 }
 
 function toggleLocation() {
-    const outside = $('residencia').value === 'exterior';
-    $('country-fields').classList.toggle('hidden', !outside);$('venezuela-fields').classList.toggle('hidden', outside);
+    var outside = $('residencia').value === 'exterior';
+    if (outside) {
+        $('country-fields').classList.remove('hidden');
+        $('venezuela-fields').classList.add('hidden');
+    } else {
+        $('country-fields').classList.add('hidden');
+        $('venezuela-fields').classList.remove('hidden');
+    }
 }
 
 function profileFromForm() {
+    var areaElements = document.querySelectorAll('.area:checked');
+    var selectedAreas = [];
+    for(var i = 0; i < areaElements.length; i++) {
+        selectedAreas.push(areaElements[i].value);
+    }
+    
     return {
         nombre: $('nombre').value.trim(),
         apellido: $('apellido').value.trim(),
@@ -204,10 +232,10 @@ function profileFromForm() {
         email: $('email').value.trim().toLowerCase(),
         fecha_nacimiento: $('fecha').value,
         residencia: $('residencia').value,
-        estado: $('residencia').value === 'venezuela' ?$('estado').value : null,
+        estado: $('residencia').value === 'venezuela' ? $('estado').value : null,
         municipio: $('municipio').value.trim() || null,
-        pais: $('residencia').value === 'exterior' ?$('pais').value.trim() : 'Venezuela',
-        areas: [...document.querySelectorAll('.area:checked')].map(x => x.value)
+        pais: $('residencia').value === 'exterior' ? $('pais').value.trim() : 'Venezuela',
+        areas: selectedAreas
     };
 }
 
@@ -215,18 +243,33 @@ function showDashboard(p, id) {
     try {
         p = p || {};
         id = id || '';
-        $('main-content').classList.add('hidden');$('dashboard').classList.remove('hidden');
-        const name = `${p.nombre || ''} ${p.apellido || ''}`.trim() || 'Afiliado';
+        $('main-content').classList.add('hidden');
+        $('dashboard').classList.remove('hidden');
+        
+        var fullName = (p.nombre || '') + ' ' + (p.apellido || '');
+        var name = fullName.trim() || 'Afiliado';
         $('greeting-name').textContent = name.split(' ')[0] || 'Afiliado';
-        $('dash-name').textContent = name.toUpperCase();$('dash-id').textContent = `${p.tipo_documento || 'V'}-${p.cedula || ''}`;
+        $('dash-name').textContent = name.toUpperCase();
+        $('dash-id').textContent = (p.tipo_documento || 'V') + '-' + (p.cedula || '');
 
-        const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
-        const uniqueId = `VV-${(cleanId || '00000000').slice(0, 8).toUpperCase()}`;
+        var regex = new RegExp('[^a-zA-Z0-9]', 'g');
+        var cleanId = id.replace(regex, '');
+        var uniqueId = 'VV-' + (cleanId || '00000000').slice(0, 8).toUpperCase();
+        
         $('dash-unique').textContent = uniqueId;
-        $('dash-email').textContent = p.email \vert{}\vert{} '';$('dash-location').textContent = p.residencia === 'exterior' ? `Exterior: ${p.pais || ''}` : `${p.estado || 'Venezuela'}${p.municipio ? ', ' + p.municipio : ''}`;
-        $('dash-area').textContent = Array.isArray(p.areas) && p.areas.length ? p.areas.join(', ') : 'Por definir';
+        $('dash-email').textContent = p.email || '';
+        
+        if (p.residencia === 'exterior') {
+            $('dash-location').textContent = 'Exterior: ' + (p.pais || '');
+        } else {
+            var locationText = p.estado || 'Venezuela';
+            if (p.municipio) locationText += ', ' + p.municipio;
+            $('dash-location').textContent = locationText;
+        }
+        
+        $('dash-area').textContent = (Array.isArray(p.areas) && p.areas.length) ? p.areas.join(', ') : 'Por definir';
 
-        const qrContainer = $('dash-qrcode');
+        var qrContainer = $('dash-qrcode');
         if (qrContainer) {
             qrContainer.innerHTML = '';
             if (typeof QRCode !== 'undefined') {
@@ -240,45 +283,46 @@ function showDashboard(p, id) {
                 });
             }
         }
-        window.scrollTo({ top: 0 });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
         console.error("Error al desplegar credencial:", e);
     }
 }
 
 async function logout() {
-    const client = initSupabase();
+    var client = initSupabase();
     if (client) await client.auth.signOut();
-    $('dashboard').classList.add('hidden');$('main-content').classList.remove('hidden');
+    $('dashboard').classList.add('hidden');
+    $('main-content').classList.remove('hidden');
     switchTab('login');
 }
 
 async function login(e) {
     if (e && e.preventDefault) e.preventDefault();
-    const client = initSupabase();
+    var client = initSupabase();
     if (!client) { notify('Error: Supabase no cargó.', 'error'); return false; }
 
-    const btn = $('btn-login');
+    var btn = $('btn-login');
     if (btn) { btn.disabled = true; btn.textContent = 'Ingresando...'; }
 
     try {
-        const emailVal = $('login-email').value.trim().toLowerCase();
-        const passVal = $('login-password').value;
+        var emailVal = $('login-email').value.trim().toLowerCase();
+        var passVal = $('login-password').value;
 
-        const { data, error } = await client.auth.signInWithPassword({
+        var authResponse = await client.auth.signInWithPassword({
             email: emailVal,
             password: passVal
         });
 
-        if (error) { notify(error.message, 'error'); return false; }
+        if (authResponse.error) { notify(authResponse.error.message, 'error'); return false; }
 
-        const u = data.user;
-        const { data: p, error: pe } = await client.from('afiliados').select('*').eq('id', u.id).maybeSingle();
+        var u = authResponse.data.user;
+        var profileResponse = await client.from('afiliados').select('*').eq('id', u.id).maybeSingle();
 
-        if (pe) { notify(pe.message, 'error'); return false; }
-        if (!p) { notify('Tu cuenta no tiene un perfil guardado. Completa el registro.', 'error'); return false; }
+        if (profileResponse.error) { notify(profileResponse.error.message, 'error'); return false; }
+        if (!profileResponse.data) { notify('Tu cuenta no tiene perfil. Regístrate.', 'error'); return false; }
 
-        showDashboard(p, u.id);
+        showDashboard(profileResponse.data, u.id);
         notify('¡Acceso correcto!', 'success');
     } catch (err) {
         notify('Error al iniciar sesión: ' + err.message, 'error');
@@ -292,29 +336,29 @@ async function register(e) {
     if (e && e.preventDefault) e.preventDefault();
     if (!validateStep() || !$('consent').checked) return false;
 
-    const client = initSupabase();
+    var client = initSupabase();
     if (!client) { notify('Error: Supabase no cargó.', 'error'); return false; }
 
-    const btn = $('submit');
+    var btn = $('submit');
     if (btn) { btn.disabled = true; btn.textContent = 'Procesando...'; }
 
     try {
-        const p = profileFromForm();
-        const { data, error } = await client.auth.signUp({
+        var p = profileFromForm();
+        var authResponse = await client.auth.signUp({
             email: p.email,
             password: $('password').value,
             options: { data: p }
         });
 
-        if (error) { notify(error.message, 'error'); return false; }
+        if (authResponse.error) { notify(authResponse.error.message, 'error'); return false; }
 
-        if (data?.user) {
-            p.id = data.user.id;
-            const { error: insertError } = await client.from('afiliados').insert(p);
-            if (insertError) { notify('Error al guardar datos: ' + insertError.message, 'error'); return false; }
+        if (authResponse.data && authResponse.data.user) {
+            p.id = authResponse.data.user.id;
+            var insertResponse = await client.from('afiliados').insert(p);
+            if (insertResponse.error) { notify('Error al guardar datos: ' + insertResponse.error.message, 'error'); return false; }
 
             notify('Registro completado con éxito.', 'success');
-            showDashboard(p, data.user.id);
+            showDashboard(p, authResponse.data.user.id);
         }
     } catch (err) {
         notify('Error en registro: ' + err.message, 'error');
@@ -326,21 +370,21 @@ async function register(e) {
 
 async function handleRecovery(e) {
     if (e && e.preventDefault) e.preventDefault();
-    const client = initSupabase();
+    var client = initSupabase();
     if (!client) { notify('Error: Supabase no cargó.', 'error'); return false; }
 
-    const btn = $('btn-recovery');
+    var btn = $('btn-recovery');
     if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
     try {
-        const email = $('recovery-email').value.trim().toLowerCase();
-        const { error } = await client.auth.resetPasswordForEmail(email, {
+        var email = $('recovery-email').value.trim().toLowerCase();
+        var response = await client.auth.resetPasswordForEmail(email, {
             redirectTo: window.location.origin + window.location.pathname
         });
 
-        if (error) { notify(error.message, 'error'); return false; }
+        if (response.error) { notify(response.error.message, 'error'); return false; }
 
-        notify('Te hemos enviado un correo con el enlace de recuperación.', 'success');
+        notify('Te hemos enviado un correo con el enlace.', 'success');
         switchTab('login');
     } catch (err) {
         notify('Error en solicitud: ' + err.message, 'error');
@@ -352,19 +396,19 @@ async function handleRecovery(e) {
 
 async function handleUpdatePassword(e) {
     if (e && e.preventDefault) e.preventDefault();
-    const client = initSupabase();
+    var client = initSupabase();
     if (!client) { notify('Error: Supabase no cargó.', 'error'); return false; }
 
-    const btn = $('btn-update-pass');
+    var btn = $('btn-update-pass');
     if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
 
     try {
-        const p1 = $('new-password').value;
-        const p2 = $('new-password-confirm').value;
+        var p1 = $('new-password').value;
+        var p2 = $('new-password-confirm').value;
         if (p1 !== p2) { notify('Las contraseñas no coinciden.', 'error'); return false; }
 
-        const { error } = await client.auth.updateUser({ password: p1 });
-        if (error) { notify(error.message, 'error'); return false; }
+        var response = await client.auth.updateUser({ password: p1 });
+        if (response.error) { notify(response.error.message, 'error'); return false; }
 
         notify('Contraseña actualizada con éxito.', 'success');
         switchTab('login');
@@ -377,20 +421,28 @@ async function handleUpdatePassword(e) {
 }
 
 async function shareCredential() {
-    const text = `Mi credencial digital de Vente Cabimas. ID: ${$('dash-unique').textContent}`;
-    if (navigator.share) await navigator.share({ title: 'Credencial Vente Cabimas', text });
-    else { await navigator.clipboard?.writeText(text); notify('Credencial copiada.', 'success'); }
+    var uniqueText = $('dash-unique').textContent;
+    var text = 'Mi credencial digital de Vente Cabimas. ID: ' + uniqueText;
+    if (navigator.share) {
+        await navigator.share({ title: 'Credencial Vente Cabimas', text: text });
+    } else { 
+        if(navigator.clipboard) {
+            await navigator.clipboard.writeText(text); 
+            notify('Credencial copiada.', 'success'); 
+        }
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     renderStep();
     toggleLocation();
-    const client = initSupabase();
+    var client = initSupabase();
 
     if (client) {
-        client.auth.onAuthStateChange((event, session) => {
+        client.auth.onAuthStateChange(function(event, session) {
             if (event === 'PASSWORD_RECOVERY') {
-                $('main-content').classList.remove('hidden');$('dashboard').classList.add('hidden');
+                $('main-content').classList.remove('hidden');
+                $('dashboard').classList.add('hidden');
                 switchTab('update-password');
             }
         });
