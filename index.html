@@ -5,16 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vente Venezuela - Portal de Afiliación y Registro</title>
 
-    <!-- Favicon SVG -->
     <link rel="icon" type="image/svg+xml" href="assets/logo-vente-cabimas.svg">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2canvas (descarga del carnet) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Font Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
@@ -24,12 +19,8 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         vente: {
-                            cyan: '#00A8E8',
-                            hover: '#0090C8',
-                            navy: '#0A192F',
-                            dark: '#030811',
-                            light: '#F4F9FC',
-                            accent: '#00E5FF'
+                            cyan: '#00A8E8', hover: '#0090C8', navy: '#0A192F',
+                            dark: '#030811', light: '#F4F9FC', accent: '#00E5FF'
                         }
                     }
                 }
@@ -52,8 +43,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .wizard-step { animation: fadeIn .25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Logo siempre proporcionado, nunca aplastado */
         .brand-logo {
             object-fit: contain;
             object-position: center;
@@ -84,9 +73,9 @@
         </div>
     </header>
 
-    <!-- Aviso si Firebase no está configurado -->
-    <div id="firebase-warning" class="hidden bg-amber-100 border-b border-amber-300 text-amber-900 text-[11px] sm:text-xs font-semibold px-4 py-2 text-center">
-        ⚠ Modo demo activo: configura <code class="font-mono">firebaseConfig</code> para guardar afiliaciones reales.
+    <!-- Banner modo demo -->
+    <div id="demo-warning" class="hidden bg-amber-100 border-b border-amber-300 text-amber-900 text-[11px] sm:text-xs font-semibold px-4 py-2 text-center">
+        ⚠ Modo demo activo: configura <code class="font-mono">SUPABASE_ANON_KEY</code> para guardar afiliaciones reales.
     </div>
 
     <!-- Hero Section -->
@@ -213,8 +202,8 @@
                                         <label for="reg-residencia" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Residencia</label>
                                         <select id="reg-residencia" name="residencia" onchange="toggleUbicacionCampos(this.value)"
                                             class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
-                                            <option value="venezuela">Venezuela</option>
-                                            <option value="exterior">En el Exterior</option>
+                                            <option value="Venezuela">Venezuela</option>
+                                            <option value="Exterior">En el Exterior</option>
                                         </select>
                                     </div>
                                     <div id="campos-venezuela" class="space-y-2.5 sm:space-y-3">
@@ -340,7 +329,6 @@
                     <h2 id="dash-welcome-heading" class="text-lg sm:text-xl font-black text-slate-900 leading-tight">¡Bienvenido!</h2>
                 </div>
 
-                <!-- Carnet digital -->
                 <div id="credential-card" class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
                     <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
@@ -474,115 +462,125 @@
         </div>
     </footer>
 
-    <!-- ==================== FIREBASE MODULE ==================== -->
+    <!-- ==================== SUPABASE MODULE ==================== -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import {
-            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-            signOut, onAuthStateChanged, sendPasswordResetEmail
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
         // =====================================================================
-        // 1) CONFIGURA AQUÍ TU PROYECTO FIREBASE
-        //    https://console.firebase.google.com  →  Configuración del proyecto
-        //    Habilita: Authentication > Email/Password   y   Firestore Database
-        //
-        //    Reglas sugeridas para Firestore:
-        //      rules_version = '2';
-        //      service cloud.firestore {
-        //        match /databases/{database}/documents {
-        //          match /afiliados/{uid} {
-        //            allow read, write: if request.auth != null
-        //                               && request.auth.uid == uid;
-        //          }
-        //        }
-        //      }
+        // 1) CONFIGURA AQUÍ TU PROYECTO SUPABASE
+        //    Dashboard → Project Settings → API
         // =====================================================================
-        const firebaseConfig = {
-            apiKey:            "TU_API_KEY",
-            authDomain:        "TU_PROYECTO.firebaseapp.com",
-            projectId:         "TU_PROYECTO",
-            storageBucket:     "TU_PROYECTO.appspot.com",
-            messagingSenderId: "000000000000",
-            appId:             "1:000000000000:web:xxxxxxxxxxxxxxxx"
-        };
+        const SUPABASE_URL      = "https://kgnajywtscoxujwdmskbb.supabase.co";
+        const SUPABASE_ANON_KEY = "PEGA_AQUI_TU_ANON_KEY";
         // =====================================================================
 
-        const CONFIGURADO = !firebaseConfig.apiKey.startsWith("TU_");
+        const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith("PEGA_");
 
-        let auth = null, db = null;
+        let supabase = null;
 
         if (CONFIGURADO) {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db   = getFirestore(app);
+            supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    try {
-                        const snap = await getDoc(doc(db, "afiliados", user.uid));
-                        if (snap.exists()) {
-                            window.renderDashboard(snap.data());
-                        }
-                    } catch (e) {
-                        console.error("No se pudo leer el perfil:", e);
-                    }
-                } else {
-                    window.closeDashboard(false);
+            // Restaurar sesión al abrir la página
+            supabase.auth.getSession().then(async ({ data: { session } }) => {
+                if (session?.user) {
+                    const perfil = await cargarPerfil(session.user.id);
+                    if (perfil) window.renderDashboard(perfil);
                 }
             });
+
+            // Escuchar logout / expiración de sesión
+            supabase.auth.onAuthStateChange((event) => {
+                if (event === "SIGNED_OUT") window.closeDashboard(false);
+            });
         } else {
-            const w = document.getElementById("firebase-warning");
+            const w = document.getElementById("demo-warning");
             if (w) w.classList.remove("hidden");
-            console.warn("[Vente] Firebase sin configurar. Modo demo activo.");
+            console.warn("[Vente] Supabase sin configurar. Modo demo activo.");
         }
 
-        window.FirebaseAPI = {
+        async function cargarPerfil(userId) {
+            const { data, error } = await supabase
+                .from("afiliados")
+                .select("*")
+                .eq("id", userId)
+                .maybeSingle();
+            if (error) { console.error("Error cargando perfil:", error); return null; }
+            return data;
+        }
+
+        /* ---------- API pública ---------- */
+        window.SupabaseAPI = {
             configurado: CONFIGURADO,
 
-            async register(data, password) {
+            async register(datos, password) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 500));
                     return { ok: true, uid: "demo-" + Date.now() };
                 }
-                const cred = await createUserWithEmailAndPassword(auth, data.email, password);
-                const uid  = cred.user.uid;
-                await setDoc(doc(db, "afiliados", uid), {
-                    ...data,
-                    uid,
-                    creadoEn: new Date().toISOString()
+
+                // 1) Crear usuario en Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: datos.email,
+                    password
                 });
-                return { ok: true, uid };
+                if (authError) throw authError;
+
+                const userId = authData.user?.id;
+                if (!userId) throw new Error("No se pudo crear el usuario.");
+
+                // 2) Si requiere confirmación de email, no hay sesión → no podemos insertar
+                if (!authData.session) {
+                    return { ok: true, uid: userId, needsConfirmation: true };
+                }
+
+                // 3) Insertar perfil en la tabla
+                const { error: dbError } = await supabase.from("afiliados").insert({
+                    id:                userId,
+                    nombre:            datos.nombre,
+                    apellido:          datos.apellido,
+                    tipo_documento:    datos.tipoDocumento,
+                    cedula:            datos.cedula,
+                    email:             datos.email,
+                    fecha_nacimiento:  datos.fechaNacimiento,
+                    residencia:        datos.residencia,
+                    estado:            datos.estado   || null,
+                    municipio:         datos.municipio || null,
+                    pais:              datos.pais     || null,
+                    areas:             datos.areas    || []
+                });
+                if (dbError) throw dbError;
+
+                return { ok: true, uid: userId };
             },
 
             async login(email, password) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 400));
-                    return { ok: true, uid: "demo-" + Date.now() };
+                    return { ok: true, uid: "demo-" + Date.now(), perfil: null };
                 }
-                const cred = await signInWithEmailAndPassword(auth, email, password);
-                const uid  = cred.user.uid;
-                const snap = await getDoc(doc(db, "afiliados", uid));
-                return { ok: true, uid, perfil: snap.exists() ? snap.data() : null };
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                const perfil = await cargarPerfil(data.user.id);
+                return { ok: true, uid: data.user.id, perfil };
             },
 
             async logout() {
                 if (!CONFIGURADO) return;
-                await signOut(auth);
+                await supabase.auth.signOut();
             },
 
             async resetPassword(email) {
-                if (!CONFIGURADO) {
-                    await new Promise(r => setTimeout(r, 300));
-                    return;
-                }
-                await sendPasswordResetEmail(auth, email);
+                if (!CONFIGURADO) { await new Promise(r => setTimeout(r, 300)); return; }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname
+                });
+                if (error) throw error;
             }
         };
     </script>
 
-
+    <!-- ==================== UI LOGIC ==================== -->
     <script>
         let currentStep = 1;
         const totalSteps = 4;
@@ -594,29 +592,31 @@
             switchTab("register");
         });
 
-
-        function generateUniqueID() {
-            const block = () => Math.floor(1000 + Math.random() * 9000);
-            return `VV-${block()}-${block().toString(36).toUpperCase().slice(0,4)}`;
+        /* ---------- Utilidades ---------- */
+        function codigoDesdeUUID(uuid) {
+            if (!uuid) return "VV-0000-0000";
+            const clean = uuid.replace(/-/g, "").toUpperCase();
+            const a = String(parseInt(clean.slice(0, 4), 16) % 10000).padStart(4, "0");
+            const b = String(parseInt(clean.slice(4, 8), 16) % 10000).padStart(4, "0");
+            return `VV-${a}-${b}`;
         }
         function getInitial(name = "V") {
             return (name.trim().charAt(0) || "V").toUpperCase();
         }
-        function traducirError(code) {
-            const map = {
-                "auth/email-already-in-use": "Ese correo ya está registrado.",
-                "auth/invalid-email": "Correo inválido.",
-                "auth/weak-password": "La contraseña es muy débil (mínimo 6).",
-                "auth/user-not-found": "No existe una cuenta con ese correo.",
-                "auth/wrong-password": "Contraseña incorrecta.",
-                "auth/invalid-credential": "Credenciales inválidas.",
-                "auth/too-many-requests": "Demasiados intentos. Intenta más tarde.",
-                "auth/network-request-failed": "Sin conexión. Revisa tu internet."
-            };
-            return map[code] || "Ocurrió un error. Intenta nuevamente.";
+        function traducirError(err) {
+            const msg = (err?.message || String(err) || "").toLowerCase();
+            if (msg.includes("invalid login"))        return "Correo o contraseña incorrectos.";
+            if (msg.includes("email not confirmed"))  return "Debes confirmar tu correo antes de entrar.";
+            if (msg.includes("already registered"))   return "Ese correo ya está registrado.";
+            if (msg.includes("already been registered")) return "Ese correo ya está registrado.";
+            if (msg.includes("password"))             return "La contraseña no cumple los requisitos mínimos (6+ caracteres).";
+            if (msg.includes("rate limit"))           return "Demasiados intentos. Espera un momento.";
+            if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
+            if (msg.includes("network"))              return "Sin conexión. Revisa tu internet.";
+            return err?.message || "Ocurrió un error. Intenta nuevamente.";
         }
 
-
+        /* ---------- Toasts ---------- */
         window.showNotification = function(msg, type = "info") {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
@@ -648,7 +648,7 @@
             }, 3200);
         };
 
-
+        /* ---------- Tabs ---------- */
         window.switchTab = function(tab) {
             const loginBtn = document.getElementById("tab-btn-login");
             const regBtn   = document.getElementById("tab-btn-register");
@@ -670,7 +670,7 @@
             lucide.createIcons();
         };
 
-
+        /* ---------- Wizard ---------- */
         window.updateWizardUI = function() {
             for (let i = 1; i <= totalSteps; i++) {
                 document.getElementById(`wizard-step-${i}`).classList.add("hidden");
@@ -712,7 +712,7 @@
             }
             if (step === 2) {
                 const residencia = get("reg-residencia").value;
-                if (residencia === "venezuela") {
+                if (residencia === "Venezuela") {
                     if (!get("reg-municipio").value.trim()) {
                         showNotification("Ingresa tu municipio.", "warning"); return false;
                     }
@@ -742,16 +742,18 @@
             }
         };
 
+        /* ---------- Ubicación ---------- */
         window.toggleUbicacionCampos = function(valor) {
             const v = document.getElementById("campos-venezuela");
             const e = document.getElementById("campos-exterior");
-            if (valor === "venezuela") {
+            if (valor === "Venezuela") {
                 v.classList.remove("hidden"); e.classList.add("hidden");
             } else {
                 v.classList.add("hidden");    e.classList.remove("hidden");
             }
         };
 
+        /* ---------- Login ---------- */
         window.handleLogin = async function(ev) {
             ev.preventDefault();
             const email    = document.getElementById("login-email").value.trim();
@@ -764,31 +766,23 @@
             btn.disabled = true; txt.textContent = "Validando...";
 
             try {
-                const res = await window.FirebaseAPI.login(email, password);
+                const res = await window.SupabaseAPI.login(email, password);
                 if (res.perfil) {
                     window.renderDashboard(res.perfil);
+                    showNotification("Sesión iniciada.", "success");
                 } else {
-                    const fallback = {
-                        nombre: email.split("@")[0],
-                        apellido: "",
-                        cedula: "—",
-                        tipoId: "V",
-                        email,
-                        ubicacion: "No registrada",
-                        areas: "Sin asignar"
-                    };
-                    window.renderDashboard(fallback);
+                    // Cuenta creada pero sin perfil (probablemente falta confirmar correo)
+                    showNotification("Tu cuenta no tiene perfil asociado. Verifica tu correo o regístrate de nuevo.", "warning");
                 }
-                showNotification("Sesión iniciada.", "success");
             } catch (err) {
                 console.error(err);
-                showNotification(traducirError(err.code), "error");
+                showNotification(traducirError(err), "error");
             } finally {
                 btn.disabled = false; txt.textContent = "Ingresar";
             }
         };
 
-
+        /* ---------- Recuperar contraseña ---------- */
         window.handleResetPassword = async function(ev) {
             ev.preventDefault();
             const email = document.getElementById("login-email").value.trim();
@@ -798,14 +792,14 @@
                 return;
             }
             try {
-                await window.FirebaseAPI.resetPassword(email);
+                await window.SupabaseAPI.resetPassword(email);
                 showNotification("Si el correo existe, recibirás un enlace.", "success");
             } catch (err) {
-                showNotification(traducirError(err.code), "error");
+                showNotification(traducirError(err), "error");
             }
         };
 
-
+        /* ---------- Registro ---------- */
         window.handleRegisterSubmit = async function(ev) {
             ev.preventDefault();
             for (let s = 1; s <= totalSteps; s++) {
@@ -824,30 +818,24 @@
                 showNotification("Debes aceptar los términos.", "warning"); return;
             }
 
-            const tipoId = document.getElementById("reg-tipo-id").value;
-            const cedula = document.getElementById("reg-cedula").value.trim();
-            const residencia = document.getElementById("reg-residencia").value;
-            let ubicacionTexto;
-            if (residencia === "venezuela") {
-                const estado = document.getElementById("reg-estado").value;
-                const municipio = document.getElementById("reg-municipio").value.trim();
-                ubicacionTexto = `${estado}, ${municipio}`;
-            } else {
-                ubicacionTexto = `Exterior (${document.getElementById("reg-pais").value.trim()})`;
-            }
-            const areas = Array.from(document.querySelectorAll(".reg-area-cb:checked")).map(c => c.value);
+            const tipoDocumento = document.getElementById("reg-tipo-id").value;
+            const cedulaNum     = document.getElementById("reg-cedula").value.trim();
+            const residencia    = document.getElementById("reg-residencia").value;
+
+            const esVenezuela = residencia === "Venezuela";
 
             const payload = {
-                nombre:    document.getElementById("reg-nombre").value.trim(),
-                apellido:  document.getElementById("reg-apellido").value.trim(),
-                tipoId,
-                cedula:    `${tipoId}-${cedula}`,
-                fnac:      document.getElementById("reg-fnac").value,
-                email:     document.getElementById("reg-email").value.trim(),
+                nombre:           document.getElementById("reg-nombre").value.trim(),
+                apellido:         document.getElementById("reg-apellido").value.trim(),
+                tipoDocumento,
+                cedula:           `${tipoDocumento}-${cedulaNum}`,
+                email:            document.getElementById("reg-email").value.trim(),
+                fechaNacimiento:  document.getElementById("reg-fnac").value,
                 residencia,
-                ubicacion: ubicacionTexto,
-                areas,
-                codigo:    generateUniqueID()
+                estado:           esVenezuela ? document.getElementById("reg-estado").value : null,
+                municipio:        esVenezuela ? document.getElementById("reg-municipio").value.trim() : null,
+                pais:             !esVenezuela ? document.getElementById("reg-pais").value.trim() : null,
+                areas:            Array.from(document.querySelectorAll(".reg-area-cb:checked")).map(c => c.value)
             };
 
             const btn = document.getElementById("btn-submit");
@@ -855,18 +843,38 @@
             btn.disabled = true; txt.textContent = "Guardando...";
 
             try {
-                await window.FirebaseAPI.register(payload, pass1);
-                window.renderDashboard(payload);
-                showNotification(
-                    window.FirebaseAPI.configurado
-                        ? "¡Afiliación guardada exitosamente!"
-                        : "Afiliación completada (modo demo).",
-                    "success"
-                );
-                resetWizard();
+                const res = await window.SupabaseAPI.register(payload, pass1);
+
+                if (res.needsConfirmation) {
+                    showNotification("Revisa tu correo para confirmar la cuenta antes de entrar.", "success");
+                    resetWizard();
+                    switchTab("login");
+                } else {
+                    // Sesión activa: mostrar dashboard con lo que ya insertamos
+                    window.renderDashboard({
+                        id: res.uid,
+                        nombre: payload.nombre,
+                        apellido: payload.apellido,
+                        tipo_documento: payload.tipoDocumento,
+                        cedula: payload.cedula,
+                        email: payload.email,
+                        residencia: payload.residencia,
+                        estado: payload.estado,
+                        municipio: payload.municipio,
+                        pais: payload.pais,
+                        areas: payload.areas
+                    });
+                    showNotification(
+                        window.SupabaseAPI.configurado
+                            ? "¡Afiliación guardada exitosamente!"
+                            : "Afiliación completada (modo demo).",
+                        "success"
+                    );
+                    resetWizard();
+                }
             } catch (err) {
                 console.error(err);
-                showNotification(traducirError(err.code), "error");
+                showNotification(traducirError(err), "error");
             } finally {
                 btn.disabled = false; txt.textContent = "Completar";
             }
@@ -879,20 +887,40 @@
             currentStep = 1;
             updateWizardUI();
         }
+
+        /* ---------- Dashboard ---------- */
         window.renderDashboard = function(perfil) {
             perfilActual = perfil;
             const nombreCompleto = `${perfil.nombre || ""} ${perfil.apellido || ""}`.trim() || "Afiliado";
             const inicial = getInitial(perfil.nombre || nombreCompleto);
-            const codigo  = perfil.codigo || generateUniqueID();
+
+            // Cédula: puede venir "V-12345678" o con tipo_documento + cedula separados
+            const cedulaTexto = perfil.cedula || `${perfil.tipo_documento || "V"}-00000000`;
+
+            // Ubicación legible según residencia
+            let ubicacionTexto = "Venezuela";
+            if (perfil.residencia === "Exterior") {
+                ubicacionTexto = perfil.pais ? `Exterior (${perfil.pais})` : "Exterior";
+            } else if (perfil.estado || perfil.municipio) {
+                ubicacionTexto = [perfil.estado, perfil.municipio].filter(Boolean).join(", ");
+            } else if (perfil.residencia) {
+                ubicacionTexto = perfil.residencia;
+            }
+
+            // Áreas
+            const areasTexto = Array.isArray(perfil.areas) && perfil.areas.length
+                ? perfil.areas.join(", ")
+                : "Sin asignar";
+
+            // ID Único derivado del UUID (consistente siempre)
+            const codigo = codigoDesdeUUID(perfil.id);
 
             document.getElementById("dash-welcome-heading").textContent = `¡Hola, ${perfil.nombre || "Afiliado"}!`;
             document.getElementById("dash-user-name").textContent = nombreCompleto.toUpperCase();
-            document.getElementById("dash-user-id").textContent = perfil.cedula || "V-00000000";
+            document.getElementById("dash-user-id").textContent = cedulaTexto;
             document.getElementById("dash-user-email").textContent = perfil.email || "afiliado@ejemplo.com";
-            document.getElementById("dash-user-state").textContent = perfil.ubicacion || "Venezuela";
-            document.getElementById("dash-user-areas").textContent = Array.isArray(perfil.areas)
-                ? (perfil.areas.join(", ") || "Sin asignar")
-                : (perfil.areas || "Sin asignar");
+            document.getElementById("dash-user-state").textContent = ubicacionTexto;
+            document.getElementById("dash-user-areas").textContent = areasTexto;
             document.getElementById("dash-user-code").textContent = codigo;
             document.getElementById("dash-user-avatar").textContent = inicial;
             document.getElementById("dash-modal-logo").textContent = inicial;
@@ -912,14 +940,16 @@
             m.classList.add("hidden");
             m.classList.remove("flex");
             if (cerrarSesion) {
-                try { await window.FirebaseAPI.logout(); } catch (e) { /* noop */ }
+                try { await window.SupabaseAPI.logout(); } catch (e) { /* noop */ }
                 perfilActual = null;
                 showNotification("Sesión cerrada.", "info");
             }
         };
+
+        /* ---------- Acciones de credencial ---------- */
         window.copyAffiliationCode = async function() {
             if (!perfilActual) return;
-            const code = perfilActual.codigo || document.getElementById("dash-user-code").textContent;
+            const code = document.getElementById("dash-user-code").textContent;
             const texto = `Vente Venezuela · Credencial de Afiliado\nID: ${code}\nNombre: ${document.getElementById("dash-user-name").textContent}\nCédula: ${document.getElementById("dash-user-id").textContent}`;
             try {
                 await navigator.clipboard.writeText(texto);
@@ -947,6 +977,8 @@
                 showNotification("No se pudo generar la imagen.", "error");
             }
         };
+
+        /* ---------- FAQ ---------- */
         window.toggleFaq = function(el) {
             const p = el.querySelector("p");
             const icon = el.querySelector("i");
