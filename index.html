@@ -100,43 +100,4 @@ async function register(e){
 async function shareCredential(){const text=`Mi credencial digital de Vente Cabimas. ID: ${$('dash-unique').textContent}`;if(navigator.share)await navigator.share({title:'Credencial Vente Cabimas',text});else{await navigator.clipboard?.writeText(text);notify('Credencial copiada.','success')}}
 document.addEventListener('DOMContentLoaded',()=>{renderStep();toggleLocation();if(typeof supabase!=='undefined')supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)})
 </script>
-</body>
-</html>
-    e.preventDefault();
-    if(!validateStep()||!$('consent').checked)return;
-    
-    const p = profileFromForm();
-    
-    // 1. Creamos el usuario en Authentication
-    const { data, error } = await supabaseClient.auth.signUp({
-        email: p.email,
-        password: $('password').value,
-        options: { data: p } 
-    });
-    
-    if(error){
-        notify(error.message, 'error');
-        return;
-    }
-    
-    if(data?.user) {
-        // 2. Vinculamos el ID y guardamos todo en la base de datos
-        p.id = data.user.id;
-        const { error: insertError } = await supabaseClient.from('afiliados').insert(p);
-        
-        if(insertError) {
-            notify('Error al guardar en la tabla: ' + insertError.message, 'error');
-            console.error(insertError);
-            return;
-        }
-        
-        notify('Registro completado con éxito.', 'success');
-        showDashboard(p, data.user.id);
-    } else {
-        notify('No se pudo crear la cuenta.', 'error');
-    }
-}
-async function shareCredential(){const text=`Mi credencial digital de Vente Cabimas. ID: ${$('dash-unique').textContent}`;if(navigator.share)await navigator.share({title:'Credencial Vente Cabimas',text});else{await navigator.clipboard?.writeText(text);notify('Credencial copiada.','success')}}
-document.addEventListener('DOMContentLoaded',()=>{renderStep();toggleLocation();if(typeof supabase!=='undefined')supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)})
-</script>
 </body></html>
