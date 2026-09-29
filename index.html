@@ -520,7 +520,10 @@
                 // 1) Crear usuario en Auth
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: datos.email,
-                    password
+                    password,
+                    options: {
+                        emailRedirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
+                    }
                 });
                 if (authError) throw authError;
 
@@ -571,7 +574,7 @@
             async resetPassword(email) {
                 if (!CONFIGURADO) { await new Promise(r => setTimeout(r, 300)); return; }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + window.location.pathname
+                    redirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
                 });
                 if (error) throw error;
             }
