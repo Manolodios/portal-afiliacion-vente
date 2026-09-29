@@ -88,32 +88,42 @@ const type = url.searchParams.get("type") || hash.get("type") || "";
 const code = url.searchParams.get("code");
 const token_hash = url.searchParams.get("token_hash");
 let session = null;
-try {
-  if (code) {
+const problems = [];
+if (code) {
+  try {
     const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
     if (error) throw error;
     session = data.session;
-  } else if (token_hash) {
+  } catch (e) { problems.push("codigo: " + e.message); }
+}
+if (!session && token_hash) {
+  try {
     const { data, error } = await supabase.auth.verifyOtp({ token_hash, type: type || "signup" });
     if (error) throw error;
     session = data.session;
-  } else if (hash.get("access_token")) {
+  } catch (e) { problems.push("token: " + e.message); }
+}
+if (!session && hash.get("access_token")) {
+  try {
     const { data, error } = await supabase.auth.setSession({
       access_token: hash.get("access_token"),
       refresh_token: hash.get("refresh_token") || ""
     });
     if (error) throw error;
     session = data.session;
-  } else {
+  } catch (e) { problems.push("sesion: " + e.message); }
+}
+if (!session) {
+  try {
     const { data } = await supabase.auth.getSession();
     session = data.session;
-  }
-} catch (e) { console.error(e); }
+  } catch (e) { problems.push("lectura: " + e.message); }
+}
 if (session) {
   if (type === "recovery") showRecoveryForm();
   else ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
 } else {
-  fail("Enlace inválido o expirado", "Pide un nuevo correo de confirmación desde el portal.");
+  fail("Enlace inválido o expirado", (problems.length ? "Motivo: " + problems.join(" | ") + ". " : "") + "Pide un nuevo correo de confirmación desde el portal.");
 }
 </script>
 </body>
