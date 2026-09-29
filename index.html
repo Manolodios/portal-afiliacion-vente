@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
@@ -371,7 +372,7 @@
                     </button>
                     <button type="button" onclick="downloadCredential()" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors flex items-center gap-2.5 text-left">
                         <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4"></i></div>
-                        <div class="font-bold text-[11px] sm:text-sm text-slate-800">Guardar Imagen</div>
+                        <div class="font-bold text-[11px] sm:text-sm text-slate-800">Guardar PDF</div>
                     </button>
                 </div>
             </div>
@@ -1000,17 +1001,31 @@
             if (!card || typeof html2canvas === "undefined") {
                 showNotification("Función no disponible.", "warning"); return;
             }
-            showNotification("Generando imagen...", "info");
+            showNotification("Generando PDF...", "info");
             try {
-                const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
-                const link = document.createElement("a");
-                link.download = `credencial-vente-${perfilActual?.cedula || "afiliado"}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-                showNotification("Carnet descargado.", "success");
+                const canvas = await html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true });
+                const imgData = canvas.toDataURL("image/png");
+                const w = canvas.width, h = canvas.height;
+                if (typeof window.jspdf === "undefined") {
+                    const link = document.createElement("a");
+                    link.download = `credencial-vente-${perfilActual?.cedula || "afiliado"}.png`;
+                    link.href = imgData;
+                    link.click();
+                    showNotification("Carnet descargado (PNG).", "success");
+                    return;
+                }
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: w > h ? "landscape" : "portrait",
+                    unit: "px",
+                    format: [w, h],
+                    hotfix: ["px_scaling"]
+                });
+                pdf.addImage(imgData, "PNG", 0, 0, w, h);
+                pdf.save(`credencial-vente-${perfilActual?.cedula || "afiliado"}.pdf`);
+                showNotification("Carnet descargado en PDF.", "success");
             } catch (e) {
                 console.error(e);
-                showNotification("No se pudo generar la imagen.", "error");
+                showNotification("No se pudo generar el PDF.", "error");
             }
         };
 
