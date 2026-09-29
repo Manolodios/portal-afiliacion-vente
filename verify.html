@@ -36,11 +36,25 @@ function fail(msgTitle, msgDesc) {
   desc.textContent = msgDesc;
   cta.classList.remove("hidden");
 }
+const url = new URL(window.location.href);
+const type = url.searchParams.get("type") || "";
+const token_hash = url.searchParams.get("token_hash");
+let done = false;
+let lastErr = null;
 try {
-  const url = new URL(window.location.href);
-  const type = url.searchParams.get("type") || "";
   const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
   if (error) throw error;
+  done = true;
+} catch (e) { lastErr = e; }
+if (!done && token_hash) {
+  try {
+    const { error } = await supabase.auth.verifyOtp({ token_hash, type: type || "signup" });
+    if (error) throw error;
+    done = true;
+  } catch (e) { lastErr = e; }
+}
+try {
+  if (!done) throw (lastErr || new Error("sin codigo"));
   if (type === "recovery") ok("Clave actualizada", "Ya puedes cerrar esta página y entrar con tu nueva contraseña.");
   else ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
 } catch (e) {
