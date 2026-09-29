@@ -35,20 +35,21 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const supabase = createClient(
   "https://kgnajywtscxujwdmskbb.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU",
+  { auth: { detectSessionInUrl: false } }
 );
 const title = document.getElementById("title");
 const desc = document.getElementById("desc");
 const icon = document.getElementById("icon");
 const cta = document.getElementById("cta");
 function ok(msgTitle, msgDesc) {
-  icon.textContent = "✅";
+  icon.textContent = "\u2705";
   title.textContent = msgTitle;
   desc.textContent = msgDesc;
   cta.classList.remove("hidden");
 }
 function fail(msgTitle, msgDesc) {
-  icon.textContent = "⚠️";
+  icon.textContent = "\u26a0\uFE0F";
   title.textContent = msgTitle;
   desc.textContent = msgDesc;
   cta.classList.remove("hidden");
@@ -79,37 +80,40 @@ function togglePass(id, btn) {
   if (!inp) return;
   const show = inp.type === "password";
   inp.type = show ? "text" : "password";
-  btn.textContent = show ? "🙈" : "👁️";
+  btn.textContent = show ? "\u{1F648}" : "\u{1F441}\uFE0F";
 }
 const url = new URL(window.location.href);
-const type = url.searchParams.get("type") || "";
+const hash = new URLSearchParams(window.location.hash.replace(/^#\/?/, ""));
+const type = url.searchParams.get("type") || hash.get("type") || "";
+const code = url.searchParams.get("code");
 const token_hash = url.searchParams.get("token_hash");
-let done = false;
-let lastErr = null;
+let session = null;
 try {
-  const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-  if (error) throw error;
-  done = true;
-} catch (e) { lastErr = e; }
-if (!done && token_hash) {
-  try {
-    const { error } = await supabase.auth.verifyOtp({ token_hash, type: type || "signup" });
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
     if (error) throw error;
-    done = true;
-  } catch (e) { lastErr = e; }
-}
-try {
-  if (!done) throw (lastErr || new Error("sin codigo"));
+    session = data.session;
+  } else if (token_hash) {
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash, type: type || "signup" });
+    if (error) throw error;
+    session = data.session;
+  } else if (hash.get("access_token")) {
+    const { data, error } = await supabase.auth.setSession({
+      access_token: hash.get("access_token"),
+      refresh_token: hash.get("refresh_token") || ""
+    });
+    if (error) throw error;
+    session = data.session;
+  } else {
+    const { data } = await supabase.auth.getSession();
+    session = data.session;
+  }
+} catch (e) { console.error(e); }
+if (session) {
   if (type === "recovery") showRecoveryForm();
   else ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
-} catch (e) {
-  const hash = new URLSearchParams(window.location.hash.slice(1));
-  if (hash.get("access_token")) {
-    ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
-  } else {
-    console.error(e);
-    fail("Enlace inválido o expirado", "Pide un nuevo correo de confirmación desde el portal.");
-  }
+} else {
+  fail("Enlace inválido o expirado", "Pide un nuevo correo de confirmación desde el portal.");
 }
 </script>
 </body>
