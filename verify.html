@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Correo verificado - Vente Venezuela</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-slate-950 text-white p-4">
+<main class="bg-white text-slate-900 rounded-2xl shadow-2xl max-w-md w-full p-8 text-center space-y-4">
+<img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-12 mx-auto">
+<div id="icon" class="text-5xl">⏳</div>
+<h1 id="title" class="text-2xl font-black">Verificando tu correo...</h1>
+<p id="desc" class="text-sm text-slate-600">Un momento, estamos confirmando tu cuenta.</p>
+<a id="cta" href="index.html" class="hidden inline-block mt-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-lg text-sm">Volver al portal e ingresar</a>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const supabase = createClient(
+  "https://kgnajywtscxujwdmskbb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU"
+);
+const title = document.getElementById("title");
+const desc = document.getElementById("desc");
+const icon = document.getElementById("icon");
+const cta = document.getElementById("cta");
+function ok(msgTitle, msgDesc) {
+  icon.textContent = "✅";
+  title.textContent = msgTitle;
+  desc.textContent = msgDesc;
+  cta.classList.remove("hidden");
+}
+function fail(msgTitle, msgDesc) {
+  icon.textContent = "⚠️";
+  title.textContent = msgTitle;
+  desc.textContent = msgDesc;
+  cta.classList.remove("hidden");
+}
+try {
+  const url = new URL(window.location.href);
+  const type = url.searchParams.get("type") || "";
+  const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+  if (error) throw error;
+  if (type === "recovery") ok("Clave actualizada", "Ya puedes cerrar esta página y entrar con tu nueva contraseña.");
+  else ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
+} catch (e) {
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  if (hash.get("access_token")) {
+    ok("Ya estás verificado", "Ya puedes cerrar esta página y entrar al portal.");
+  } else {
+    console.error(e);
+    fail("Enlace inválido o expirado", "Pide un nuevo correo de confirmación desde el portal.");
+  }
+}
+</script>
+</body>
+</html>
