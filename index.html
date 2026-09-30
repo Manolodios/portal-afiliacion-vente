@@ -601,13 +601,13 @@
         if (CONFIGURADO) {
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Restaurar sesión al abrir la página
-            supabase.auth.getSession().then(async ({ data: { session } }) => {
-                if (session?.user) {
-                    const perfil = await cargarPerfil(session.user.id);
-                    if (perfil) window.renderDashboard(perfil);
-                }
-            });
+        // NO restaurar sesión automáticamente: el usuario debe iniciar sesión siempre
+        // supabase.auth.getSession().then(async ({ data: { session } }) => {
+        //     if (session?.user) {
+        //         const perfil = await cargarPerfil(session.user.id);
+        //         if (perfil) window.renderDashboard(perfil);
+        //     }
+        // });
 
             // Escuchar logout / expiración de sesión
             supabase.auth.onAuthStateChange((event) => {
