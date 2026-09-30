@@ -85,6 +85,25 @@
         .feed-error { text-align: center; padding: 40px; color: #f4212e; }
         .verified-badge { width: 18px; height: 18px; display: inline-block; }
         .x-logo { width: 24px; height: 24px; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar para un acabado limpio */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
@@ -351,123 +370,123 @@
     </section>
 
     <!-- Dashboard: Feed + Perfil -->
-<div id="member-dashboard-modal" class="fixed inset-0 bg-black z-50 hidden overflow-y-auto">
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <nav class="sidebar-feed hidden sm:flex flex-col items-end">
-            <div class="w-[275px] flex flex-col h-full">
-                <div class="p-4">
-                    <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8">
+<div id="member-dashboard-modal" class="fixed inset-0 bg-gray-50 z-50 hidden overflow-hidden">
+    
+
+    <aside class="w-20 md:w-64 bg-vente-navy border-r border-slate-800 h-full flex flex-col justify-between transition-all duration-300">
+        <div>
+            <!-- Logo de marca -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-center md:justify-start">
+                <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto object-contain">
+            </div>
+
+            <!-- Perfil del Usuario / Header Sidebar -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-center md:justify-start gap-3 hover:bg-white/5 transition cursor-pointer">
+                <img src="https://placehold.co/100x100/00A8E8/0A192F?text=User" alt="Avatar Usuario" class="w-10 h-10 rounded-full object-cover shadow-sm border border-slate-700">
+                <div class="hidden md:block">
+                    <h2 class="text-sm font-semibold text-white">Mi Cuenta</h2>
+                    <p class="text-xs text-slate-400">@usuario_activo</p>
                 </div>
-                <a href="#" class="sidebar-item active" onclick="showFeedTab('inicio'); return false;">
-                    <i data-lucide="home" class="w-6 h-6"></i><span>Inicio</span>
+            </div>
+
+            <nav class="p-4 flex flex-col gap-2 mt-2">
+                <a href="#" class="flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl hover:bg-white/10 text-slate-200 font-medium transition group">
+                    <svg class="w-6 h-6 text-slate-400 group-hover:text-vente-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="hidden md:inline">Inicio</span>
                 </a>
-                <a href="#" class="sidebar-item" onclick="showFeedTab('explorar'); return false;">
-                    <i data-lucide="search" class="w-6 h-6"></i><span>Explorar</span>
+                <a href="#" class="flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl hover:bg-white/10 text-slate-200 font-medium transition group">
+                    <svg class="w-6 h-6 text-slate-400 group-hover:text-vente-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span class="hidden md:inline">Explorar</span>
                 </a>
-                <a href="#" class="sidebar-item" onclick="showFeedTab('perfil'); return false;">
-                    <i data-lucide="user" class="w-6 h-6"></i><span>Mi Perfil</span>
+                <a href="#" class="flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl hover:bg-white/10 text-slate-200 font-medium transition group">
+                    <svg class="w-6 h-6 text-slate-400 group-hover:text-vente-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="hidden md:inline">Notificaciones</span>
                 </a>
-                <div class="mt-auto p-4">
-                    <div class="flex items-center gap-3 p-3 rounded-full hover:bg-[#181c1f] cursor-pointer" onclick="closeDashboard(true)">
-                        <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-vente-cyan flex items-center justify-center font-bold text-slate-950">V</div>
+                <a href="#" class="flex items-center justify-center md:justify-start gap-4 p-3 rounded-xl hover:bg-white/10 text-slate-200 font-medium transition group">
+                    <svg class="w-6 h-6 text-slate-400 group-hover:text-vente-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span class="hidden md:inline">Mensajes</span>
+                </a>
+            </nav>
+        </div>
+
+        
+    </aside>
+
+    <main class="flex-1 h-full overflow-y-auto bg-gray-50 flex justify-center pt-10 md:pt-20 px-4">
+        
+        <!-- Contenedor central -->
+        <div class="w-full max-w-xl">
+            
+            <h1 class="text-2xl font-bold mb-6 text-gray-800">Para ti</h1>
+
+            <div id="feed-content"><div class="text-center py-10 text-gray-500">Cargando publicaciones...</div></div>
+
+            <div class="h-20"></div>
+
+        </div>
+    
+        <!-- Profile view -->
+        <div id="profile-view" class="flex-1 hidden overflow-y-auto bg-gray-50">
+            <div class="w-full max-w-xl mx-auto py-8 px-4">
+                <h1 class="text-2xl font-bold mb-6 text-gray-800">Mi Perfil</h1>
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-6">
+                    <div class="h-32 bg-gradient-to-r from-vente-navy via-[#004E89] to-vente-cyan"></div>
+                    <div class="p-4 -mt-12">
+                        <div class="relative inline-block">
+                            <div class="w-24 h-24 rounded-full border-4 border-white bg-vente-cyan flex items-center justify-center text-3xl font-bold text-white overflow-hidden" id="profile-avatar-lg">V</div>
+                            <label class="absolute bottom-0 right-0 w-8 h-8 bg-vente-cyan rounded-full flex items-center justify-center cursor-pointer border-2 border-white" title="Cambiar foto">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="uploadProfilePhoto(event)">
+                            </label>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900 mt-3" id="profile-name-lg">Usuario</h2>
+                        <p class="text-gray-500 text-sm" id="profile-handle-lg">@usuario</p>
+                    </div>
+                </div>
+                <!-- Credential card -->
+                <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
+                    <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
+                        <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
+                    </div>
+                    <div class="flex justify-between items-start z-10 relative">
+                        <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto drop-shadow-md">
+                        <div class="w-6 h-4 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
+                    </div>
+                    <div class="flex items-center gap-4 z-10">
+                        <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
                         <div class="flex-1 min-w-0">
-                            <div id="sidebar-name" class="font-bold text-sm text-white truncate">Usuario</div>
-                            <div id="sidebar-handle" class="text-xs text-slate-500 truncate">@usuario</div>
+                            <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
+                            <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                            <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
+                            <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
                         </div>
-                        <i data-lucide="log-out" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
+                        <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
+                    </div>
+                    <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                        <div>
+                            <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                            <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
+                        </div>
+                        <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
+                            <svg class="w-full h-full text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
-
-        <!-- Main content -->
-        <div class="flex-1 flex flex-col min-h-screen">
-            <!-- Feed view -->
-            <div id="feed-view" class="flex-1">
-                <div class="feed-container">
-                    <div class="feed-header">
-                        <h2>Inicio</h2>
-                    </div>
-                    <div id="feed-content">
-                        <div class="feed-loading">Cargando publicaciones...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile view -->
-            <div id="profile-view" class="flex-1 hidden">
-                <div class="feed-container">
-                    <div class="feed-header">
-                        <h2>Mi Perfil</h2>
-                    </div>
-                    <div class="profile-section">
-                        <div class="profile-banner"></div>
-                        <div class="profile-body">
-                            <div class="relative">
-                                <div class="profile-avatar-lg" id="profile-avatar-lg">V</div>
-                                <label class="absolute bottom-0 right-[calc(50%-50px)] w-8 h-8 bg-vente-cyan rounded-full flex items-center justify-center cursor-pointer border-2 border-black" title="Cambiar foto">
-                                    <i data-lucide="camera" class="w-4 h-4 text-slate-950"></i>
-                                    <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="uploadProfilePhoto(event)">
-                                </label>
-                            </div>
-                            <div class="profile-name" id="profile-name-lg">Usuario</div>
-                            <div class="profile-handle" id="profile-handle-lg">@usuario</div>
-                            <div class="profile-stats">
-                                <span><b id="stat-tweets">0</b> Posts</span>
-                                <span><b>0</b> Siguiendo</span>
-                                <span><b>0</b> Seguidores</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Credential card en perfil -->
-                    <div id="credential-card" class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none m-4">
-                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
-                            <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
-                        </div>
-                        <div class="flex justify-between items-start z-10 relative">
-                            <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="brand-logo h-8 sm:h-10 w-auto drop-shadow-md">
-                            <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
-                        </div>
-                        <div class="flex items-center gap-3 sm:gap-4 z-10">
-                            <div id="dash-user-avatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-2xl sm:text-3xl font-black gradient-cyan text-slate-950">V</div>
-                            <div class="flex-1 min-w-0">
-                                <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
-                                <div class="text-sm sm:text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
-                                <div class="text-[11px] sm:text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
-                                <div class="text-[10px] sm:text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
-                                <div class="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
-                            </div>
-                        </div>
-                        <div class="pt-2 border-t border-slate-800/80 z-10 text-[10px] sm:text-[11px] text-slate-300 truncate">
-                            <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
-                        </div>
-                        <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
-                            <div>
-                                <div class="text-[7px] sm:text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
-                                <div class="text-[10px] sm:text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
-                            </div>
-                            <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white p-1 rounded flex items-center justify-center">
-                                <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pb-4">
-                        <button type="button" onclick="copyAffiliationCode()" class="p-3 border border-slate-700 rounded-xl bg-slate-900 active:bg-slate-800 transition-colors flex items-center gap-2.5 text-left">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-900 text-vente-cyan flex items-center justify-center"><i data-lucide="share-2" class="w-4 h-4"></i></div>
-                            <div class="font-bold text-[11px] sm:text-sm text-white">Compartir Credencial</div>
-                        </button>
-                        <button type="button" onclick="downloadCredential()" class="p-3 border border-slate-700 rounded-xl bg-slate-900 active:bg-slate-800 transition-colors flex items-center gap-2.5 text-left">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-900 text-emerald-400 flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4"></i></div>
-                            <div class="font-bold text-[11px] sm:text-sm text-white">Guardar PDF</div>
-                        </button>
-                    </div>
+                <div class="flex gap-3 mt-4">
+                    <button type="button" onclick="copyAffiliationCode()" class="flex-1 py-3 bg-vente-navy hover:bg-vente-navylight text-white font-bold rounded-xl text-sm transition-colors">Compartir Credencial</button>
+                    <button type="button" onclick="downloadCredential()" class="flex-1 py-3 bg-vente-cyan hover:bg-vente-hover text-slate-950 font-bold rounded-xl text-sm transition-colors">Guardar PDF</button>
                 </div>
             </div>
         </div>
-    </div>
+</main>
+
+
 </div>
+
     <!-- Principios -->
     <section id="principios" class="py-14 bg-slate-50 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1101,20 +1120,25 @@
                         }
                     });
                     const timeAgo = tw.created_at || "";
-                    html += '<div class="tweet-card">'
-                        + '<div class="tweet-header">'
-                        + '<img src="https://unavatar.io/twitter/MariaCorinaYa" class="tweet-avatar" alt="avatar" onerror="this.style.display=\'none\'">'
-                        + '<div class="tweet-user">'
-                        + '<div class="tweet-name">María Corina <svg class="verified-badge" viewBox="0 0 24 24" fill="#1d9bf0"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg></div>'
-                        + '<div class="tweet-handle">@MariaCorinaYa · ' + timeAgo + '</div>'
-                        + '</div></div>'
-                        + '<div class="tweet-text">' + text + '</div>'
+                    html += '<article class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors p-4 cursor-pointer">'
+                        + '<div class="flex justify-between items-start">'
+                        + '<div class="flex gap-3">'
+                        + '<img src="https://unavatar.io/twitter/MariaCorinaYa" class="w-12 h-12 rounded-full object-cover" alt="avatar">'
+                        + '<div>'
+                        + '<div class="flex flex-wrap items-center gap-x-1 gap-y-0.5 pr-6">'
+                        + '<span class="font-bold text-gray-900 text-[15px]">María Corina</span>'
+                        + '<svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M9.999 18.001L4.78 12.782l1.414-1.414 3.805 3.805 9.172-9.172 1.414 1.414z"></path></svg>'
+                        + '<span class="text-gray-500 text-[15px]">@MariaCorinaYa</span>'
+                        + '<span class="text-gray-500 text-[15px]">· ' + timeAgo + '</span>'
+                        + '</div></div></div>'
+                        + '<div class="text-gray-800"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg></div></div>'
+                        + '<div class="mt-3 ml-[60px]"><p class="text-[15px] text-gray-900 leading-normal mb-3">' + text + '</p>'
                         + imgHtml
-                        + '<div class="tweet-actions">'
-                        + '<span class="tweet-action"><i data-lucide="repeat-2" class="w-4 h-4"></i> ' + (tw.replies || 0) + '</span>'
-                        + '<span class="tweet-action"><i data-lucide="heart" class="w-4 h-4"></i> ' + (tw.likes || 0) + '</span>'
-                        + '<span class="tweet-action"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> ' + (tw.views || "") + '</span>'
-                        + '</div></div>';
+                        + '<div class="flex justify-between items-center text-gray-500 mt-4 max-w-md">'
+                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g></svg></div><span class="text-sm">' + (tw.replies || 0) + '</span></div>'
+                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></g></svg></div><span class="text-sm">' + (tw.reposts || 0) + '</span></div>'
+                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g></svg></div><span class="text-sm">' + (tw.likes || 0) + '</span></div>'
+                        + '</div></div></article>';
                 });
                 container.innerHTML = html;
                 lucide.createIcons();
