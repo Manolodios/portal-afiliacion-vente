@@ -29,14 +29,17 @@
         }
 
         window.toggleCredential = function() {
-            const blur = document.getElementById("credential-blur");
+            const card = document.getElementById("credential-card");
+            const overlay = document.getElementById("blur-overlay");
             const btn = document.getElementById("reveal-btn");
-            if (blur) {
-                const overlay = blur.querySelector(".backdrop-blur-md");
-                if (overlay) {
-                    overlay.classList.add("hidden");
-                    btn.classList.add("hidden");
-                }
+            if (card) {
+                card.style.filter = "none";
+            }
+            if (overlay) {
+                overlay.classList.add("hidden");
+            }
+            if (btn) {
+                btn.classList.add("hidden");
             }
         };
     </script>
@@ -606,15 +609,16 @@
         <div class="px-6 max-w-4xl w-full mx-auto pb-8">
           <div class="relative">
             <!-- Botón revelador circular -->
-            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-16 h-16 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110">
-              <i class="fa-solid fa-eye text-2xl"></i>
+            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
+              <i class="fa-solid fa-eye text-xl"></i>
             </button>
             <!-- Tarjeta con blur -->
             <div id="credential-blur" class="relative">
-              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md rounded-2xl z-10 flex items-center justify-center">
+              <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none" style="filter: blur(8px);">
+              </div>
+              <div id="blur-overlay" class="absolute inset-0 bg-slate-900/40 rounded-2xl z-10 flex items-center justify-center">
                 <p class="text-white font-bold text-lg">Toca el ojo para revelar</p>
               </div>
-              <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
                 <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
                   <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
@@ -659,7 +663,7 @@
         <!-- Logo de Vente Cabimas en el feed -->
         <div class="px-6 max-w-4xl w-full mx-auto pb-8">
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center">
-            <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-16 w-auto mb-4">
+            <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-20 w-auto mb-4 drop-shadow-lg">
             <p class="text-slate-400 text-sm text-center">Síguenos en nuestras redes para más contenido</p>
           </div>
         </div>
