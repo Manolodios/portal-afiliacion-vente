@@ -75,7 +75,7 @@ document.getElementById("newpass-form").addEventListener("submit", async (ev) =>
   document.getElementById("newpass-form").classList.add("hidden");
   ok("Clave actualizada", "Ya puedes cerrar esta página y entrar con tu nueva contraseña.");
 });
-function togglePass(id, btn) {
+window.togglePass = function(id, btn) {
   const inp = document.getElementById(id);
   if (!inp) return;
   const show = inp.type === "password";
