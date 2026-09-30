@@ -50,7 +50,42 @@
             max-width: 100%;
             height: auto;
         }
-    </style>
+    
+        /* ===== FEED X STYLE ===== */
+        .feed-container { max-width: 600px; margin: 0 auto; min-height: 100vh; border-left: 1px solid #2f3336; border-right: 1px solid #2f3336; }
+        .feed-header { position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #2f3336; padding: 12px 16px; z-index: 10; }
+        .feed-header h2 { font-size: 20px; font-weight: 800; color: #e7e9ea; }
+        .tweet-card { border-bottom: 1px solid #2f3336; padding: 12px 16px; transition: background 0.2s; }
+        .tweet-card:hover { background: #080808; }
+        .tweet-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .tweet-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+        .tweet-user { flex: 1; min-width: 0; }
+        .tweet-name { font-weight: 700; color: #e7e9ea; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+        .tweet-handle { color: #71767b; font-size: 14px; }
+        .tweet-time { color: #71767b; font-size: 14px; }
+        .tweet-text { color: #e7e9ea; font-size: 15px; line-height: 1.4; margin-bottom: 8px; white-space: pre-wrap; }
+        .tweet-img { border-radius: 16px; border: 1px solid #2f3336; max-width: 100%; margin-top: 8px; }
+        .tweet-actions { display: flex; gap: 40px; margin-top: 8px; }
+        .tweet-action { color: #71767b; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+        .sidebar-feed { width: 275px; flex-shrink: 0; border-right: 1px solid #2f3336; padding: 8px 0; }
+        .sidebar-item { display: flex; align-items: center; gap: 16px; padding: 12px 24px; color: #e7e9ea; font-size: 20px; border-radius: 9999px; margin: 4px 12px; cursor: pointer; transition: background 0.2s; text-decoration: none; }
+        .sidebar-item:hover { background: #181c1f; }
+        .sidebar-item.active { font-weight: 700; }
+        .sidebar-avatar { width: 24px; height: 24px; border-radius: 50%; }
+        .profile-section { border: 1px solid #2f3336; border-radius: 16px; margin: 16px; overflow: hidden; }
+        .profile-banner { height: 120px; background: linear-gradient(135deg, #0A192F 0%, #004E89 50%, #00A8E8 100%); }
+        .profile-body { padding: 0 16px 16px; }
+        .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #000; margin-top: -40px; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: #fff; overflow: hidden; }
+        .profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { font-size: 20px; font-weight: 800; color: #e7e9ea; margin-top: 8px; }
+        .profile-handle { color: #71767b; font-size: 14px; }
+        .profile-stats { display: flex; gap: 16px; margin-top: 12px; color: #71767b; font-size: 14px; }
+        .profile-stats b { color: #e7e9ea; }
+        .feed-loading { text-align: center; padding: 40px; color: #71767b; }
+        .feed-error { text-align: center; padding: 40px; color: #f4212e; }
+        .verified-badge { width: 18px; height: 18px; display: inline-block; }
+        .x-logo { width: 24px; height: 24px; }
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
@@ -315,81 +350,124 @@
         </div>
     </section>
 
-    <!-- Dashboard Modal -->
-    <div id="member-dashboard-modal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-white rounded-2xl w-full max-w-md sm:max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[95vh]">
-            <div class="bg-slate-900 text-white p-3 sm:p-4 flex justify-between items-center border-b border-slate-800 shrink-0">
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div id="dash-modal-logo" class="w-8 h-8 rounded-lg gradient-cyan text-slate-950 font-black flex items-center justify-center text-sm shadow-sm">V</div>
-                    <div>
-                        <h3 class="font-extrabold text-sm sm:text-base leading-tight">Portal Afiliado</h3>
-                        <p class="text-[9px] sm:text-[10px] text-vente-cyan">Sistema de Credenciales</p>
-                    </div>
+    <!-- Dashboard: Feed + Perfil -->
+<div id="member-dashboard-modal" class="fixed inset-0 bg-black z-50 hidden overflow-y-auto">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <nav class="sidebar-feed hidden sm:flex flex-col items-end">
+            <div class="w-[275px] flex flex-col h-full">
+                <div class="p-4">
+                    <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8">
                 </div>
-                <button type="button" onclick="closeDashboard()" class="text-slate-400 hover:text-white p-1 sm:p-2 rounded-lg hover:bg-slate-800">
-                    <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                </button>
-            </div>
-
-            <div class="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
-                <div class="text-center bg-gradient-to-r from-sky-50 to-cyan-50 p-3 sm:p-4 rounded-xl border border-cyan-100 flex flex-col items-center gap-1.5 sm:gap-2">
-                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] sm:text-xs font-bold rounded-full">✓ Identidad Verificada</span>
-                    <h2 id="dash-welcome-heading" class="text-lg sm:text-xl font-black text-slate-900 leading-tight">¡Bienvenido!</h2>
-                </div>
-
-                <div id="credential-card" class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none">
-                    <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
-                        <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
-                    </div>
-                    <div class="flex justify-between items-start z-10 relative">
-                        <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png"
-                             alt="Vente Cabimas"
-                             class="brand-logo h-8 sm:h-10 w-auto drop-shadow-md">
-                        <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
-                    </div>
-                    <div class="flex items-center gap-3 sm:gap-4 z-10">
-                        <div id="dash-user-avatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-2xl sm:text-3xl font-black gradient-cyan text-slate-950">V</div>
+                <a href="#" class="sidebar-item active" onclick="showFeedTab('inicio'); return false;">
+                    <i data-lucide="home" class="w-6 h-6"></i><span>Inicio</span>
+                </a>
+                <a href="#" class="sidebar-item" onclick="showFeedTab('explorar'); return false;">
+                    <i data-lucide="search" class="w-6 h-6"></i><span>Explorar</span>
+                </a>
+                <a href="#" class="sidebar-item" onclick="showFeedTab('perfil'); return false;">
+                    <i data-lucide="user" class="w-6 h-6"></i><span>Mi Perfil</span>
+                </a>
+                <div class="mt-auto p-4">
+                    <div class="flex items-center gap-3 p-3 rounded-full hover:bg-[#181c1f] cursor-pointer" onclick="closeDashboard(true)">
+                        <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-vente-cyan flex items-center justify-center font-bold text-slate-950">V</div>
                         <div class="flex-1 min-w-0">
-                            <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
-                            <div class="text-sm sm:text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
-                            <div class="text-[11px] sm:text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
-                            <div class="text-[10px] sm:text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
-                            <div class="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
+                            <div id="sidebar-name" class="font-bold text-sm text-white truncate">Usuario</div>
+                            <div id="sidebar-handle" class="text-xs text-slate-500 truncate">@usuario</div>
                         </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-800/80 z-10 text-[10px] sm:text-[11px] text-slate-300 truncate">
-                        <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
-                    </div>
-                    <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
-                        <div>
-                            <div class="text-[7px] sm:text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
-                            <div class="text-[10px] sm:text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
-                        </div>
-                        <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white p-1 rounded flex items-center justify-center">
-                            <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
-                        </div>
+                        <i data-lucide="log-out" class="w-5 h-5 text-slate-400"></i>
                     </div>
                 </div>
+            </div>
+        </nav>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button type="button" onclick="copyAffiliationCode()" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors flex items-center gap-2.5 text-left">
-                        <div class="w-8 h-8 rounded-lg bg-cyan-100 text-vente-cyan flex items-center justify-center"><i data-lucide="share-2" class="w-4 h-4"></i></div>
-                        <div class="font-bold text-[11px] sm:text-sm text-slate-800">Compartir Credencial</div>
-                    </button>
-                    <button type="button" onclick="downloadCredential()" class="p-3 border rounded-xl bg-slate-50 active:bg-slate-100 transition-colors flex items-center gap-2.5 text-left">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4"></i></div>
-                        <div class="font-bold text-[11px] sm:text-sm text-slate-800">Guardar PDF</div>
-                    </button>
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col min-h-screen">
+            <!-- Feed view -->
+            <div id="feed-view" class="flex-1">
+                <div class="feed-container">
+                    <div class="feed-header">
+                        <h2>Inicio</h2>
+                    </div>
+                    <div id="feed-content">
+                        <div class="feed-loading">Cargando publicaciones...</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-slate-100 p-3 sm:p-4 flex justify-end border-t border-slate-200 shrink-0">
-                <button type="button" onclick="closeDashboard(true)" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 transition-all">Cerrar Sesión</button>
+            <!-- Profile view -->
+            <div id="profile-view" class="flex-1 hidden">
+                <div class="feed-container">
+                    <div class="feed-header">
+                        <h2>Mi Perfil</h2>
+                    </div>
+                    <div class="profile-section">
+                        <div class="profile-banner"></div>
+                        <div class="profile-body">
+                            <div class="relative">
+                                <div class="profile-avatar-lg" id="profile-avatar-lg">V</div>
+                                <label class="absolute bottom-0 right-[calc(50%-50px)] w-8 h-8 bg-vente-cyan rounded-full flex items-center justify-center cursor-pointer border-2 border-black" title="Cambiar foto">
+                                    <i data-lucide="camera" class="w-4 h-4 text-slate-950"></i>
+                                    <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="uploadProfilePhoto(event)">
+                                </label>
+                            </div>
+                            <div class="profile-name" id="profile-name-lg">Usuario</div>
+                            <div class="profile-handle" id="profile-handle-lg">@usuario</div>
+                            <div class="profile-stats">
+                                <span><b id="stat-tweets">0</b> Posts</span>
+                                <span><b>0</b> Siguiendo</span>
+                                <span><b>0</b> Seguidores</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Credential card en perfil -->
+                    <div id="credential-card" class="relative w-full rounded-2xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-3 sm:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none m-4">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
+                            <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
+                        </div>
+                        <div class="flex justify-between items-start z-10 relative">
+                            <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="brand-logo h-8 sm:h-10 w-auto drop-shadow-md">
+                            <div class="w-6 h-4 sm:w-7 sm:h-5 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
+                        </div>
+                        <div class="flex items-center gap-3 sm:gap-4 z-10">
+                            <div id="dash-user-avatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-2xl sm:text-3xl font-black gradient-cyan text-slate-950">V</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
+                                <div class="text-sm sm:text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                                <div class="text-[11px] sm:text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
+                                <div class="text-[10px] sm:text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
+                                <div class="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 z-10 text-[10px] sm:text-[11px] text-slate-300 truncate">
+                            <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                            <div>
+                                <div class="text-[7px] sm:text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                                <div class="text-[10px] sm:text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
+                            </div>
+                            <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white p-1 rounded flex items-center justify-center">
+                                <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pb-4">
+                        <button type="button" onclick="copyAffiliationCode()" class="p-3 border border-slate-700 rounded-xl bg-slate-900 active:bg-slate-800 transition-colors flex items-center gap-2.5 text-left">
+                            <div class="w-8 h-8 rounded-lg bg-cyan-900 text-vente-cyan flex items-center justify-center"><i data-lucide="share-2" class="w-4 h-4"></i></div>
+                            <div class="font-bold text-[11px] sm:text-sm text-white">Compartir Credencial</div>
+                        </button>
+                        <button type="button" onclick="downloadCredential()" class="p-3 border border-slate-700 rounded-xl bg-slate-900 active:bg-slate-800 transition-colors flex items-center gap-2.5 text-left">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-900 text-emerald-400 flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4"></i></div>
+                            <div class="font-bold text-[11px] sm:text-sm text-white">Guardar PDF</div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+</div>
     <!-- Principios -->
     <section id="principios" class="py-14 bg-slate-50 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -942,42 +1020,127 @@
         /* ---------- Dashboard ---------- */
         window.renderDashboard = function(perfil) {
             perfilActual = perfil;
-            const nombreCompleto = `${perfil.nombre || ""} ${perfil.apellido || ""}`.trim() || "Afiliado";
-            const inicial = getInitial(perfil.nombre || nombreCompleto);
-
-            // Cédula: puede venir "V-12345678" o con tipo_documento + cedula separados
-            const cedulaTexto = perfil.cedula || `${perfil.tipo_documento || "V"}-00000000`;
-
-            // Ubicación legible según residencia
-            let ubicacionTexto = "Venezuela";
-            if (perfil.residencia === "Exterior") {
-                ubicacionTexto = perfil.pais ? `Exterior (${perfil.pais})` : "Exterior";
-            } else if (perfil.estado || perfil.municipio) {
-                ubicacionTexto = [perfil.estado, perfil.municipio].filter(Boolean).join(", ");
-            } else if (perfil.residencia) {
-                ubicacionTexto = perfil.residencia;
+            // Actualizar sidebar
+            const nombre = (perfil.nombre || "Usuario") + " " + (perfil.apellido || "");
+            document.getElementById("sidebar-name").textContent = nombre;
+            document.getElementById("sidebar-handle").textContent = "@" + (perfil.email || "usuario").split("@")[0];
+            const inicial = getInitial(perfil.nombre || "V");
+            const avatarEl = document.getElementById("sidebar-avatar");
+            if (perfil.foto) {
+                avatarEl.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-full object-cover">';
+            } else {
+                avatarEl.textContent = inicial;
             }
-
-            // Áreas
-            const areasTexto = Array.isArray(perfil.areas) && perfil.areas.length
-                ? perfil.areas.join(", ")
-                : "Sin asignar";
-
-            // ID Único derivado del UUID (consistente siempre)
-            const codigo = codigoDesdeUUID(perfil.id);
-
-            document.getElementById("dash-welcome-heading").textContent = `¡Hola, ${perfil.nombre || "Afiliado"}!`;
-            document.getElementById("dash-user-name").textContent = nombreCompleto.toUpperCase();
-            document.getElementById("dash-user-id").textContent = cedulaTexto;
-            document.getElementById("dash-user-email").textContent = perfil.email || "afiliado@ejemplo.com";
-            document.getElementById("dash-user-state").textContent = ubicacionTexto;
-            document.getElementById("dash-user-areas").textContent = areasTexto;
-            document.getElementById("dash-user-code").textContent = codigo;
-            document.getElementById("dash-user-avatar").textContent = inicial;
-            document.getElementById("dash-modal-logo").textContent = inicial;
-
-            window.openDashboard();
+            // Actualizar perfil
+            document.getElementById("profile-name-lg").textContent = nombre;
+            document.getElementById("profile-handle-lg").textContent = "@" + (perfil.email || "usuario").split("@")[0];
+            const profileAvatarLg = document.getElementById("profile-avatar-lg");
+            if (perfil.foto) {
+                profileAvatarLg.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full object-cover">';
+            } else {
+                profileAvatarLg.textContent = inicial;
+            }
+            // Actualizar credencial
+            document.getElementById("dash-user-name").textContent = (perfil.nombre || "").toUpperCase() + " " + (perfil.apellido || "").toUpperCase();
+            document.getElementById("dash-user-id").textContent = perfil.cedula || "V-00000000";
+            document.getElementById("dash-user-email").textContent = perfil.email || "";
+            const ubicacion = perfil.residencia === "Venezuela"
+                ? (perfil.estado || "") + (perfil.municipio ? ", " + perfil.municipio : "") + ", Venezuela"
+                : (perfil.pais || "") + ", Exterior";
+            document.getElementById("dash-user-state").textContent = ubicacion;
+            document.getElementById("dash-user-areas").textContent = (perfil.areas || []).join(", ") || "Sin áreas";
+            document.getElementById("dash-user-code").textContent = codigoDesdeUUID(perfil.id);
+            const dashAvatar = document.getElementById("dash-user-avatar");
+            if (perfil.foto) {
+                dashAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-xl object-cover">';
+            } else {
+                dashAvatar.textContent = inicial;
+            }
+            // Mostrar modal
+            const m = document.getElementById("member-dashboard-modal");
+            m.classList.remove("hidden");
+            m.classList.add("flex");
+            lucide.createIcons();
+            // Cargar feed
+            loadFeed();
         };
+
+        window.showFeedTab = function(tab) {
+            const feedView = document.getElementById("feed-view");
+            const profileView = document.getElementById("profile-view");
+            if (tab === "perfil") {
+                feedView.classList.add("hidden");
+                profileView.classList.remove("hidden");
+            } else {
+                feedView.classList.remove("hidden");
+                profileView.classList.add("hidden");
+            }
+            lucide.createIcons();
+        };
+
+        window.loadFeed = async function() {
+            const container = document.getElementById("feed-content");
+            container.innerHTML = '<div class="feed-loading">Cargando publicaciones...</div>';
+            try {
+                const resp = await fetch("https://api.fxtwitter.com/MariaCorinaYa");
+                if (!resp.ok) throw new Error("HTTP " + resp.status);
+                const data = await resp.json();
+                const tweets = data.tweets || [];
+                if (!tweets.length) {
+                    container.innerHTML = '<div class="feed-loading">No hay publicaciones recientes.</div>';
+                    return;
+                }
+                let html = "";
+                tweets.forEach(tw => {
+                    const text = tw.text || "";
+                    const media = tw.media && tw.media.all ? tw.media.all : [];
+                    let imgHtml = "";
+                    media.forEach(m => {
+                        if (m.type === "photo" && m.url) {
+                            imgHtml += '<img src="' + m.url + '" class="tweet-img" alt="media">';
+                        }
+                    });
+                    const timeAgo = tw.created_at || "";
+                    html += '<div class="tweet-card">'
+                        + '<div class="tweet-header">'
+                        + '<img src="https://unavatar.io/twitter/MariaCorinaYa" class="tweet-avatar" alt="avatar" onerror="this.style.display=\'none\'">'
+                        + '<div class="tweet-user">'
+                        + '<div class="tweet-name">María Corina <svg class="verified-badge" viewBox="0 0 24 24" fill="#1d9bf0"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg></div>'
+                        + '<div class="tweet-handle">@MariaCorinaYa · ' + timeAgo + '</div>'
+                        + '</div></div>'
+                        + '<div class="tweet-text">' + text + '</div>'
+                        + imgHtml
+                        + '<div class="tweet-actions">'
+                        + '<span class="tweet-action"><i data-lucide="repeat-2" class="w-4 h-4"></i> ' + (tw.replies || 0) + '</span>'
+                        + '<span class="tweet-action"><i data-lucide="heart" class="w-4 h-4"></i> ' + (tw.likes || 0) + '</span>'
+                        + '<span class="tweet-action"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> ' + (tw.views || "") + '</span>'
+                        + '</div></div>';
+                });
+                container.innerHTML = html;
+                lucide.createIcons();
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div class="feed-error">No se pudieron cargar las publicaciones. Intenta más tarde.</div>';
+            }
+        };
+
+        window.uploadProfilePhoto = async function(ev) {
+            const file = ev.target.files[0];
+            if (!file || !perfilActual) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                perfilActual.foto = dataUrl;
+                // Actualizar todos los avatares
+                const inicial = getInitial(perfilActual.nombre || "V");
+                ["sidebar-avatar", "profile-avatar-lg", "dash-user-avatar"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = '<img src="' + dataUrl + '" class="w-full h-full rounded-full object-cover">';
+                });
+                showNotification("Foto actualizada.", "success");
+            };
+            reader.readAsDataURL(file);
+        };;
 
         window.openDashboard = function() {
             const m = document.getElementById("member-dashboard-modal");
