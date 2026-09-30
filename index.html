@@ -509,9 +509,12 @@
 
       <!-- TOP STICKY BAR -->
       <header class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-6 py-4 flex items-center justify-between">
-        <div>
-          <h2 id="mainHeaderTitle" class="text-xl font-extrabold text-white tracking-tight">Para ti</h2>
-          <p id="mainHeaderSub" class="text-xs text-slate-400">Publicaciones recientes en Cabimas</p>
+        <div class="flex items-center gap-3">
+          <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto">
+          <div>
+            <h2 id="mainHeaderTitle" class="text-xl font-extrabold text-white tracking-tight">Para ti</h2>
+            <p id="mainHeaderSub" class="text-xs text-slate-400">Publicaciones recientes en Cabimas</p>
+          </div>
         </div>
       </header>
 
@@ -609,14 +612,44 @@
         <div class="px-6 max-w-4xl w-full mx-auto pb-8">
           <div class="relative">
             <!-- Botón revelador circular -->
-            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
-              <i class="fa-solid fa-eye text-xl"></i>
+            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-2 border-white/30">
+              <i class="fa-solid fa-eye text-lg"></i>
             </button>
             <!-- Tarjeta con blur -->
             <div id="credential-blur" class="relative">
               <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none" style="filter: blur(8px);">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
+                  <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
+                </div>
+                <div class="flex justify-between items-start z-10 relative">
+                  <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto drop-shadow-md">
+                  <div class="w-6 h-4 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
+                </div>
+                <div class="flex items-center gap-4 z-10">
+                  <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
+                    <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                    <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
+                    <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
+                    <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
+                  </div>
+                </div>
+                <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
+                  <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
+                </div>
+                <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                  <div>
+                    <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                    <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
+                  </div>
+                  <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
+                    <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
+                  </div>
+                </div>
               </div>
-              <div id="blur-overlay" class="absolute inset-0 bg-slate-900/40 rounded-2xl z-10 flex items-center justify-center">
+              <div id="blur-overlay" class="absolute inset-0 bg-slate-900/40 rounded-2xl z-20 flex items-center justify-center">
                 <p class="text-white font-bold text-lg">Toca el ojo para revelar</p>
               </div>
                 <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
