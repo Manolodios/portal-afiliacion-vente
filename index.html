@@ -382,10 +382,10 @@
 
             <!-- Perfil del Usuario / Header Sidebar -->
             <div class="p-4 border-b border-slate-800 flex items-center justify-center md:justify-start gap-3 hover:bg-white/5 transition cursor-pointer">
-                <img src="https://placehold.co/100x100/00A8E8/0A192F?text=User" alt="Avatar Usuario" class="w-10 h-10 rounded-full object-cover shadow-sm border border-slate-700">
+                <img src="https://placehold.co/100x100/00A8E8/0A192F?text=User" alt="Avatar Usuario" class="w-10 h-10 rounded-full sidebar-profile-avatar object-cover shadow-sm border border-slate-700">
                 <div class="hidden md:block">
-                    <h2 class="text-sm font-semibold text-white">Mi Cuenta</h2>
-                    <p class="text-xs text-slate-400">@usuario_activo</p>
+                    <h2 class="text-sm font-semibold text-white sidebar-profile-name">Mi Cuenta</h2>
+                    <p class="text-xs text-slate-400 sidebar-profile-handle">@usuario_activo</p>
                 </div>
             </div>
 
@@ -1037,50 +1037,65 @@
         }
 
         /* ---------- Dashboard ---------- */
-        window.renderDashboard = function(perfil) {
+window.renderDashboard = function(perfil) {
             perfilActual = perfil;
-            // Actualizar sidebar
             const nombre = (perfil.nombre || "Usuario") + " " + (perfil.apellido || "");
-            document.getElementById("sidebar-name").textContent = nombre;
-            document.getElementById("sidebar-handle").textContent = "@" + (perfil.email || "usuario").split("@")[0];
+            const email = perfil.email || "usuario";
+            const handle = "@" + email.split("@")[0];
             const inicial = getInitial(perfil.nombre || "V");
-            const avatarEl = document.getElementById("sidebar-avatar");
-            if (perfil.foto) {
-                avatarEl.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-full object-cover">';
-            } else {
-                avatarEl.textContent = inicial;
+
+            // Sidebar (dashboard.html no tiene IDs, usar querySelector)
+            const sidebarName = document.querySelector(".sidebar-profile-name");
+            const sidebarHandle = document.querySelector(".sidebar-profile-handle");
+            const sidebarAvatar = document.querySelector(".sidebar-profile-avatar");
+            if (sidebarName) sidebarName.textContent = nombre;
+            if (sidebarHandle) sidebarHandle.textContent = handle;
+            if (sidebarAvatar) {
+                if (perfil.foto) sidebarAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-full object-cover">';
+                else sidebarAvatar.textContent = inicial;
             }
-            // Actualizar perfil
-            document.getElementById("profile-name-lg").textContent = nombre;
-            document.getElementById("profile-handle-lg").textContent = "@" + (perfil.email || "usuario").split("@")[0];
-            const profileAvatarLg = document.getElementById("profile-avatar-lg");
-            if (perfil.foto) {
-                profileAvatarLg.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full object-cover">';
-            } else {
-                profileAvatarLg.textContent = inicial;
+
+            // Perfil
+            const profileName = document.getElementById("profile-name-lg");
+            const profileHandle = document.getElementById("profile-handle-lg");
+            const profileAvatar = document.getElementById("profile-avatar-lg");
+            if (profileName) profileName.textContent = nombre;
+            if (profileHandle) profileHandle.textContent = handle;
+            if (profileAvatar) {
+                if (perfil.foto) profileAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full object-cover">';
+                else profileAvatar.textContent = inicial;
             }
-            // Actualizar credencial
-            document.getElementById("dash-user-name").textContent = (perfil.nombre || "").toUpperCase() + " " + (perfil.apellido || "").toUpperCase();
-            document.getElementById("dash-user-id").textContent = perfil.cedula || "V-00000000";
-            document.getElementById("dash-user-email").textContent = perfil.email || "";
-            const ubicacion = perfil.residencia === "Venezuela"
-                ? (perfil.estado || "") + (perfil.municipio ? ", " + perfil.municipio : "") + ", Venezuela"
-                : (perfil.pais || "") + ", Exterior";
-            document.getElementById("dash-user-state").textContent = ubicacion;
-            document.getElementById("dash-user-areas").textContent = (perfil.areas || []).join(", ") || "Sin áreas";
-            document.getElementById("dash-user-code").textContent = codigoDesdeUUID(perfil.id);
+
+            // Credencial
+            const dashName = document.getElementById("dash-user-name");
+            if (dashName) dashName.textContent = (perfil.nombre || "").toUpperCase() + " " + (perfil.apellido || "").toUpperCase();
+            const dashId = document.getElementById("dash-user-id");
+            if (dashId) dashId.textContent = perfil.cedula || "V-00000000";
+            const dashEmail = document.getElementById("dash-user-email");
+            if (dashEmail) dashEmail.textContent = email;
+            const dashState = document.getElementById("dash-user-state");
+            if (dashState) {
+                dashState.textContent = perfil.residencia === "Venezuela"
+                    ? (perfil.estado || "") + (perfil.municipio ? ", " + perfil.municipio : "") + ", Venezuela"
+                    : (perfil.pais || "") + ", Exterior";
+            }
+            const dashAreas = document.getElementById("dash-user-areas");
+            if (dashAreas) dashAreas.textContent = (perfil.areas || []).join(", ") || "Sin áreas";
+            const dashCode = document.getElementById("dash-user-code");
+            if (dashCode) dashCode.textContent = codigoDesdeUUID(perfil.id);
             const dashAvatar = document.getElementById("dash-user-avatar");
-            if (perfil.foto) {
-                dashAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-xl object-cover">';
-            } else {
-                dashAvatar.textContent = inicial;
+            if (dashAvatar) {
+                if (perfil.foto) dashAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-xl object-cover">';
+                else dashAvatar.textContent = inicial;
             }
+
             // Mostrar modal
             const m = document.getElementById("member-dashboard-modal");
-            m.classList.remove("hidden");
-            m.classList.add("flex");
-            lucide.createIcons();
-            // Cargar feed
+            if (m) {
+                m.classList.remove("hidden");
+                m.classList.add("flex");
+            }
+            if (typeof lucide !== "undefined") lucide.createIcons();
             setTimeout(function() { loadFeed(); }, 50);
         };
 
