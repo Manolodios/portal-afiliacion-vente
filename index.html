@@ -532,9 +532,9 @@
     </section>
 
     <!-- Dashboard: Feed + Perfil -->
-<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden">
+<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden h-screen">
     
-  <div class="flex flex-1 h-screen overflow-hidden">
+  <div class="flex h-full overflow-hidden">
 
     <!-- SIDEBAR NAV (MATCHING SCREENSHOT WITH ENHANCEMENTS) -->
     <aside class="w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 flex-shrink-0 z-20 transition-all duration-300">
@@ -1805,16 +1805,16 @@ window.renderDashboard = function(perfil) {
             }
 
             // Actualizar perfil
-            const profileName = document.getElementById("profileViewDisplayName");
-            const profileUsername = document.getElementById("profileViewUsername");
-            const profileBio = document.getElementById("profileViewBio");
-            const profileLocation = document.getElementById("profileViewLocation");
+            const profileViewDisplayName = document.getElementById("profileViewDisplayName");
+            const profileViewUsername = document.getElementById("profileViewUsername");
+            const profileViewBio = document.getElementById("profileViewBio");
+            const profileViewLocation = document.getElementById("profileViewLocation");
             const bigAvatarText = document.getElementById("bigAvatarText");
             const bigAvatarImg = document.getElementById("bigAvatarImg");
-            if (profileName) profileName.textContent = nombre;
-            if (profileUsername) profileUsername.textContent = handle;
-            if (profileBio) profileBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
-            if (profileLocation) profileLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
+            if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
+            if (profileViewUsername) profileViewUsername.textContent = handle;
+            if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
+            if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
             if (bigAvatarText) bigAvatarText.textContent = inicial;
             if (bigAvatarImg && perfil.foto) {
                 bigAvatarImg.src = perfil.foto;
@@ -1853,7 +1853,7 @@ window.renderDashboard = function(perfil) {
             }
             if (typeof lucide !== "undefined") lucide.createIcons();
             setTimeout(function() { loadFeed(); }, 50);
-        };;
+        };
 
         window.showFeedTab = function(tab) {
             const feedView = document.getElementById("feed-view");
