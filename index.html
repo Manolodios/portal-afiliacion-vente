@@ -420,759 +420,168 @@
     </section>
 
     <!-- Dashboard: Feed + Perfil -->
-<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden">
-    
-  <div class="flex flex-1 h-screen overflow-hidden">
-
-    <!-- SIDEBAR NAV (MATCHING SCREENSHOT WITH ENHANCEMENTS) -->
-    <aside class="w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 flex-shrink-0 z-20 transition-all duration-300">
-      <div class="space-y-6">
-        
-        <!-- LOGO BRAND -->
-        <div class="px-3 pt-2 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-sky-500/20">
-              V
-            </div>
+<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden bg-[#0f172a]">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between flex-shrink-0">
             <div>
-              <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                Vente <span class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">CABIMAS</span>
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <!-- USER PROFILE SIDEBAR CARD (CLICKABLE TO CUSTOMIZE) -->
-        <div id="sidebarUserCard" onclick="openProfileModal()" class="group px-3 py-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-sky-500/50 cursor-pointer transition-all duration-200 flex items-center gap-3 relative overflow-hidden" title="Haz clic para personalizar tu foto y perfil">
-          <!-- USER AVATAR CONTAINER -->
-          <div class="relative">
-            <div id="sidebarAvatarContainer" class="w-12 h-12 rounded-full overflow-hidden bg-sky-600 flex items-center justify-center ring-2 ring-sky-500/30 group-hover:ring-sky-400 transition-all">
-              <span id="sidebarAvatarText" class="text-white font-semibold text-sm">User</span>
-              <img id="sidebarAvatarImg" class="w-full h-full object-cover hidden" src="" alt="Avatar">
-            </div>
-            <div class="absolute -bottom-1 -right-1 bg-sky-500 rounded-full p-1 text-[9px] text-white shadow-md">
-              <i class="fa-solid fa-pen"></i>
-            </div>
-          </div>
-
-          <!-- USER DETAILS -->
-          <div class="flex-1 min-w-0">
-            <h2 id="sidebarDisplayName" class="font-bold text-slate-100 text-sm truncate group-hover:text-sky-400 transition-colors">
-              Yhojan Suarez
-            </h2>
-            <p id="sidebarUsername" class="text-xs text-slate-400 truncate">
-              @yhojansuarez
-            </p>
-          </div>
-        </div>
-
-        <!-- NAVIGATION MENU ITEMS -->
-        <nav class="space-y-1 text-slate-300">
-          <button onclick="switchView('feed')" id="nav-feed" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-semibold text-sm transition-colors text-sky-400 bg-sky-500/10 border-l-4 border-sky-500">
-            <i class="fa-solid fa-house text-lg w-6 text-center"></i>
-            <span>Inicio</span>
-          </button>
-
-          <button onclick="switchView('explore')" id="nav-explore" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
-            <i class="fa-solid fa-magnifying-glass text-lg w-6 text-center"></i>
-            <span>Explorar</span>
-          </button>
-
-          <button onclick="switchView('notifications')" id="nav-notifications" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200 relative">
-            <i class="fa-regular fa-bell text-lg w-6 text-center"></i>
-            <span>Notificaciones</span>
-            <span class="ml-auto text-[10px] bg-sky-500 text-white font-bold px-2 py-0.5 rounded-full">3</span>
-          </button>
-
-          <button onclick="switchView('messages')" id="nav-messages" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
-            <i class="fa-regular fa-envelope text-lg w-6 text-center"></i>
-            <span>Mensajes</span>
-          </button>
-
-          <button onclick="switchView('profile')" id="nav-profile" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
-            <i class="fa-regular fa-user text-lg w-6 text-center"></i>
-            <span>Mi Perfil</span>
-          </button>
-        </nav>
-
-      </div>
-
-      <!-- FOOTER INFO -->
-      <div class="px-3 text-xs text-slate-500 border-t border-slate-800/80 pt-4 flex justify-between items-center">
-        <span>Vente Cabimas © 2026</span>
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En línea</span>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT VIEW AREA -->
-    <main class="flex-1 overflow-y-auto bg-[#111827] relative flex flex-col">
-
-      <!-- TOP STICKY BAR -->
-      <header class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto">
-          <div>
-            <h2 id="mainHeaderTitle" class="text-xl font-extrabold text-white tracking-tight">Para ti</h2>
-            <p id="mainHeaderSub" class="text-xs text-slate-400">Publicaciones recientes en Cabimas</p>
-          </div>
-        </div>
-      </header>
-
-      <!-- FEED VIEW CONTENT -->
-      <div id="view-feed" class="p-6 max-w-3xl mx-auto w-full space-y-6">
-
-        <!-- CREATE POST BANNER -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-          <div class="flex gap-3">
-            <div id="postBoxAvatar" class="w-10 h-10 rounded-full bg-sky-600 flex-shrink-0 flex items-center justify-center font-bold text-white overflow-hidden ring-2 ring-sky-500/20">
-              <span id="postBoxAvatarText">User</span>
-              <img id="postBoxAvatarImg" class="w-full h-full object-cover hidden" src="" alt="Avatar">
-            </div>
-            <div class="flex-1">
-              
-              <div class="flex justify-between items-center pt-2 border-t border-slate-800/60 mt-2">
-                
-                
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RECENT POSTS LIST CONTAINER -->
-        <div id="postsList" class="space-y-4">
-          <!-- INITIAL EMPTY STATE OR DYNAMIC POSTS -->
-          <div id="emptyState" class="text-center py-16 px-4 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800">
-            <div class="w-16 h-16 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-500 mb-4">
-              <i class="fa-regular fa-folder-open text-2xl"></i>
-            </div>
-            <h3 class="text-slate-300 font-bold text-base mb-1">No hay publicaciones recientes.</h3>
-            <p class="text-slate-500 text-xs max-w-md mx-auto mb-4">Escribe tu primer mensaje en la caja superior o edita tu perfil para destacar en la comunidad.</p>
-            <button onclick="openProfileModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 border border-sky-500/30 rounded-xl font-semibold text-xs transition">
-              <i class="fa-solid fa-user-pen"></i> Configurar mi perfil
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- FULL USER PROFILE VIEW TAB -->
-      <div id="view-profile" class="hidden flex-1 flex flex-col">
-        <!-- PROFILE HEADER BANNER -->
-        <div id="profileBanner" class="h-48 w-full bg-gradient-to-r from-sky-900 via-indigo-950 to-slate-900 relative">
-          <button onclick="openProfileModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition border border-white/10">
-            <i class="fa-solid fa-camera"></i> Cambiar portada
-          </button>
-        </div>
-
-        <!-- PROFILE HEADER CONTENT -->
-        <div class="px-6 max-w-4xl w-full mx-auto -mt-16 pb-8 space-y-4">
-          <div class="flex justify-between items-end">
-            <!-- AVATAR BIG -->
-            <div id="bigAvatarContainer" class="w-28 h-28 rounded-full bg-sky-600 ring-4 ring-[#111827] flex items-center justify-center text-white text-2xl font-bold overflow-hidden shadow-2xl relative group">
-              <span id="bigAvatarText">User</span>
-              <img id="bigAvatarImg" class="w-full h-full object-cover hidden" src="" alt="Avatar profile">
-              <div onclick="openProfileModal()" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition">
-                <i class="fa-solid fa-camera text-white text-lg"></i>
-              </div>
-            </div>
-
-            <!-- ACTION BUTTON -->
-            <button onclick="openProfileModal()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center gap-2 text-sm">
-              <i class="fa-solid fa-pen-to-square"></i>
-              <span>Editar perfil</span>
-            </button>
-          </div>
-
-          <!-- USER TEXT INFO -->
-          <div class="space-y-2">
-            <div>
-              <h2 id="profileViewDisplayName" class="text-2xl font-extrabold text-white tracking-tight">Yhojan Suarez</h2>
-              <p id="profileViewUsername" class="text-sm text-slate-400">@yhojansuarez</p>
-            </div>
-
-            <p id="profileViewBio" class="text-slate-300 text-sm max-w-xl leading-relaxed">
-              Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
-            </p>
-
-            <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
-              <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i> Cabimas, Zulia</span>
-              <span id="profileViewLink" class="flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia Carmen Herrera</span>
-              <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Se unió en Septiembre 2026</span>
-            </div>
-
-            <!-- STATS -->
-            <div class="flex gap-6 pt-3 border-t border-slate-800 text-xs">
-              <div><strong class="text-white font-extrabold text-sm">142</strong> <span class="text-slate-400">Siguiendo</span></div>
-              <div><strong class="text-white font-extrabold text-sm">528</strong> <span class="text-slate-400">Seguidores</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta de Credencial con Blur en Perfil -->
-        <div class="px-6 max-w-4xl w-full mx-auto pb-8">
-          <div class="relative">
-            <!-- Botón revelador circular -->
-            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-2 border-white/30">
-              <i class="fa-solid fa-eye text-lg"></i>
-            </button>
-            <!-- Tarjeta con blur -->
-            <div id="credential-blur" class="relative">
-              <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none" style="filter: blur(8px);">
-                <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
-                  <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
+                <!-- Logo -->
+                <div class="p-4 border-b border-[#1e293b]">
+                    <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto">
                 </div>
-                <div class="flex justify-between items-start z-10 relative">
-                  <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto drop-shadow-md">
-                  <div class="w-6 h-4 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
+                <!-- User Card -->
+                <div class="p-4 border-b border-[#1e293b] flex items-center gap-3 cursor-pointer" onclick="showFeedTab('perfil')">
+                    <div class="w-10 h-10 rounded-full bg-sky-600 flex items-center justify-center text-white font-bold overflow-hidden" id="sidebar-avatar">
+                        <span id="sidebar-avatar-text">V</span>
+                        <img id="sidebar-avatar-img" class="w-full h-full object-cover hidden" src="" alt="">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-semibold text-white truncate" id="sidebar-name">Usuario</div>
+                        <div class="text-xs text-slate-400 truncate" id="sidebar-handle">@usuario</div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4 z-10">
-                  <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
-                    <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
-                    <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
-                    <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
-                    <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
-                  </div>
-                </div>
-                <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
-                  <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
-                </div>
-                <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
-                  <div>
-                    <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
-                    <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
-                  </div>
-                  <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
-                    <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
-                  </div>
-                </div>
-              </div>
-              <div id="blur-overlay" class="absolute inset-0 bg-slate-900/40 rounded-2xl z-20 flex items-center justify-center">
-                <p class="text-white font-bold text-lg">Toca el ojo para revelar</p>
-              </div>
-                <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
-                  <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
-                </div>
-                <div class="flex justify-between items-start z-10 relative">
-                  <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto drop-shadow-md">
-                  <div class="w-6 h-4 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
-                </div>
-                <div class="flex items-center gap-4 z-10">
-                  <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
-                    <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
-                    <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
-                    <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
-                    <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
-                  </div>
-                </div>
-                <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
-                  <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
-                </div>
-                <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
-                  <div>
-                    <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
-                    <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
-                  </div>
-                  <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
-                    <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
-                  </div>
-                </div>
-              </div>
+                <!-- Nav -->
+                <nav class="p-4 space-y-1">
+                    <button onclick="showFeedTab('inicio')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-sky-400 bg-sky-500/10 border-l-4 border-sky-500" id="nav-inicio">
+                        <i class="fa-solid fa-house text-lg w-6"></i>
+                        <span>Inicio</span>
+                    </button>
+                    <button onclick="showFeedTab('explorar')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200" id="nav-explorar">
+                        <i class="fa-solid fa-magnifying-glass text-lg w-6"></i>
+                        <span>Explorar</span>
+                    </button>
+                    <button onclick="showFeedTab('notificaciones')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200" id="nav-notificaciones">
+                        <i class="fa-regular fa-bell text-lg w-6"></i>
+                        <span>Notificaciones</span>
+                    </button>
+                    <button onclick="showFeedTab('mensajes')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200" id="nav-mensajes">
+                        <i class="fa-regular fa-envelope text-lg w-6"></i>
+                        <span>Mensajes</span>
+                    </button>
+                    <button onclick="showFeedTab('perfil')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200" id="nav-perfil">
+                        <i class="fa-regular fa-user text-lg w-6"></i>
+                        <span>Mi Perfil</span>
+                    </button>
+                </nav>
             </div>
-          </div>
-          <div class="flex gap-3 mt-4">
-            <button type="button" onclick="copyAffiliationCode()" class="flex-1 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-sm transition-colors">Compartir Credencial</button>
-            <button type="button" onclick="downloadCredential()" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-colors">Guardar PDF</button>
-          </div>
-        </div>
-      </div>
+            <div class="p-4 text-xs text-slate-500 border-t border-[#1e293b] flex justify-between items-center">
+                <span>Vente Cabimas © 2026</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En línea</span>
+            </div>
+        </aside>
 
-    
-        <!-- Logo de Vente Cabimas en el feed -->
-        <div class="px-6 max-w-4xl w-full mx-auto pb-8">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center">
-            <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-20 w-auto mb-4 drop-shadow-lg">
-            <p class="text-slate-400 text-sm text-center">Síguenos en nuestras redes para más contenido</p>
-          </div>
-        </div>
-</main>
-  </div>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-[#111827] flex flex-col">
+            <!-- Header -->
+            <header class="sticky top-0 z-10 bg-[#0f172a]/80 backdrop-blur-md border-b border-[#1e293b] px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white tracking-tight" id="header-title">Para ti</h2>
+                        <p class="text-xs text-slate-400" id="header-sub">Publicaciones recientes en Cabimas</p>
+                    </div>
+                </div>
+            </header>
 
-  <!-- MODAL DE PERSONALIZACIÓN DE PERFIL -->
-  <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl transform scale-95 transition-all duration-300 animate-pop-in flex flex-col max-h-[90vh]">
-      
-      <!-- MODAL HEADER -->
-      <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 sticky top-0 z-10">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold">
-            <i class="fa-solid fa-user-pen"></i>
-          </div>
-          <div>
-            <h3 class="font-bold text-white text-base">Personalizar Tu Perfil</h3>
-            <p class="text-xs text-slate-400">Actualiza tus datos y apariencia pública</p>
-          </div>
-        </div>
-        <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- MODAL BODY FORM -->
-      <div class="p-6 space-y-6 overflow-y-auto">
-
-        <!-- SECCIÓN DE FOTO DE PERFIL -->
-        <div class="space-y-3">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Foto de Perfil</label>
-          <div class="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
-            <!-- PREVIEW CIRCLE -->
-            <div id="modalAvatarPreviewContainer" class="w-16 h-16 rounded-full bg-sky-600 flex items-center justify-center font-bold text-white text-xl overflow-hidden ring-2 ring-sky-500/40 relative group">
-              <span id="modalAvatarText">User</span>
-              <img id="modalAvatarImg" class="w-full h-full object-cover hidden" src="" alt="Avatar preview">
+            <!-- Feed View -->
+            <div id="feed-view" class="flex-1 p-6 max-w-3xl mx-auto w-full space-y-6">
+                <div id="feed-content">
+                    <div class="text-center py-10 text-slate-500">Cargando publicaciones...</div>
+                </div>
             </div>
 
-            <!-- ACTIONS -->
-            <div class="flex-1 space-y-2">
-              <div class="flex gap-2">
-                <label class="cursor-pointer bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-md transition flex items-center gap-2">
-                  <i class="fa-solid fa-upload"></i> Subir Imagen
-                  <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
-                </label>
-                <button type="button" onclick="removeAvatarImage()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium py-2 px-3 rounded-lg border border-slate-700 transition">
-                  Quitar
-                </button>
-              </div>
-              <p class="text-[11px] text-slate-500">Formato recomendado: JPG, PNG o GIF (Máx. 2MB)</p>
+            <!-- Profile View -->
+            <div id="profile-view" class="hidden flex-1 flex flex-col">
+                <!-- Banner -->
+                <div class="h-48 w-full bg-gradient-to-r from-sky-900 via-indigo-950 to-slate-900 relative">
+                    <button onclick="openProfileModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition border border-white/10">
+                        <i class="fa-solid fa-camera"></i> Cambiar portada
+                    </button>
+                </div>
+                <!-- Profile Content -->
+                <div class="px-6 max-w-4xl w-full mx-auto -mt-16 pb-8 space-y-4">
+                    <div class="flex justify-between items-end">
+                        <div class="w-28 h-28 rounded-full bg-sky-600 ring-4 ring-[#111827] flex items-center justify-center text-white text-2xl font-bold overflow-hidden shadow-2xl relative group" id="profile-avatar-lg">
+                            <span id="profile-avatar-text">V</span>
+                            <img id="profile-avatar-img" class="w-full h-full object-cover hidden" src="" alt="">
+                            <label class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition">
+                                <i class="fa-solid fa-camera text-white text-lg"></i>
+                                <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="uploadProfilePhoto(event)">
+                            </label>
+                        </div>
+                        <button onclick="openProfileModal()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Editar perfil</span>
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-white tracking-tight" id="profile-name-lg">Usuario</h2>
+                            <p class="text-sm text-slate-400" id="profile-handle-lg">@usuario</p>
+                        </div>
+                        <p class="text-slate-300 text-sm max-w-xl leading-relaxed">Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.</p>
+                        <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i> <span id="profile-location">Cabimas, Zulia</span></span>
+                            <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Se unió en Septiembre 2026</span>
+                        </div>
+                        <div class="flex gap-6 pt-3 border-t border-slate-800 text-xs">
+                            <div><strong class="text-white font-extrabold text-sm">142</strong> <span class="text-slate-400">Siguiendo</span></div>
+                            <div><strong class="text-white font-extrabold text-sm">528</strong> <span class="text-slate-400">Seguidores</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Credential Card with Blur -->
+                    <div class="relative mt-6">
+                        <!-- Reveal Button -->
+                        <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
+                            <i class="fa-solid fa-eye text-xl"></i>
+                        </button>
+                        <!-- Card with blur -->
+                        <div id="credential-card" class="relative w-full rounded-2xl p-5 text-white shadow-2xl overflow-hidden border border-cyan-400/40 flex flex-col gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 select-none" style="filter: blur(8px);">
+                            <div class="absolute -right-8 -top-8 w-32 h-32 bg-vente-cyan/20 rounded-full blur-2xl pointer-events-none"></div>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0 overflow-hidden">
+                                <span class="text-[12rem] font-black text-white -rotate-[20deg]">V</span>
+                            </div>
+                            <div class="flex justify-between items-start z-10 relative">
+                                <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto drop-shadow-md">
+                                <div class="w-6 h-4 rounded bg-amber-400/80 border border-amber-200/50 flex items-center justify-center text-[7px] font-mono font-bold text-slate-900 shadow-sm">CHIP</div>
+                            </div>
+                            <div class="flex items-center gap-4 z-10">
+                                <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
+                                    <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                                    <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
+                                    <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
+                                    <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
+                                <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
+                            </div>
+                            <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
+                                <div>
+                                    <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                                    <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
+                                </div>
+                                <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
+                                    <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Overlay -->
+                        <div id="blur-overlay" class="absolute inset-0 bg-slate-900/40 rounded-2xl z-20 flex items-center justify-center">
+                            <p class="text-white font-bold text-lg">Toca el ojo para revelar</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button type="button" onclick="copyAffiliationCode()" class="flex-1 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-sm transition-colors">Compartir Credencial</button>
+                        <button type="button" onclick="downloadCredential()" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-colors">Guardar PDF</button>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <!-- RAPID PRESET AVATARS -->
-          <div>
-            <span class="text-xs text-slate-400 mb-2 block">O elige un avatar prediseñado:</span>
-            <div class="flex gap-2 overflow-x-auto pb-1">
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 1">
-              </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 2">
-              </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 3">
-              </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 4">
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- SECCIÓN DE NOMBRE Y USERNAME -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-1.5">
-            <label for="inputDisplayName" class="block text-xs font-semibold text-slate-300">Nombre Visible</label>
-            <input type="text" id="inputDisplayName" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition" placeholder="Ej: Yhojan Suarez">
-          </div>
-
-          <div class="space-y-1.5">
-            <label for="inputUsername" class="block text-xs font-semibold text-slate-300">Usuario (@handle)</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2.5 text-slate-500 text-xs">@</span>
-              <input type="text" id="inputUsername" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl pl-7 pr-3 py-2 text-sm text-white focus:outline-none transition" placeholder="yhojansuarez">
-            </div>
-          </div>
-        </div>
-
-        <!-- SECCIÓN DE BIOGRAFÍA -->
-        <div class="space-y-1.5">
-          <label for="inputBio" class="block text-xs font-semibold text-slate-300">Biografía</label>
-          <textarea id="inputBio" rows="3" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl p-3 text-sm text-white focus:outline-none transition resize-none" placeholder="Cuéntanos un poco sobre ti..."></textarea>
-        </div>
-
-        <!-- UBICACIÓN Y PARROQUIA -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="space-y-1.5">
-            <label for="inputLocation" class="block text-xs font-semibold text-slate-300">Ubicación</label>
-            <input type="text" id="inputLocation" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition" placeholder="Ej: Cabimas, Zulia">
-          </div>
-
-          <div class="space-y-1.5">
-            <label for="inputWebsite" class="block text-xs font-semibold text-slate-300">Parroquia</label>
-            <select id="inputWebsite" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition cursor-pointer">
-              <option value="Ambrosio">Ambrosio</option>
-              <option value="Carmen Herrera" selected>Carmen Herrera</option>
-              <option value="La Rosa">La Rosa</option>
-              <option value="San Benito">San Benito</option>
-              <option value="Jorge Hernández">Jorge Hernández</option>
-              <option value="Rómulo Betancourt">Rómulo Betancourt</option>
-              <option value="Germán Ríos Linares">Germán Ríos Linares</option>
-              <option value="Arístides Calvani">Arístides Calvani</option>
-              <option value="Punta Gorda">Punta Gorda</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- ACCENT COLOR THEME SELECTOR -->
-        <div class="space-y-2 pt-2 border-t border-slate-800">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Color de Acento del Perfil</label>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="setAccentTheme('sky')" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white/20 hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></button>
-            <button type="button" onclick="setAccentTheme('emerald')" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('purple')" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('amber')" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('rose')" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- MODAL FOOTER -->
-      <div class="px-6 py-4 border-t border-slate-800 bg-slate-900/90 flex justify-end gap-3">
-        <button onclick="closeProfileModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          Cancelar
-        </button>
-        <button onclick="saveProfileChanges()" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/25 transition flex items-center gap-2">
-          <i class="fa-solid fa-floppy-disk"></i>
-          <span>Guardar Cambios</span>
-        </button>
-      </div>
-
+        </main>
     </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="bg-slate-800 border border-sky-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-      <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm font-bold">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <div>
-        <h4 id="toastTitle" class="font-bold text-xs text-white">¡Perfil Actualizado!</h4>
-        <p id="toastBody" class="text-[11px] text-slate-300">Tus datos han sido guardados correctamente.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC ENGINE -->
-  <script>
-    const userState = {
-      displayName: "Yhojan Suarez",
-      username: "yhojansuarez",
-      bio: "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.",
-      location: "Cabimas, Zulia",
-      parroquia: "Carmen Herrera",
-      avatarUrl: "", // Empty string means default placeholder icon/initials
-      accentColor: "sky"
-    };
-
-    // SAMPLE INITIAL POSTS
-    let posts = [
-      {
-        id: 1,
-        authorName: "Vente Cabimas",
-        authorHandle: "ventecabimas",
-        authorAvatar: "",
-        content: "¡Bienvenidos a la plataforma digital renovada de Vente Cabimas! Haz clic en tu usuario en el menú lateral para personalizar tu perfil.",
-        time: "Hace 10m",
-        likes: 12
-      }
-    ];
-
-    window.addEventListener('DOMContentLoaded', () => {
-      syncUIState();
-      renderPosts();
-    });
-
-    // VIEW SWITCHER
-    function switchView(viewName) {
-      const feedView = document.getElementById('view-feed');
-      const profileView = document.getElementById('view-profile');
-      const headerTitle = document.getElementById('mainHeaderTitle');
-      const headerSub = document.getElementById('mainHeaderSub');
-
-      // Update Nav Button Styles
-      document.querySelectorAll('nav button').forEach(btn => {
-        btn.classList.remove('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500', 'font-semibold');
-        btn.classList.add('text-slate-400', 'font-medium');
-      });
-
-      const activeNav = document.getElementById(`nav-${viewName}`);
-      if (activeNav) {
-        activeNav.classList.remove('text-slate-400', 'font-medium');
-        activeNav.classList.add('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500', 'font-semibold');
-      }
-
-      if (viewName === 'feed') {
-        feedView.classList.remove('hidden');
-        profileView.classList.add('hidden');
-        headerTitle.textContent = "Para ti";
-        headerSub.textContent = "Publicaciones recientes en Cabimas";
-      } else if (viewName === 'profile') {
-        feedView.classList.add('hidden');
-        profileView.classList.remove('hidden');
-        headerTitle.textContent = "Perfil de Usuario";
-        headerSub.textContent = `@${userState.username}`;
-      } else {
-        // Placeholder for other tabs
-        feedView.classList.remove('hidden');
-        profileView.classList.add('hidden');
-        headerTitle.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
-        headerSub.textContent = "Sección en desarrollo";
-      }
-    }
-
-    // MODAL CONTROL
-    function openProfileModal() {
-      // Load current state into inputs
-      const elName = document.getElementById('inputDisplayName');
-      const elUser = document.getElementById('inputUsername');
-      const elBio = document.getElementById('inputBio');
-      const elLoc = document.getElementById('inputLocation');
-      const elWeb = document.getElementById('inputWebsite');
-
-      if (elName) elName.value = userState.displayName;
-      if (elUser) elUser.value = userState.username;
-      if (elBio) elBio.value = userState.bio;
-      if (elLoc) elLoc.value = userState.location;
-      if (elWeb) elWeb.value = userState.parroquia;
-
-      updateModalAvatarPreview(userState.avatarUrl);
-
-      const modal = document.getElementById('profileModal');
-      if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
-    }
-
-    function closeProfileModal() {
-      const modal = document.getElementById('profileModal');
-      if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-    }
-
-    function closeProfileModal() {
-      const modal = document.getElementById('profileModal');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-    }
-
-    // AVATAR FILE UPLOAD / PRESET HANDLERS
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imgUrl = e.target.result;
-          userState.tempAvatarUrl = imgUrl;
-          updateModalAvatarPreview(imgUrl);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function setPresetAvatar(url) {
-      userState.tempAvatarUrl = url;
-      updateModalAvatarPreview(url);
-    }
-
-    function removeAvatarImage() {
-      userState.tempAvatarUrl = "";
-      updateModalAvatarPreview("");
-    }
-
-    function updateModalAvatarPreview(url) {
-      const modalImg = document.getElementById('modalAvatarImg');
-      const modalText = document.getElementById('modalAvatarText');
-
-      if (url) {
-        modalImg.src = url;
-        modalImg.classList.remove('hidden');
-        modalText.classList.add('hidden');
-      } else {
-        modalImg.classList.add('hidden');
-        modalText.classList.remove('hidden');
-        modalText.textContent = getInitials(userState.displayName || "User");
-      }
-    }
-
-    // SAVE PROFILE CHANGES
-    function saveProfileChanges() {
-      const elName = document.getElementById('inputDisplayName');
-      const elUser = document.getElementById('inputUsername');
-      const elBio = document.getElementById('inputBio');
-      const elLoc = document.getElementById('inputLocation');
-      const elWeb = document.getElementById('inputWebsite');
-
-      const newName = elName ? elName.value.trim() : "";
-      const newHandle = elUser ? elUser.value.trim().replace(/^@/, '') : "";
-      const newBio = elBio ? elBio.value.trim() : "";
-      const newLoc = elLoc ? elLoc.value.trim() : "";
-      const newParroquia = elWeb ? elWeb.value : "Carmen Herrera";
-
-      userState.displayName = newName || "Usuario";
-      userState.username = newHandle || "usuario";
-      userState.bio = newBio;
-      userState.location = newLoc;
-      userState.parroquia = newParroquia || "Carmen Herrera";
-
-      if (userState.tempAvatarUrl !== undefined) {
-        userState.avatarUrl = userState.tempAvatarUrl;
-        delete userState.tempAvatarUrl;
-      }
-
-      syncUIState();
-      closeProfileModal();
-      showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
-    }
-
-    // SYNC DOM WITH STATE
-    function syncUIState() {
-      const name = userState.displayName;
-      const handle = `@${userState.username}`;
-      const initials = getInitials(name);
-
-      // Sidebar
-      document.getElementById('sidebarDisplayName').textContent = name;
-      document.getElementById('sidebarUsername').textContent = handle;
-      setAvatarElement('sidebarAvatarImg', 'sidebarAvatarText', userState.avatarUrl, initials);
-
-      // Post Box Avatar
-      setAvatarElement('postBoxAvatarImg', 'postBoxAvatarText', userState.avatarUrl, initials);
-
-      // Profile View Page
-      document.getElementById('profileViewDisplayName').textContent = name;
-      document.getElementById('profileViewUsername').textContent = handle;
-      document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
-      document.getElementById('profileViewLocation').innerHTML = `<i class="fa-solid fa-location-dot text-sky-400"></i> ${userState.location || 'Cabimas'}`;
-      document.getElementById('profileViewLink').innerHTML = `<i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia ${userState.parroquia || 'Carmen Herrera'}`;
-      setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
-    }
-
-    function setAvatarElement(imgId, textId, url, initials) {
-      const img = document.getElementById(imgId);
-      const txt = document.getElementById(textId);
-      if (img && txt) {
-        if (url) {
-          img.src = url;
-          img.classList.remove('hidden');
-          txt.classList.add('hidden');
-        } else {
-          img.classList.add('hidden');
-          txt.classList.remove('hidden');
-          txt.textContent = initials;
-        }
-      }
-    }
-
-    function getInitials(name) {
-      if (!name) return "U";
-      const parts = name.split(' ');
-      if (parts.length >= 2) {
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-      }
-      return name.substring(0, 2).toUpperCase();
-    }
-
-    // NEW POST LOGIC
-    function addNewPost() {
-      const input = document.getElementById('newPostInput');
-      const text = input.value.trim();
-
-      if (!text) return;
-
-      const newPost = {
-        id: Date.now(),
-        authorName: userState.displayName,
-        authorHandle: userState.username,
-        authorAvatar: userState.avatarUrl,
-        content: text,
-        time: "Justo ahora",
-        likes: 0
-      };
-
-      posts.unshift(newPost);
-      input.value = "";
-      renderPosts();
-      showToast("Publicación Enviada", "Tu mensaje ha sido compartido en la comunidad.");
-    }
-
-    function renderPosts() {
-      const list = document.getElementById('postsList');
-      const empty = document.getElementById('emptyState');
-
-      if (posts.length === 0) {
-        if (empty) empty.classList.remove('hidden');
-        return;
-      }
-
-      if (empty) empty.classList.add('hidden');
-
-      list.innerHTML = posts.map(post => {
-        const initials = getInitials(post.authorName);
-        const avatarHtml = post.authorAvatar
-          ? `<img src="${post.authorAvatar}" class="w-full h-full object-cover" alt="${post.authorName}">`
-          : `<span>${initials}</span>`;
-
-        return `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md transition hover:border-slate-700">
-            <div class="flex gap-3">
-              <div class="w-10 h-10 rounded-full bg-sky-600 flex-shrink-0 flex items-center justify-center font-bold text-white overflow-hidden ring-2 ring-sky-500/20">
-                ${avatarHtml}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2 truncate">
-                    <span class="font-bold text-slate-100 text-sm truncate">${post.authorName}</span>
-                    <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
-                    <span class="text-xs text-slate-600">• ${post.time}</span>
-                  </div>
-                  <button class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
-                </div>
-                <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${post.content}</p>
-                
-                <div class="flex items-center gap-6 mt-4 text-slate-500 text-xs pt-2 border-t border-slate-800/50">
-                  <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> 0</button>
-                  <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> 0</button>
-                  <button onclick="likePost(${post.id}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
-                  <button class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function likePost(id, btn) {
-      const post = posts.find(p => p.id === id);
-      if (post) {
-        post.likes++;
-        const countSpan = btn.querySelector('.like-count');
-        const icon = btn.querySelector('i');
-        if (countSpan) countSpan.textContent = post.likes;
-        btn.classList.add('text-rose-500');
-        icon.classList.remove('fa-regular');
-        icon.classList.add('fa-solid');
-      }
-    }
-
-    function setAccentTheme(color) {
-      showToast("Tema de color", `Color de acento cambiado a ${color}`);
-    }
-
-    // TOAST NOTIFICATION HELPERS
-    function showToast(title, body) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toastTitle').textContent = title;
-      document.getElementById('toastBody').textContent = body;
-
-      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-      }, 3500);
-    }
-  </script>
-
 </div>
 
     <!-- Principios -->
