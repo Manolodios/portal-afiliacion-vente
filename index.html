@@ -9,6 +9,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -43,8 +44,8 @@
             }
         };
 
-        // Feed functions
-        window.loadFeed = async function() {
+        // Feed functions (legacy: la API de fxtwitter ya no devuelve timelines; ver loadFeed definitivo más abajo)
+        window._loadFeedLegacyA = async function() {
             const container = document.getElementById("feed-content");
             if (!container) { console.warn("feed-content no encontrado"); return; }
             container.innerHTML = '<div class="text-center py-10 text-slate-500">Cargando publicaciones...</div>';
@@ -97,6 +98,69 @@
                 console.error(e);
                 container.innerHTML = '<div class="text-center py-10 text-rose-500">No se pudieron cargar las publicaciones. Intenta más tarde.</div>';
             }
+        };
+
+        // === FEED DEFINITIVO: publicaciones reales de María Corina Machado ===
+        // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
+        // timeline oficial de X responde 429 desde muchas redes, así que se muestran
+        // publicaciones fijas y cada tarjeta enlaza al post original en X.
+        const FEED_POSTS = [
+            { "id": "1976662546599018964", "text": "En nombre del pueblo de Venezuela, GRACIAS.", "date": "10 oct 2025", "time": "10:54", "replies": 5440, "reposts": 29888, "likes": 129011, "photos": ["https://pbs.twimg.com/media/G26EG_uW8AAzUrI.jpg"], "link": "https://x.com/MariaCorinaYA/status/1976662546599018964", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
+            { "id": "1976637297618571653", "text": "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n \nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", "date": "10 oct 2025", "time": "09:13", "replies": 7156, "reposts": 30384, "likes": 120786, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1976637297618571653", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
+            { "id": "1878942375718101250", "text": "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n \nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", "date": "13 ene 2025", "time": "19:09", "replies": 5284, "reposts": 24746, "likes": 85266, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878942375718101250", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
+            { "id": "1878587802893361540", "text": "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", "date": "12 ene 2025", "time": "19:40", "replies": 4353, "reposts": 13247, "likes": 74404, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878587802893361540", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
+            { "id": "1878151278557327662", "text": "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", "date": "11 ene 2025", "time": "14:45", "replies": 2566, "reposts": 15508, "likes": 66758, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878151278557327662", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
+            { "id": "1877822096182530559", "text": "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", "date": "10 ene 2025", "time": "16:57", "replies": 5040, "reposts": 22397, "likes": 102962, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1877822096182530559", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" }
+        ];
+
+        const escapeHtml = function(s) {
+            return String(s).replace(/[&<>"']/g, function(ch) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+            });
+        };
+        const fmtNumber = function(n) {
+            return Number(n || 0).toLocaleString('es-VE');
+        };
+
+        window.loadFeed = function() {
+            const container = document.getElementById("feed-content");
+            if (!container) { console.warn("feed-content no encontrado"); return; }
+
+            const cards = FEED_POSTS.map(function(p) {
+                const photos = (p.photos || []).map(function(u) {
+                    return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicación" '
+                        + 'class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
+                }).join('');
+
+                const avatar = p.avatar
+                    ? '<img src="' + p.avatar + '" alt="María Corina Machado" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ring-sky-500/30">'
+                    : '<div class="w-10 h-10 rounded-full bg-sky-600 flex items-center justify-center text-white font-bold flex-shrink-0">MC</div>';
+
+                return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">'
+                    + '<div class="flex gap-3">' + avatar
+                    + '<div class="flex-1 min-w-0">'
+                    + '<div class="flex items-start justify-between gap-2">'
+                    + '<div class="min-w-0">'
+                    + '<span class="font-bold text-slate-100 text-sm block truncate">María Corina Machado</span>'
+                    + '<span class="text-xs text-slate-500">@MariaCorinaYA · ' + p.date + ' · ' + p.time + '</span>'
+                    + '</div>'
+                    + '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X ↗</a>'
+                    + '</div>'
+                    + '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>'
+                    + photos
+                    + '<div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">'
+                    + '<span class="flex items-center gap-1.5"><i class="fa-regular fa-comment"></i> ' + fmtNumber(p.replies) + '</span>'
+                    + '<span class="flex items-center gap-1.5"><i class="fa-solid fa-arrows-rotate"></i> ' + fmtNumber(p.reposts) + '</span>'
+                    + '<span class="flex items-center gap-1.5"><i class="fa-regular fa-heart"></i> ' + fmtNumber(p.likes) + '</span>'
+                    + '</div>'
+                    + '</div></div></article>';
+            }).join('');
+
+            container.innerHTML = cards
+                + '<div class="text-center pt-2">'
+                + '<a href="https://x.com/MariaCorinaYA" target="_blank" rel="noopener" '
+                + 'class="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition">'
+                + 'Ver más publicaciones en X</a></div>';
         };
 
         window.toggleCredential = function() {
@@ -532,9 +596,9 @@
     </section>
 
     <!-- Dashboard: Feed + Perfil -->
-<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden h-screen">
+<div id="member-dashboard-modal" class="fixed inset-0 z-50 hidden overflow-hidden h-screen bg-[#111827]">
     
-  <div class="flex h-full overflow-hidden">
+  <div class="flex h-full w-full overflow-hidden">
 
     <!-- SIDEBAR NAV (MATCHING SCREENSHOT WITH ENHANCEMENTS) -->
     <aside class="w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 flex-shrink-0 z-20 transition-all duration-300">
@@ -646,6 +710,10 @@
             </div>
           </div>
         </div>
+
+        <!-- PUBLICACIONES DE LA COMUNIDAD -->
+        <div id="postsList" class="space-y-4"></div>
+        <div id="emptyState" class="hidden text-center py-6 text-slate-500 text-sm">Aún no hay publicaciones.</div>
 
         <!-- FEED CONTENT -->
         <div id="feed-content"><div class="text-center py-10 text-slate-500">Cargando publicaciones...</div></div>
@@ -1851,6 +1919,12 @@ window.renderDashboard = function(perfil) {
                 m.classList.remove("hidden");
                 m.classList.add("flex");
             }
+            // Ocultar landing/login detrás del dashboard (si no, se ven mezclados)
+            const landingHeader = document.querySelector("header");
+            const landingInicio = document.getElementById("inicio");
+            if (landingHeader) landingHeader.classList.add("hidden");
+            if (landingInicio) landingInicio.classList.add("hidden");
+            window.scrollTo(0, 0);
             if (typeof lucide !== "undefined") lucide.createIcons();
             setTimeout(function() { loadFeed(); }, 50);
         };
@@ -1868,7 +1942,8 @@ window.renderDashboard = function(perfil) {
             lucide.createIcons();
         };
 
-        window.loadFeed = async function() {
+        // (legacy: fxtwitter ya no sirve para timelines de usuario - 404)
+        window._loadFeedLegacyB = async function() {
             const container = document.getElementById("feed-content");
             if (!container) { console.warn("feed-content no encontrado"); return; }
             container.innerHTML = '<div class="feed-loading">Cargando publicaciones...</div>';
@@ -1952,6 +2027,12 @@ window.renderDashboard = function(perfil) {
             if (cerrarSesion) {
                 try { await window.SupabaseAPI.logout(); } catch (e) { /* noop */ }
                 perfilActual = null;
+                // Volver a mostrar la landing/login
+                const landingHeader = document.querySelector("header");
+                const landingInicio = document.getElementById("inicio");
+                if (landingHeader) landingHeader.classList.remove("hidden");
+                if (landingInicio) landingInicio.classList.remove("hidden");
+                window.scrollTo(0, 0);
                 showNotification("Sesión cerrada.", "info");
             }
         };
