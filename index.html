@@ -1598,6 +1598,50 @@
       }
     }
 
+    // Sube la foto al Storage y devuelve el valor a guardar en la base. Si Storage
+    // no responde, se devuelve el base64 de siempre: nunca se pierde la foto.
+    async function guardarFotoEnStorage(campo, dataUrl) {
+      if (!dataUrl) return null;
+      const api = window.SupabaseAPI;
+      if (!api || !api.subirFoto) return dataUrl;
+      try {
+        return await api.subirFoto(campo, dataUrl);
+      } catch (e) {
+        console.warn("[Vente] Storage no disponible, se guarda la foto embebida:", e.message);
+        return dataUrl;
+      }
+    }
+
+    // Si la foto sigue en base64, la mueve a Storage (sin bloquear la interfaz)
+    const fotosMigradas = new Set();
+    function migrarFotoASiStorage(perfil, campo) {
+      const api = window.SupabaseAPI;
+      const clave = (perfil && perfil.id ? perfil.id : "?") + ":" + campo;
+      if (!api || !api.subirFoto || !api.guardarPerfil) return;
+      if (fotosMigradas.has(clave)) return;
+      fotosMigradas.add(clave);
+      api.subirFoto(campo, perfil[campo])
+        .then(ruta => api.guardarPerfil({ [campo]: ruta }))
+        .then(res => { if (res && res.ok) console.info("[Vente] Foto '" + campo + "' movida a Storage."); })
+        .catch(e => { fotosMigradas.delete(clave); console.warn("[Vente] No se pudo mover la foto a Storage:", e.message); });
+    }
+
+    // Devuelve la foto que se puede mostrar: URL firmada si está en Storage,
+    // base64/URL directa si es antigua (y entonces se migra en segundo plano).
+    async function resolverFotoPerfil(perfil, campo) {
+      const valor = perfil ? perfil[campo] : "";
+      if (typeof valor !== "string" || !valor) return "";
+      const api = window.SupabaseAPI;
+      if (valor.startsWith("perfil/")) {
+        if (api && api.urlFirmada) {
+          try { return await api.urlFirmada(valor); } catch (e) { console.warn("[Vente] URL firmada falló:", e.message); }
+        }
+        return "";
+      }
+      if (valor.startsWith("data:")) migrarFotoASiStorage(perfil, campo);
+      return valor;
+    }
+
     // --- Portada en HD al mostrar ---
     // Si la foto guardada tiene menos píxeles que los que se van a mostrar, se amplía
     // en memoria con suavizado y un enfoque suave. Es solo visual: no se modifica lo
@@ -1703,7 +1747,8 @@
         onListo: async function(dataUrl) {
           aplicarPortada(dataUrl);
           if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
-          await guardarCampoPerfil({ portada: dataUrl }, "Portada actualizada.");
+          const guardado = await guardarFotoEnStorage("portada", dataUrl);
+          await guardarCampoPerfil({ portada: guardado }, "Portada actualizada.");
         }
       });
     };
@@ -1755,7 +1800,7 @@
     }
 
     // SAVE PROFILE CHANGES
-    function saveProfileChanges() {
+    async function saveProfileChanges() {
       const elName = document.getElementById('inputDisplayName');
       const elUser = document.getElementById('inputUsername');
       const elBio = document.getElementById('inputBio');
@@ -1784,7 +1829,8 @@
       syncUIState();
       if (fotoCambiada) {
         aplicarFotoPerfil(userState.avatarUrl);
-        guardarCampoPerfil({ foto: userState.avatarUrl || null }, "Foto de perfil actualizada.");
+        const guardado = await guardarFotoEnStorage("foto", userState.avatarUrl || null);
+        guardarCampoPerfil({ foto: guardado }, "Foto de perfil actualizada.");
       }
       closeProfileModal();
       showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
@@ -2217,6 +2263,39 @@
                 } catch (e) {
                     return { ok: false, error: e.message };
                 }
+            },
+
+            // ------------------------------------------------------------------
+            // Fotos en Supabase Storage (bucket privado "perfil")
+            // En la base se guarda la ruta "perfil/{uid}/portada-...jpg" en lugar
+            // del base64 completo; para mostrarla se pide una URL firmada de 24 h.
+            // ------------------------------------------------------------------
+            async subirFoto(campo, dataUrl) {
+                if (!CONFIGURADO) throw new Error("Supabase no configurado");
+                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es válida");
+                // getSession lee el navegador (sin petición a la red)
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session || !session.user) throw new Error("Sesión expirada");
+                const blob = await (await fetch(dataUrl)).blob();
+                const extension = ((blob.type || "").split("/")[1] || "jpg").replace("jpeg", "jpg");
+                const ruta = session.user.id + "/" + campo + "-" + Date.now() + "." + extension;
+                const { error } = await supabase.storage.from("perfil").upload(ruta, blob, {
+                    contentType: blob.type || "image/jpeg",
+                    upsert: true
+                });
+                if (error) throw error;
+                return "perfil/" + ruta;
+            },
+
+            // Convierte la ruta guardada en una URL firmada (si no es ruta, la devuelve tal cual)
+            async urlFirmada(valor) {
+                if (typeof valor !== "string" || !valor.startsWith("perfil/")) return valor || "";
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) return "";
+                const { data, error } = await supabase.storage.from("perfil")
+                    .createSignedUrl(valor.slice("perfil/".length), 60 * 60 * 24);
+                if (error || !data || !data.signedUrl) return "";
+                return data.signedUrl;
             }
         };
     </script>
@@ -2555,8 +2634,11 @@
         }
 
         /* ---------- Dashboard ---------- */
-window.renderDashboard = function(perfil) {
+window.renderDashboard = async function(perfil) {
             perfilActual = perfil;
+            // Las fotos pueden estar en Storage: se resuelven a URL firmada antes de pintar
+            const fotoUrl = await resolverFotoPerfil(perfil, "foto");
+            const portadaUrl = await resolverFotoPerfil(perfil, "portada");
             const nombre = (perfil.nombre || "Usuario") + " " + (perfil.apellido || "");
             const email = perfil.email || "usuario";
             const handle = "@" + email.split("@")[0];
@@ -2570,10 +2652,19 @@ window.renderDashboard = function(perfil) {
             if (sidebarName) sidebarName.textContent = nombre;
             if (sidebarUsername) sidebarUsername.textContent = handle;
             if (sidebarAvatarText) sidebarAvatarText.textContent = inicial;
-            if (sidebarAvatarImg && perfil.foto) {
-                sidebarAvatarImg.src = perfil.foto;
-                sidebarAvatarImg.classList.remove("hidden");
-                if (sidebarAvatarText) sidebarAvatarText.classList.add("hidden");
+            if (sidebarAvatarImg) {
+                if (fotoUrl) {
+                    sidebarAvatarImg.src = fotoUrl;
+                    sidebarAvatarImg.classList.remove("hidden");
+                    if (sidebarAvatarText) sidebarAvatarText.classList.add("hidden");
+                } else {
+                    // sin foto (o si la URL firmada no se pudo pedir): quedan las iniciales
+                    sidebarAvatarImg.classList.add("hidden");
+                    if (sidebarAvatarText) {
+                        sidebarAvatarText.textContent = inicial;
+                        sidebarAvatarText.classList.remove("hidden");
+                    }
+                }
             }
 
             // Actualizar perfil
@@ -2588,20 +2679,28 @@ window.renderDashboard = function(perfil) {
             if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
             if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
             if (bigAvatarText) bigAvatarText.textContent = inicial;
-            if (bigAvatarImg && perfil.foto) {
-                bigAvatarImg.src = perfil.foto;
-                bigAvatarImg.classList.remove("hidden");
-                if (bigAvatarText) bigAvatarText.classList.add("hidden");
+            if (bigAvatarImg) {
+                if (fotoUrl) {
+                    bigAvatarImg.src = fotoUrl;
+                    bigAvatarImg.classList.remove("hidden");
+                    if (bigAvatarText) bigAvatarText.classList.add("hidden");
+                } else {
+                    bigAvatarImg.classList.add("hidden");
+                    if (bigAvatarText) {
+                        bigAvatarText.textContent = inicial;
+                        bigAvatarText.classList.remove("hidden");
+                    }
+                }
             }
 
             // Portada guardada en el perfil
-            if (typeof aplicarPortada === "function") aplicarPortada(perfil.portada || "");
+            if (typeof aplicarPortada === "function") aplicarPortada(portadaUrl || "");
 
             // Sincronizar el estado local del modal con los datos reales del afiliado
             if (typeof userState !== "undefined") {
                 userState.displayName = nombre.trim();
                 userState.username = handle.replace("@", "");
-                userState.avatarUrl = perfil.foto || "";
+                userState.avatarUrl = fotoUrl || "";
             }
 
             // Actualizar credencial
@@ -2623,7 +2722,7 @@ window.renderDashboard = function(perfil) {
             if (dashCode) dashCode.textContent = codigoDesdeUUID(perfil.id);
             const dashAvatar = document.getElementById("dash-user-avatar");
             if (dashAvatar) {
-                if (perfil.foto) dashAvatar.innerHTML = '<img src="' + perfil.foto + '" class="w-full h-full rounded-xl object-cover">';
+                if (fotoUrl) dashAvatar.innerHTML = '<img src="' + fotoUrl + '" class="w-full h-full rounded-xl object-cover">';
                 else dashAvatar.textContent = inicial;
             }
 
