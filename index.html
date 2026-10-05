@@ -1677,6 +1677,9 @@
       const visible = (banner && banner.offsetWidth) ? banner.offsetWidth : (window.innerWidth || 1280);
       const objetivo = Math.max(1200, Math.round(visible * dpr));
       const img = new Image();
+      // La foto puede venir de Storage (otro dominio): sin CORS el canvas quedaría
+      // "tocado" y getImageData/toDataURL fallarían y se perdería el retoque HD.
+      img.crossOrigin = "anonymous";
       img.onerror = function() { listo(dataUrl); };
       img.onload = function() {
         if (!img.naturalWidth || img.naturalWidth >= objetivo) { listo(dataUrl); return; }
