@@ -332,6 +332,14 @@
       animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    /* ===== "Mi Perfil": barra de título ===== */
+    /* En PC (>=768px) se oculta la barra superior con "Perfil de Usuario" para que la
+       portada ocupe todo el alto (el sidebar ya muestra logo y usuario).
+       En móvil (<768px) se mantiene visible. Solo cuando la vista activa es el perfil. */
+    @media (min-width: 768px) {
+      #mainHeader.en-perfil { display: none; }
+    }
+
     /* ===== Recortador de imágenes (crop) ===== */
     .crop-area {
       position: relative;
@@ -733,7 +741,7 @@
     <main class="flex-1 overflow-y-auto bg-[#111827] relative flex flex-col">
 
       <!-- TOP STICKY BAR -->
-      <header class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
+      <header id="mainHeader" class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
           <button type="button" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú"
             class="md:hidden shrink-0 w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition">
@@ -1151,6 +1159,11 @@
         headerTitle.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
         headerSub.textContent = "Sección en desarrollo";
       }
+
+      // "Mi Perfil": en PC se oculta la barra de título para que la portada ocupe todo el alto
+      // (en móvil se mantiene, ahí sí se usa). Regla CSS en #mainHeader.en-perfil.
+      const cabecera = document.getElementById('mainHeader');
+      if (cabecera) cabecera.classList.toggle('en-perfil', viewName === 'profile');
     }
 
     // MODAL CONTROL
