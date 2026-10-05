@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vente Venezuela - Portal de Afiliación y Registro</title>
 
+    <!-- Compartir en WhatsApp / Telegram / redes -->
+    <meta name="description" content="Portal de afiliación de Vente en Cabimas: regístrate en 4 pasos, verifica tu correo y obtén tu credencial de afiliado.">
+    <meta name="theme-color" content="#030811">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Vente Cabimas">
+    <meta property="og:title" content="Vente Venezuela - Portal de Afiliación y Registro">
+    <meta property="og:description" content="Regístrate en 4 pasos, verifica tu correo y obtén tu credencial de afiliado.">
+    <meta property="og:url" content="https://manolodios.github.io/portal-afiliacion-vente/">
+    <meta property="og:image" content="https://manolodios.github.io/portal-afiliacion-vente/assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="298">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="icon" type="image/svg+xml" href="assets/logo-vente-cabimas.svg">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- lucide fijado a 1.52.0: con "latest" una actualización puede romper los iconos sin aviso -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.52.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -81,7 +93,7 @@
                         + '<span class="text-xs text-slate-500 truncate">@MariaCorinaYa</span>'
                         + '<span class="text-xs text-slate-600">· ' + timeAgo + '</span>'
                         + '</div>'
-                        + '<button class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>'
+                        + '<button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>'
                         + '</div>'
                         + '<p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">' + text + '</p>'
                         + imgHtml
@@ -89,7 +101,7 @@
                         + '<button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ' + (tw.replies || 0) + '</button>'
                         + '<button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ' + (tw.reposts || 0) + '</button>'
                         + '<button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ' + (tw.likes || 0) + '</button>'
-                        + '<button class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>'
+                        + '<button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>'
                         + '</div>'
                         + '</div>'
                         + '</div>'
@@ -516,7 +528,7 @@
                                         <div>
                                             <label for="reg-cedula" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Cédula</label>
                                             <div class="flex gap-1">
-                                                <select id="reg-tipo-id" name="tipoId" class="px-1.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan">
+                                                <select id="reg-tipo-id" name="tipoId" aria-label="Tipo de documento" class="px-1.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan">
                                                     <option value="V">V-</option>
                                                     <option value="E">E-</option>
                                                 </select>
@@ -839,7 +851,7 @@
         <div class="px-6 max-w-4xl w-full mx-auto pb-8">
           <div class="relative">
             <!-- Reveal Button -->
-            <button onclick="toggleCredential()" id="reveal-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
+            <button onclick="toggleCredential()" id="reveal-btn" aria-label="Ver credencial completa" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
               <i class="fa-solid fa-eye text-xl"></i>
             </button>
             <!-- Card with blur -->
@@ -906,7 +918,7 @@
             <p class="text-xs text-slate-400">Actualiza tus datos y apariencia pública</p>
           </div>
         </div>
-        <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
+        <button onclick="closeProfileModal()" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -943,17 +955,17 @@
           <div>
             <span class="text-xs text-slate-400 mb-2 block">O elige un avatar prediseñado:</span>
             <div class="flex gap-2 overflow-x-auto pb-1">
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 1">
+              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 1" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 2">
+              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 2" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 3">
+              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 3" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80')" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Preset 4">
+              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 4" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
               </button>
             </div>
           </div>
@@ -1033,11 +1045,11 @@
         <div class="space-y-2 pt-2 border-t border-slate-800">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Color de Acento del Perfil</label>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="setAccentTheme('sky')" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white/20 hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></button>
-            <button type="button" onclick="setAccentTheme('emerald')" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('purple')" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('amber')" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('rose')" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" onclick="setAccentTheme('sky')" aria-label="Color de acento celeste" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white/20 hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></button>
+            <button type="button" onclick="setAccentTheme('emerald')" aria-label="Color de acento verde" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" onclick="setAccentTheme('purple')" aria-label="Color de acento morado" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" onclick="setAccentTheme('amber')" aria-label="Color de acento ámbar" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" onclick="setAccentTheme('rose')" aria-label="Color de acento rosa" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition"></button>
           </div>
         </div>
 
@@ -1891,7 +1903,7 @@
                     <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
                     <span class="text-xs text-slate-600">• ${post.time}</span>
                   </div>
-                  <button class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
+                  <button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${post.content}</p>
                 
@@ -1899,7 +1911,7 @@
                   <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> 0</button>
                   <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> 0</button>
                   <button onclick="likePost(${post.id}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
-                  <button class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
+                  <button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
                 </div>
               </div>
             </div>
@@ -2052,7 +2064,7 @@
 
         <div class="flex flex-wrap items-center justify-center gap-2 px-4 pb-4">
           <button class="crop-btn" onclick="recorteZoom(-0.15)" title="Alejar"><i class="fa-solid fa-minus text-xs"></i></button>
-          <input id="cropZoom" type="range" min="0" max="100" value="50" step="1" oninput="recorteZoomSlider(this.value)" class="w-32 sm:w-44 accent-sky-500 cursor-pointer" title="Zoom">
+          <input id="cropZoom" type="range" min="0" max="100" value="50" step="1" oninput="recorteZoomSlider(this.value)" aria-label="Zoom de la imagen" class="w-32 sm:w-44 accent-sky-500 cursor-pointer" title="Zoom">
           <button class="crop-btn" onclick="recorteZoom(0.15)" title="Acercar"><i class="fa-solid fa-plus text-xs"></i></button>
           <span class="w-2"></span>
           <button class="crop-btn" onclick="recorteRotar(-90)" title="Girar a la izquierda"><i class="fa-solid fa-rotate-left text-xs"></i></button>
@@ -2742,13 +2754,40 @@ window.renderDashboard = function(perfil) {
             }
         };
 
+        // Carga una librería solo cuando se necesita (ahorra ~400 KB en la carga inicial)
+        function cargarScript(src) {
+            return new Promise(function(resolve, reject) {
+                const previo = document.querySelector('script[src="' + src + '"]');
+                if (previo) {
+                    if (previo.dataset.listo === "1") { resolve(); return; }
+                    previo.addEventListener("load", resolve);
+                    previo.addEventListener("error", reject);
+                    return;
+                }
+                const s = document.createElement("script");
+                s.src = src;
+                s.onload = function() { s.dataset.listo = "1"; resolve(); };
+                s.onerror = function() { reject(new Error("No se pudo cargar " + src)); };
+                document.head.appendChild(s);
+            });
+        }
+
         window.downloadCredential = async function() {
             const card = document.getElementById("credential-card");
-            if (!card || typeof html2canvas === "undefined") {
+            if (!card) {
                 showNotification("Función no disponible.", "warning"); return;
             }
             showNotification("Generando PDF...", "info");
             try {
+                if (typeof html2canvas === "undefined") {
+                    await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+                }
+                try {
+                    if (typeof window.jspdf === "undefined") {
+                        await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+                    }
+                } catch (e) { /* sin jsPDF se descarga igual en PNG */ }
+                if (typeof html2canvas === "undefined") { throw new Error("html2canvas no disponible"); }
                 const canvas = await html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true });
                 const imgData = canvas.toDataURL("image/png");
                 const w = canvas.width, h = canvas.height;
