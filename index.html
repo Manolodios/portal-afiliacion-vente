@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
@@ -328,6 +330,55 @@
     }
     .animate-pop-in {
       animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ===== Recortador de imágenes (crop) ===== */
+    .crop-area {
+      position: relative;
+      width: 100%;
+      height: min(340px, 48vh);
+      background: #020617;
+      touch-action: none;
+    }
+    .crop-area > img {
+      display: block;
+      max-width: 100%;
+    }
+    .crop-mask-circle {
+      position: absolute;
+      border-radius: 9999px;
+      border: 2px solid rgba(56, 189, 248, 0.95);
+      box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.62);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .cropper-view-box {
+      outline-color: rgba(56, 189, 248, 0.9);
+      outline-width: 2px;
+      outline-style: solid;
+    }
+    .cropper-face {
+      background-color: rgba(2, 6, 23, 0.08);
+    }
+    .cropper-line, .cropper-point {
+      background-color: rgba(56, 189, 248, 0.9);
+    }
+    #cropModal .crop-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      transition: all .15s ease;
+      flex-shrink: 0;
+    }
+    #cropModal .crop-btn:hover {
+      background: #334155;
+      color: #fff;
     }
   
 </style>
@@ -1109,10 +1160,19 @@
       if (!file.type.startsWith("image/")) { notificar("El archivo debe ser una imagen.", "warning"); return; }
       if (file.size > 8 * 1024 * 1024) { notificar("La imagen no puede superar 8 MB.", "warning"); return; }
 
-      comprimirImagen(file, 512, 512, 0.85, 350 * 1024).then(function(imgUrl) {
-        if (!imgUrl) { notificar("No se pudo leer la imagen.", "error"); return; }
-        userState.tempAvatarUrl = imgUrl;
-        updateModalAvatarPreview(imgUrl);
+      editarImagen(file, {
+        titulo: "Foto de perfil",
+        subtitulo: "Arrastra la imagen y usa el zoom para encajar el rostro dentro del círculo.",
+        aspecto: 1,
+        mascara: true,
+        maxW: 512,
+        maxH: 512,
+        calidad: 0.85,
+        maxBytes: 350 * 1024,
+        onListo: function(imgUrl) {
+          userState.tempAvatarUrl = imgUrl;
+          updateModalAvatarPreview(imgUrl);
+        }
       });
     }
 
@@ -1168,6 +1228,258 @@
       });
     }
 
+    // ========== RECORTADOR DE IMAGEN (CROP) ==========
+    let recortador = null;
+    let cropConfig = null;
+    let cropZoomBase = 0; // escala (ancho/natural) con la que se ancló el slider
+
+    function leerDataURL(file) {
+      return new Promise(function(resolve) {
+        const reader = new FileReader();
+        reader.onerror = function() { resolve(null); };
+        reader.onload = function(ev) { resolve(ev.target.result); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Codifica un canvas a JPEG bajando la calidad hasta respetar maxBytes
+    function codificarCanvas(canvas, calidadInicial, maxBytes) {
+      let calidad = calidadInicial;
+      let dataUrl = canvas.toDataURL("image/jpeg", calidad);
+      while (dataUrl.length > maxBytes && calidad > 0.35) {
+        calidad -= 0.15;
+        dataUrl = canvas.toDataURL("image/jpeg", calidad);
+      }
+      return dataUrl;
+    }
+
+    function recorteDisponible() {
+      return typeof Cropper !== "undefined";
+    }
+
+    // Punto de entrada: abre el recortador; si Cropper no carga, comprime directo
+    async function editarImagen(file, config) {
+      if (recorteDisponible()) {
+        const dataUrl = await leerDataURL(file);
+        if (!dataUrl) { notificar("No se pudo leer la imagen.", "error"); return; }
+        abrirRecortador(dataUrl, config);
+      } else {
+        const url = await comprimirImagen(file, config.maxW, config.maxH, config.calidad, config.maxBytes);
+        if (!url) { notificar("No se pudo leer la imagen.", "error"); return; }
+        config.onListo(url);
+      }
+    }
+
+    function actualizarMascaraRecorte() {
+      const capa = document.getElementById("cropMask");
+      const circulo = document.getElementById("cropMaskCircle");
+      if (!capa || !circulo || capa.classList.contains("hidden") || !recortador) return;
+      try {
+        const caja = recortador.getCropBoxData();
+        circulo.style.left = caja.left + "px";
+        circulo.style.top = caja.top + "px";
+        circulo.style.width = caja.width + "px";
+        circulo.style.height = caja.height + "px";
+      } catch (e) { /* aún no listo */ }
+    }
+
+    function ratioActualRecorte() {
+      try {
+        const d = recortador.getImageData();
+        return (d && d.naturalWidth) ? (d.width / d.naturalWidth) : 0;
+      } catch (e) { return 0; }
+    }
+
+    // Mantiene el slider en sincronía con el zoom real (botones, rueda, pellizco)
+    // Cropper dispara "zoom" ANTES de actualizar imageData, así que la
+    // sincronización se hace al terminar la tarea actual (con datos ya frescos)
+    let cropZoomTimer = null;
+
+    function actualizarSliderZoom() {
+      if (cropZoomTimer) clearTimeout(cropZoomTimer);
+      cropZoomTimer = setTimeout(function() {
+        cropZoomTimer = null;
+        refrescarSlider();
+      }, 0);
+    }
+
+    // Posición del slider = función pura del zoom real (sin estado acumulado,
+    // así no puede derivar): 50 en el anclaje inicial, ±25 por cada doblez
+    function refrescarSlider() {
+      const sl = document.getElementById("cropZoom");
+      if (!sl || !recortador || !cropZoomBase) return;
+      try {
+        const ratio = ratioActualRecorte();
+        if (!ratio) return;
+        const log = Math.log(ratio / cropZoomBase) / Math.LN2;
+        sl.value = String(Math.round(Math.max(0, Math.min(100, 50 + 25 * log))));
+      } catch (e) { /* ignorar */ }
+    }
+
+    // Aplica ya la actualización pendiente (Cropper dispara "zoom" antes de
+    // actualizar imageData, así que al terminar la tarea los datos ya están frescos)
+    function vaciarPendienteZoom() {
+      if (cropZoomTimer) {
+        clearTimeout(cropZoomTimer);
+        cropZoomTimer = null;
+        refrescarSlider();
+      }
+    }
+
+    window.abrirRecortador = function(dataUrl, config) {
+      if (!recorteDisponible() || !dataUrl || !config) {
+        if (config && typeof config.onListo === "function") config.onListo(dataUrl);
+        return;
+      }
+      const modal = document.getElementById("cropModal");
+      const img = document.getElementById("cropImage");
+      const titulo = document.getElementById("cropTitulo");
+      const sub = document.getElementById("cropSubtitulo");
+      const mascara = document.getElementById("cropMask");
+      const zoom = document.getElementById("cropZoom");
+      if (!modal || !img) return;
+
+      cropConfig = config;
+      cropZoomBase = 0; // se ancla cuando Cropper esté "ready"
+      if (titulo) titulo.textContent = config.titulo || "Ajustar imagen";
+      if (sub) sub.textContent = config.subtitulo || "Arrastra la imagen para posicionarla dentro del marco.";
+      if (mascara) mascara.classList.toggle("hidden", !config.mascara);
+      if (zoom) zoom.value = 50;
+      if (recortador) { try { recortador.destroy(); } catch (e) {} recortador = null; }
+
+      modal.classList.remove("opacity-0", "pointer-events-none");
+
+      function iniciar() {
+        if (recortador || cropConfig !== config) return; // ya abierto o cancelado
+        try {
+          recortador = new Cropper(img, {
+            viewMode: 1,
+            dragMode: "move",
+            aspectRatio: (config.aspecto && !isNaN(config.aspecto)) ? config.aspecto : NaN,
+            autoCropArea: 1,
+            responsive: true,
+            restore: false,
+            background: false,
+            guides: true,
+            highlight: false,
+            movable: true,
+            zoomable: true,
+            rotatable: true,
+            scalable: false,
+            ready: function() {
+              cropZoomBase = ratioActualRecorte(); // ancla del slider = zoom inicial
+              const sl = document.getElementById("cropZoom");
+              if (sl) sl.value = "50";
+              refrescarSlider();
+              actualizarMascaraRecorte();
+            },
+            crop: actualizarMascaraRecorte
+          });
+          // el slider se sincroniza con el zoom real (rueda, pellizco, botones)
+          img.removeEventListener("zoom", actualizarSliderZoom);
+          img.addEventListener("zoom", actualizarSliderZoom);
+        } catch (e) {
+          console.error("Error iniciando recortador:", e);
+        }
+      }
+
+      img.onload = iniciar;
+      img.removeAttribute("src");
+      img.src = dataUrl;
+      // red de seguridad por si el navegador no dispara "load"
+      setTimeout(iniciar, 500);
+    };
+
+    window.aplicarRecorte = function() {
+      const config = cropConfig;
+      if (!recortador || !config) { cerrarRecortador(); return; }
+      try {
+        const cortado = recortador.getCroppedCanvas({
+          maxWidth: config.maxW,
+          maxHeight: config.maxH,
+          imageSmoothingEnabled: true,
+          imageSmoothingQuality: "high"
+        });
+        if (!cortado || !cortado.width) { notificar("No se pudo recortar la imagen.", "error"); return; }
+
+        // fondo sólido: evita bordes negros si el original tiene transparencia
+        const fin = document.createElement("canvas");
+        fin.width = cortado.width;
+        fin.height = cortado.height;
+        const ctx = fin.getContext("2d");
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, fin.width, fin.height);
+        ctx.drawImage(cortado, 0, 0);
+
+        const url = codificarCanvas(fin, config.calidad, config.maxBytes);
+        cerrarRecortador();
+        if (typeof config.onListo === "function") config.onListo(url);
+      } catch (e) {
+        console.error(e);
+        notificar("No se pudo recortar la imagen.", "error");
+      }
+    };
+
+    function cerrarRecortador() {
+      const modal = document.getElementById("cropModal");
+      if (modal) modal.classList.add("opacity-0", "pointer-events-none");
+      if (recortador) { try { recortador.destroy(); } catch (e) {} recortador = null; }
+      cropConfig = null;
+    }
+    window.cancelarRecorte = cerrarRecortador;
+
+    window.recorteZoom = function(delta) {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      const actual = ratioActualRecorte();
+      if (actual > 0) recortador.zoomTo(actual * (1 + delta)); // paso proporcional exacto
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    window.recorteZoomSlider = function(valor) {
+      if (!recortador || !cropZoomBase) return;
+      try {
+        vaciarPendienteZoom();
+        const v = Math.max(0, Math.min(100, Number(valor)));
+        const objetivo = cropZoomBase * Math.pow(2, (v - 50) / 25);
+        if (objetivo > 0) recortador.zoomTo(objetivo); // escala absoluta, sin deriva
+        refrescarSlider(); // refleja el zoom real (Cropper lo limita si no cabe)
+        actualizarMascaraRecorte();
+      } catch (e) { /* ignorar */ }
+    };
+
+    window.recorteRotar = function(grados) {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      const sl = document.getElementById("cropZoom");
+      const vAntes = (sl && !isNaN(Number(sl.value))) ? Number(sl.value) : 50;
+      recortador.rotate(grados);
+      // reanclaje para que la girar no mueva el valor mostrado
+      const r = ratioActualRecorte();
+      if (r) cropZoomBase = r * Math.pow(2, (50 - vAntes) / 25);
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    window.recorteReset = function() {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      recortador.reset();
+      cropZoomBase = ratioActualRecorte(); // nuevo ancla en el estado inicial
+      const sl = document.getElementById("cropZoom");
+      if (sl) sl.value = "50";
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    // Esc cierra el recortador sin aplicar
+    document.addEventListener("keydown", function(e) {
+      if (e.key !== "Escape") return;
+      const modal = document.getElementById("cropModal");
+      if (modal && !modal.classList.contains("opacity-0")) cerrarRecortador();
+    });
+
     // Guarda el campo en Supabase y avisa el resultado
     async function guardarCampoPerfil(campos, msgOk) {
       try {
@@ -1204,12 +1516,29 @@
       if (!file.type.startsWith("image/")) { notificar("El archivo debe ser una imagen.", "warning"); return; }
       if (file.size > 8 * 1024 * 1024) { notificar("La imagen no puede superar 8 MB.", "warning"); return; }
 
-      const dataUrl = await comprimirImagen(file, 1600, 500, 0.72, 420 * 1024);
-      if (!dataUrl) { notificar("No se pudo leer la imagen.", "error"); return; }
+      // Proporción real del banner: lo que veas en el recorte es lo que se mostrará
+      const banner = document.getElementById("profileBanner");
+      const aspecto = (banner && banner.offsetWidth && banner.offsetHeight)
+        ? banner.offsetWidth / banner.offsetHeight
+        : NaN;
 
-      aplicarPortada(dataUrl);
-      if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
-      await guardarCampoPerfil({ portada: dataUrl }, "Portada actualizada.");
+      editarImagen(file, {
+        titulo: "Foto de portada",
+        subtitulo: isNaN(aspecto)
+          ? "Arrastra la imagen y usa el zoom para encajarla como quieras."
+          : "Arrastra la imagen para encajarla en la cabecera de tu perfil (se recorta a la proporción del banner).",
+        aspecto: aspecto,
+        mascara: false,
+        maxW: 1600,
+        maxH: 500,
+        calidad: 0.72,
+        maxBytes: 420 * 1024,
+        onListo: async function(dataUrl) {
+          aplicarPortada(dataUrl);
+          if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
+          await guardarCampoPerfil({ portada: dataUrl }, "Portada actualizada.");
+        }
+      });
     };
 
     // Quita la portada y vuelve al degradado por defecto
@@ -1527,6 +1856,53 @@
                 Entendido
             </button>
         </div>
+    </div>
+
+    <!-- MODAL RECORTAR IMAGEN (CROP) -->
+    <div id="cropModal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+      <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-pop-in max-h-[92vh] flex flex-col">
+
+        <div class="flex items-start justify-between gap-4 px-5 pt-5 pb-3">
+          <div>
+            <h3 id="cropTitulo" class="text-white font-bold text-sm">Ajustar imagen</h3>
+            <p id="cropSubtitulo" class="text-slate-400 text-xs mt-1 leading-relaxed">Arrastra la imagen para posicionarla dentro del marco.</p>
+          </div>
+          <button onclick="cancelarRecorte()" aria-label="Cerrar" class="text-slate-400 hover:text-white transition p-1 shrink-0">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="px-4 pb-3 overflow-y-auto">
+          <div class="relative rounded-2xl overflow-hidden border border-slate-800">
+            <div class="crop-area" id="cropArea">
+              <img id="cropImage" alt="Imagen a recortar">
+            </div>
+            <div id="cropMask" class="hidden absolute inset-0 pointer-events-none overflow-hidden">
+              <div class="crop-mask-circle" id="cropMaskCircle"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-2 px-4 pb-4">
+          <button class="crop-btn" onclick="recorteZoom(-0.15)" title="Alejar"><i class="fa-solid fa-minus text-xs"></i></button>
+          <input id="cropZoom" type="range" min="0" max="100" value="50" step="1" oninput="recorteZoomSlider(this.value)" class="w-32 sm:w-44 accent-sky-500 cursor-pointer" title="Zoom">
+          <button class="crop-btn" onclick="recorteZoom(0.15)" title="Acercar"><i class="fa-solid fa-plus text-xs"></i></button>
+          <span class="w-2"></span>
+          <button class="crop-btn" onclick="recorteRotar(-90)" title="Girar a la izquierda"><i class="fa-solid fa-rotate-left text-xs"></i></button>
+          <button class="crop-btn" onclick="recorteRotar(90)" title="Girar a la derecha"><i class="fa-solid fa-rotate-right text-xs"></i></button>
+          <button class="crop-btn" onclick="recorteReset()" title="Restablecer"><i class="fa-solid fa-arrows-rotate text-xs"></i></button>
+        </div>
+
+        <div class="flex justify-end gap-2 px-5 py-4 border-t border-slate-800 bg-slate-900/70">
+          <button onclick="cancelarRecorte()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+            Cancelar
+          </button>
+          <button onclick="aplicarRecorte()" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/25 transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i> Usar imagen
+          </button>
+        </div>
+
+      </div>
     </div>
 
     <div id="toast-container" class="fixed bottom-4 right-4 left-4 sm:left-auto z-[60] flex flex-col gap-2 pointer-events-none"></div>
