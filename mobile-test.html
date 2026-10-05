@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prueba responsive 9:16</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;padding:12px}
+  .barra{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer}
+  button.on{background:#0ea5e9;border-color:#0ea5e9;color:#fff;font-weight:700}
+  #marco{border:1px solid #334155;background:#000;display:block}
+  #diag{font-size:12px;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;background:#020617;border:1px solid #334155;padding:10px;border-radius:8px;margin-top:10px;max-height:46vh;overflow:auto;line-height:1.5}
+  .ok{color:#4ade80}.mal{color:#f87171}.av{color:#facc15}
+</style>
+</head>
+<body>
+<div class="barra">
+  <button data-w="360" data-h="640" class="on">360×640 (9:16)</button>
+  <button data-w="390" data-h="844">390×844</button>
+  <button data-w="412" data-h="915">412×915</button>
+  <button data-w="768" data-h="1024">768×1024</button>
+  <button id="btnDiag">Medir</button>
+  <button id="btnLarga">Alto auto (página completa)</button>
+</div>
+<iframe id="marco" src="index.html" width="360" height="640"></iframe>
+<pre id="diag">Pulsa «Medir»…</pre>
+<script>
+const marco = document.getElementById('marco');
+let altoAuto = false;
+
+document.querySelectorAll('.barra button[data-w]').forEach(b => b.onclick = () => {
+  marco.width = b.dataset.w;
+  marco.height = altoAuto ? '480' : b.dataset.h;
+  document.querySelectorAll('.barra button[data-w]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  setTimeout(medir, 1200);
+});
+document.getElementById('btnDiag').onclick = () => medir();
+document.getElementById('btnLarga').onclick = (e) => {
+  altoAuto = !altoAuto;
+  e.target.classList.toggle('on', altoAuto);
+  if (altoAuto) {
+    const d = marco.contentDocument;
+    marco.height = Math.min(4000, (d ? d.documentElement.scrollHeight : 900));
+  } else {
+    marco.height = document.querySelector('.barra button.on').dataset.h;
+  }
+  setTimeout(medir, 600);
+};
+
+function ruta(el) {
+  let s = el.tagName.toLowerCase();
+  if (el.id) s += '#' + el.id;
+  else if (el.className && typeof el.className === 'string')
+    s += '.' + el.className.trim().split(/\s+/).slice(0, 3).join('.');
+  return s;
+}
+
+function medir() {
+  try {
+    const w = marco.contentWindow, d = marco.contentDocument;
+    if (!d || !d.body) { document.getElementById('diag').textContent = 'iframe no cargado todavía'; return; }
+    const iw = w.innerWidth, ih = w.innerHeight;
+    const out = [];
+    const ratio = iw / ih;
+    out.push(`Viewport: ${iw}×${ih}  ratio=${ratio.toFixed(4)}  (9:16 = 0.5625)  ${Math.abs(ratio - 0.5625) < 0.01 ? 'OK 9:16' : ''}`);
+    out.push(`UA: ${navigator.userAgent.includes('Mobile') ? 'móvil' : 'desktop'} | dpr=${w.devicePixelRatio}`);
+    out.push('');
+
+    const de = d.documentElement;
+    const overflowX = de.scrollWidth - de.clientWidth;
+    out.push(`Scroll horizontal: scrollWidth=${de.scrollWidth} clientWidth=${de.clientWidth} → ${overflowX > 1 ? `DEBORDA +${overflowX}px` : 'sin desbordamiento'}`);
+    out.push(`Scroll vertical: scrollHeight=${de.scrollHeight}`);
+    out.push('');
+
+    // Elementos que se salen del viewport
+    const malos = [];
+    for (const el of d.querySelectorAll('body *')) {
+      if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'LINK' || el.tagName === 'IFRAME') continue;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      const cs = w.getComputedStyle(el);
+      if (cs.visibility === 'hidden' || cs.display === 'none' || cs.opacity === '0') continue;
+      const exIzq = Math.round(-r.left), exDer = Math.round(r.right - iw);
+      if (exIzq > 2 || exDer > 2) {
+        malos.push({ el: ruta(el), izq: r.left, der: r.right, w: Math.round(r.width),
+          exceso: Math.max(exIzq, exDer), pos: cs.position, txt: (el.textContent || '').trim().slice(0, 35) });
+      }
+    }
+    malos.sort((a, b) => b.exceso - a.exceso);
+    out.push(`Elementos fuera del viewport: ${malos.length}`);
+    malos.slice(0, 20).forEach(m => out.push(`  +${m.exceso}px  ${m.el}  [left=${Math.round(m.izq)} right=${Math.round(m.der)} w=${m.w} pos=${m.pos}] "${m.txt}"`));
+    out.push('');
+
+    // Textos diminutos
+    const minis = [];
+    for (const el of d.querySelectorAll('body *')) {
+      if (el.children.length) continue;
+      const t = (el.textContent || '').trim();
+      if (!t) continue;
+      const fs = parseFloat(w.getComputedStyle(el).fontSize);
+      if (fs && fs < 11) minis.push(`${ruta(el)} ${fs}px "${t.slice(0, 28)}"`);
+    }
+    out.push(`Textos < 11px: ${minis.length}`);
+    minis.slice(0, 8).forEach(m => out.push('  ' + m));
+    out.push('');
+
+    // Estados de las secciones principales
+    const ids = ['landing', 'inicio', 'perfil', 'feed', 'profileModal', 'cropModal', 'dashboardModal',
+                 'sidebar', 'header', 'profileBanner', 'member-dashboard-modal'];
+    out.push('Secciones:');
+    ids.forEach(id => {
+      const el = d.getElementById(id);
+      if (!el) return;
+      const cs = w.getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      const visible = cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0;
+      out.push(`  ${visible ? 'VISIBLE' : 'oculto '} ${id} ${visible ? `(${Math.round(r.width)}×${Math.round(r.height)} @${Math.round(r.top)})` : ''}`);
+    });
+
+    // Imágenes deformadas
+    const defs = [];
+    for (const img of d.querySelectorAll('img')) {
+      const r = img.getBoundingClientRect();
+      if (!r.width || !img.naturalWidth) continue;
+      const natR = img.naturalWidth / img.naturalHeight, dispR = r.width / r.height;
+      if (Math.abs(natR - dispR) / natR > 0.12 && cs0(d, img) === 'fill') {
+        defs.push(`${ruta(img)} natural=${natR.toFixed(2)} display=${dispR.toFixed(2)}`);
+      }
+    }
+    function cs0(doc, el) { return doc.defaultView.getComputedStyle(el).objectFit || 'fill'; }
+    out.push(`Imágenes deformadas (object-fit=fill): ${defs.length}`);
+    defs.slice(0, 6).forEach(x => out.push('  ' + x));
+
+    document.getElementById('diag').innerHTML = out.join('\n')
+      .replace(/DEBORDA/g, '<span class="mal">DEBORDA</span>')
+      .replace(/sin desbordamiento/g, '<span class="ok">sin desbordamiento</span>');
+  } catch (e) {
+    document.getElementById('diag').textContent = 'ERROR: ' + e.message;
+  }
+}
+marco.addEventListener('load', () => setTimeout(medir, 1500));
+</script>
+</body>
+</html>

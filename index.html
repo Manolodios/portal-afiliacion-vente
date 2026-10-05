@@ -652,7 +652,8 @@
   <div class="flex h-full w-full overflow-hidden">
 
     <!-- SIDEBAR NAV (MATCHING SCREENSHOT WITH ENHANCEMENTS) -->
-    <aside class="w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 flex-shrink-0 z-20 transition-all duration-300">
+    <!-- Móvil: cajón deslizante fuera de pantalla (fixed) · md+: lateral fijo (static) -->
+    <aside id="appSidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 md:flex-shrink-0 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-out shadow-2xl md:shadow-none">
       <div class="space-y-6">
         
         <!-- LOGO BRAND -->
@@ -725,14 +726,23 @@
       </div>
     </aside>
 
+    <!-- FONDO DEL CAJÓN MÓVIL (solo se muestra con el menú abierto) -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-sm"></div>
+
     <!-- MAIN CONTENT VIEW AREA -->
     <main class="flex-1 overflow-y-auto bg-[#111827] relative flex flex-col">
 
       <!-- TOP STICKY BAR -->
-      <header class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-6 py-4 flex items-center justify-between">
-        <div>
-          <div class="flex items-center gap-3"><img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-8 w-auto"><h2 id="mainHeaderTitle" class="text-xl font-extrabold text-white tracking-tight">Para ti</h2></div>
-          <p id="mainHeaderSub" class="text-xs text-slate-400">Publicaciones recientes en Cabimas</p>
+      <header class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button type="button" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú"
+            class="md:hidden shrink-0 w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="min-w-0">
+            <div class="flex items-center gap-3 min-w-0"><img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="hidden md:block h-8 w-auto"><h2 id="mainHeaderTitle" class="text-lg md:text-xl font-extrabold text-white tracking-tight truncate">Para ti</h2></div>
+            <p id="mainHeaderSub" class="text-xs text-slate-400 truncate">Publicaciones recientes en Cabimas</p>
+          </div>
         </div>
       </header>
 
@@ -1082,8 +1092,31 @@
       renderPosts();
     });
 
+    // CAJÓN DE NAVEGACIÓN EN MÓVIL (en md+ el sidebar es lateral fijo)
+    function toggleSidebar(forzar) {
+      const aside = document.getElementById('appSidebar');
+      const fondo = document.getElementById('sidebarBackdrop');
+      if (!aside) return;
+      const esMovil = window.innerWidth < 768;
+      const abierto = (typeof forzar === 'boolean')
+        ? forzar
+        : !aside.classList.contains('translate-x-0');
+      const ver = abierto && esMovil;
+      aside.classList.toggle('translate-x-0', ver);
+      aside.classList.toggle('-translate-x-full', !ver);
+      if (fondo) fondo.classList.toggle('hidden', !ver);
+      document.body.style.overflow = ver ? 'hidden' : '';
+    }
+    window.toggleSidebar = toggleSidebar;
+
+    // Al pasar a pantalla ancha el cajón queda cerrado (el sidebar siempre visible)
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 768) toggleSidebar(false);
+    });
+
     // VIEW SWITCHER
     function switchView(viewName) {
+      toggleSidebar(false); // al elegir una opción en móvil se cierra el menú
       const feedView = document.getElementById('view-feed');
       const profileView = document.getElementById('view-profile');
       const headerTitle = document.getElementById('mainHeaderTitle');
@@ -2616,29 +2649,12 @@ window.renderDashboard = function(perfil) {
             if (icon) icon.classList.toggle("rotate-180");
         };
 
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#f0f7ff',
-              100: '#e0effe',
-              500: '#0088ff',
-              600: '#0066cc',
-              700: '#004ebd',
-              sidebar: '#08101e',
-              card: '#0f172a',
-              bg: '#111827',
-              border: '#1e293b'
-            }
-          }
-        }
-      }
-    }
+    // IMPORTANTE: aquí existía una SEGUNDA asignación de tailwind.config (darkMode + colores
+    // "brand") que pisaba la del <head> y obligaba a Tailwind a regenerar el CSS SIN los colores
+    // "vente" (bg-vente-cyan, from-vente-cyan, text-vente-accent...). Resultado: botones con fondo
+    // transparente y texto negro, barra de progreso sin color y el título "Libertad" invisible
+    // (texto transparente con background-clip:text y sin degradado). No volver a añadir aquí otra
+    // asignación: la config válida es la del inicio de este archivo.
   
     </script>
 </body>
