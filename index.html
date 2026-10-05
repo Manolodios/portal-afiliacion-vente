@@ -20,7 +20,6 @@
 
     <link rel="icon" type="image/svg+xml" href="assets/logo-vente-cabimas.svg">
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- lucide fijado a 1.52.0: con "latest" una actualización puede romper los iconos sin aviso -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.52.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -29,20 +28,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        vente: {
-                            cyan: '#00A8E8', hover: '#0090C8', navy: '#0A192F',
-                            dark: '#030811', light: '#F4F9FC', accent: '#00E5FF'
-                        }
-                    }
-                }
-            }
-        }
-
         window.toggleCredential = function() {
             const card = document.getElementById("credential-card");
             const overlay = document.getElementById("blur-overlay");
@@ -85,7 +70,7 @@
                     const timeAgo = tw.created_at || "";
                     html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md transition hover:border-slate-700">'
                         + '<div class="flex gap-3">'
-                        + '<img src="https://unavatar.io/twitter/MariaCorinaYa" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="avatar">'
+                        + '<img src="assets/avatar-marcorina.jpg" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="avatar">'
                         + '<div class="flex-1 min-w-0">'
                         + '<div class="flex items-center justify-between">'
                         + '<div class="flex items-center gap-2 truncate">'
@@ -119,12 +104,12 @@
         // timeline oficial de X responde 429 desde muchas redes, así que se muestran
         // publicaciones fijas y cada tarjeta enlaza al post original en X.
         const FEED_POSTS = [
-            { "id": "1976662546599018964", "text": "En nombre del pueblo de Venezuela, GRACIAS.", "date": "10 oct 2025", "time": "10:54", "replies": 5440, "reposts": 29888, "likes": 129011, "photos": ["https://pbs.twimg.com/media/G26EG_uW8AAzUrI.jpg"], "link": "https://x.com/MariaCorinaYA/status/1976662546599018964", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
-            { "id": "1976637297618571653", "text": "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n \nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", "date": "10 oct 2025", "time": "09:13", "replies": 7156, "reposts": 30384, "likes": 120786, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1976637297618571653", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
-            { "id": "1878942375718101250", "text": "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n \nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", "date": "13 ene 2025", "time": "19:09", "replies": 5284, "reposts": 24746, "likes": 85266, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878942375718101250", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
-            { "id": "1878587802893361540", "text": "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", "date": "12 ene 2025", "time": "19:40", "replies": 4353, "reposts": 13247, "likes": 74404, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878587802893361540", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
-            { "id": "1878151278557327662", "text": "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", "date": "11 ene 2025", "time": "14:45", "replies": 2566, "reposts": 15508, "likes": 66758, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878151278557327662", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" },
-            { "id": "1877822096182530559", "text": "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", "date": "10 ene 2025", "time": "16:57", "replies": 5040, "reposts": 22397, "likes": 102962, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1877822096182530559", "avatar": "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea_normal.jpg" }
+            { "id": "1976662546599018964", "text": "En nombre del pueblo de Venezuela, GRACIAS.", "date": "10 oct 2025", "time": "10:54", "replies": 5440, "reposts": 29888, "likes": 129011, "photos": ["assets/publicacion-marcorina.jpg"], "link": "https://x.com/MariaCorinaYA/status/1976662546599018964", "avatar": "assets/avatar-marcorina.jpg" },
+            { "id": "1976637297618571653", "text": "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n \nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", "date": "10 oct 2025", "time": "09:13", "replies": 7156, "reposts": 30384, "likes": 120786, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1976637297618571653", "avatar": "assets/avatar-marcorina.jpg" },
+            { "id": "1878942375718101250", "text": "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n \nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", "date": "13 ene 2025", "time": "19:09", "replies": 5284, "reposts": 24746, "likes": 85266, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878942375718101250", "avatar": "assets/avatar-marcorina.jpg" },
+            { "id": "1878587802893361540", "text": "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", "date": "12 ene 2025", "time": "19:40", "replies": 4353, "reposts": 13247, "likes": 74404, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878587802893361540", "avatar": "assets/avatar-marcorina.jpg" },
+            { "id": "1878151278557327662", "text": "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", "date": "11 ene 2025", "time": "14:45", "replies": 2566, "reposts": 15508, "likes": 66758, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878151278557327662", "avatar": "assets/avatar-marcorina.jpg" },
+            { "id": "1877822096182530559", "text": "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", "date": "10 ene 2025", "time": "16:57", "replies": 5040, "reposts": 22397, "likes": 102962, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1877822096182530559", "avatar": "assets/avatar-marcorina.jpg" }
         ];
 
         const escapeHtml = function(s) {
@@ -402,6 +387,9 @@
     }
   
 </style>
+    <!-- Tailwind compilado (reemplaza al Play CDN). Regenerar con:
+         npx tailwindcss -c tailwind.config.js -i tailwind.src.css -o assets/tailwind.css -->
+    <link rel="stylesheet" href="assets/tailwind.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
@@ -955,17 +943,17 @@
           <div>
             <span class="text-xs text-slate-400 mb-2 block">O elige un avatar prediseñado:</span>
             <div class="flex gap-2 overflow-x-auto pb-1">
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 1" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
+              <button onclick="setPresetAvatar('assets/avatar-preset-1.jpg')" aria-label="Usar foto de perfil 1" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="assets/avatar-preset-1.jpg" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 2" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
+              <button onclick="setPresetAvatar('assets/avatar-preset-2.jpg')" aria-label="Usar foto de perfil 2" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="assets/avatar-preset-2.jpg" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 3" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
+              <button onclick="setPresetAvatar('assets/avatar-preset-3.jpg')" aria-label="Usar foto de perfil 3" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="assets/avatar-preset-3.jpg" class="w-full h-full object-cover" alt="">
               </button>
-              <button onclick="setPresetAvatar('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80')" aria-label="Usar foto de perfil 4" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="">
+              <button onclick="setPresetAvatar('assets/avatar-preset-4.jpg')" aria-label="Usar foto de perfil 4" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
+                <img src="assets/avatar-preset-4.jpg" class="w-full h-full object-cover" alt="">
               </button>
             </div>
           </div>
@@ -2111,15 +2099,19 @@
         let supabase = null;
 
         if (CONFIGURADO) {
+            // La sesión se guarda en este navegador (persistSession está activo por
+            // defecto): no hace falta volver a iniciar sesión en cada visita.
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // NO restaurar sesión automáticamente: el usuario debe iniciar sesión siempre
-        // supabase.auth.getSession().then(async ({ data: { session } }) => {
-        //     if (session?.user) {
-        //         const perfil = await cargarPerfil(session.user.id);
-        //         if (perfil) window.renderDashboard(perfil);
-        //     }
-        // });
+            // Si ya había sesión, se restaura y se abre el panel directamente
+            supabase.auth.getSession().then(async ({ data: { session } }) => {
+                if (session?.user) {
+                    const perfil = await cargarPerfil(session.user.id);
+                    if (perfil && typeof window.renderDashboard === "function") {
+                        window.renderDashboard(perfil);
+                    }
+                }
+            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesión:", e));
 
             // Escuchar logout / expiración de sesión
             supabase.auth.onAuthStateChange((event) => {
@@ -2692,7 +2684,7 @@ window.renderDashboard = function(perfil) {
                     html += '<article class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors p-4 cursor-pointer">'
                         + '<div class="flex justify-between items-start">'
                         + '<div class="flex gap-3">'
-                        + '<img src="https://unavatar.io/twitter/MariaCorinaYa" class="w-12 h-12 rounded-full object-cover" alt="avatar">'
+                        + '<img src="assets/avatar-marcorina.jpg" class="w-12 h-12 rounded-full object-cover" alt="avatar">'
                         + '<div>'
                         + '<div class="flex flex-wrap items-center gap-x-1 gap-y-0.5 pr-6">'
                         + '<span class="font-bold text-gray-900 text-[15px]">María Corina</span>'
