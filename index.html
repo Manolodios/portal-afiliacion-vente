@@ -1262,8 +1262,9 @@
 
             let calidad = calidadInicial;
             let dataUrl = canvas.toDataURL("image/jpeg", calidad);
-            while (dataUrl.length > maxBytes && calidad > 0.35) {
-              calidad -= 0.15;
+            // piso en 0.5 y pasos de 0.1: nunca degrada hasta "bloques" visibles
+            while (dataUrl.length > maxBytes && calidad > 0.5) {
+              calidad -= 0.1;
               dataUrl = canvas.toDataURL("image/jpeg", calidad);
             }
             resolve(dataUrl);
@@ -1292,8 +1293,9 @@
     function codificarCanvas(canvas, calidadInicial, maxBytes) {
       let calidad = calidadInicial;
       let dataUrl = canvas.toDataURL("image/jpeg", calidad);
-      while (dataUrl.length > maxBytes && calidad > 0.35) {
-        calidad -= 0.15;
+      // piso en 0.5 y pasos de 0.1: nunca degrada hasta "bloques" visibles
+      while (dataUrl.length > maxBytes && calidad > 0.5) {
+        calidad -= 0.1;
         dataUrl = canvas.toDataURL("image/jpeg", calidad);
       }
       return dataUrl;
@@ -1436,30 +1438,86 @@
       setTimeout(iniciar, 500);
     };
 
+    // Salida clásica (Cropper): depende del tamaño en pantalla del recortador,
+    // por eso solo se usa como respaldo si la imagen está rotada/invertida.
+    function recorteClasico(config) {
+      const cortado = recortador.getCroppedCanvas({
+        maxWidth: config.maxW,
+        maxHeight: config.maxH,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: "high"
+      });
+      if (!cortado || !cortado.width) { notificar("No se pudo recortar la imagen.", "error"); return; }
+
+      // fondo sólido: evita bordes negros si el original tiene transparencia
+      const fin = document.createElement("canvas");
+      fin.width = cortado.width;
+      fin.height = cortado.height;
+      const ctx = fin.getContext("2d");
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, fin.width, fin.height);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(cortado, 0, 0);
+
+      const url = codificarCanvas(fin, config.calidad, config.maxBytes);
+      cerrarRecortador();
+      if (typeof config.onListo === "function") config.onListo(url);
+    }
+
     window.aplicarRecorte = function() {
       const config = cropConfig;
       if (!recortador || !config) { cerrarRecortador(); return; }
       try {
-        const cortado = recortador.getCroppedCanvas({
-          maxWidth: config.maxW,
-          maxHeight: config.maxH,
-          imageSmoothingEnabled: true,
-          imageSmoothingQuality: "high"
-        });
-        if (!cortado || !cortado.width) { notificar("No se pudo recortar la imagen.", "error"); return; }
+        const origen = document.getElementById("cropImage");
+        const info = (recortador.getImageData && recortador.getImageData()) || {};
+        const rect = (recortador.getData && recortador.getData()) || null;
+        const natW = origen ? origen.naturalWidth : 0;
+        const natH = origen ? origen.naturalHeight : 0;
+        const marcoValido = rect && rect.width > 1 && rect.height > 1 && natW && natH;
+        // En esta versión de Cropper, scaleX/scaleY/rotate pueden no venir en getImageData()
+        // (undefined = sin transformar). Si hay rotación o espejo, se usa la ruta clásica.
+        const escalaX = (info.scaleX === undefined) ? 1 : info.scaleX;
+        const escalaY = (info.scaleY === undefined) ? 1 : info.scaleY;
+        const sinTransformar = !info.rotate && !rect.rotate && escalaX === 1 && escalaY === 1;
 
-        // fondo sólido: evita bordes negros si el original tiene transparencia
-        const fin = document.createElement("canvas");
-        fin.width = cortado.width;
-        fin.height = cortado.height;
-        const ctx = fin.getContext("2d");
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(0, 0, fin.width, fin.height);
-        ctx.drawImage(cortado, 0, 0);
+        if (!marcoValido || !sinTransformar) { recorteClasico(config); return; }
 
-        const url = codificarCanvas(fin, config.calidad, config.maxBytes);
-        cerrarRecortador();
-        if (typeof config.onListo === "function") config.onListo(url);
+        // getData() devuelve el marco en PÍXELES REALES de la foto (no de pantalla).
+        // Antes se usaba getCroppedCanvas, que recortaba al tamaño visible y dejaba
+        // la imagen pixelada al ampliarla en pantalla. Se escala al tamaño pedido.
+        const maxW = config.maxW || 1600;
+        const maxH = config.maxH || 1600;
+        const escala = Math.min(maxW / rect.width, maxH / rect.height);
+        const outW = Math.max(1, Math.round(rect.width * escala));
+        const outH = Math.max(1, Math.round(rect.height * escala));
+        const srcOrigen = origen.src;
+
+        const img = new Image();
+        img.onload = function() {
+          const fin = document.createElement("canvas");
+          fin.width = outW;
+          fin.height = outH;
+          const ctx = fin.getContext("2d");
+          ctx.fillStyle = "#0f172a"; // evita bordes negros con transparencias
+          ctx.fillRect(0, 0, outW, outH);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          // el marco puede sobresalir de la foto: se dibuja solo la parte real
+          const x0 = Math.max(0, rect.x), y0 = Math.max(0, rect.y);
+          const x1 = Math.min(natW, rect.x + rect.width);
+          const y1 = Math.min(natH, rect.y + rect.height);
+          if (x1 > x0 && y1 > y0) {
+            ctx.drawImage(img, x0, y0, x1 - x0, y1 - y0,
+              (x0 - rect.x) * escala, (y0 - rect.y) * escala,
+              (x1 - x0) * escala, (y1 - y0) * escala);
+          }
+          const url = codificarCanvas(fin, config.calidad, config.maxBytes);
+          cerrarRecortador();
+          if (typeof config.onListo === "function") config.onListo(url);
+        };
+        img.onerror = function() { recorteClasico(config); };
+        img.src = srcOrigen;
       } catch (e) {
         console.error(e);
         notificar("No se pudo recortar la imagen.", "error");
@@ -1540,16 +1598,79 @@
       }
     }
 
+    // --- Portada en HD al mostrar ---
+    // Si la foto guardada tiene menos píxeles que los que se van a mostrar, se amplía
+    // en memoria con suavizado y un enfoque suave. Es solo visual: no se modifica lo
+    // guardado en la base de datos.
+    let portadaMejorada = { origen: null, resultado: null };
+
+    function enfoqueSuave(ctx, w, h, fuerza) {
+      if (w * h > 4000000) return; // imágenes muy grandes: se omite por rendimiento
+      const datos = ctx.getImageData(0, 0, w, h);
+      const s = datos.data;
+      const copia = new Uint8ClampedArray(s);
+      const paso = w * 4;
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = (y * w + x) * 4;
+          for (let c = 0; c < 3; c++) {
+            const vecinos = s[i - 4 + c] + s[i + 4 + c] + s[i - paso + c] + s[i + paso + c];
+            const centro = s[i + c];
+            const enfocado = centro * 5 - vecinos;
+            copia[i + c] = centro * (1 - fuerza) + enfocado * fuerza;
+          }
+        }
+      }
+      datos.data.set(copia);
+      ctx.putImageData(datos, 0, 0);
+    }
+
+    function ampliarPortadaHD(dataUrl, listo) {
+      if (!dataUrl) { listo(""); return; }
+      if (portadaMejorada.origen === dataUrl) { listo(portadaMejorada.resultado); return; }
+      const banner = document.getElementById("profileBanner");
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const visible = (banner && banner.offsetWidth) ? banner.offsetWidth : (window.innerWidth || 1280);
+      const objetivo = Math.max(1200, Math.round(visible * dpr));
+      const img = new Image();
+      img.onerror = function() { listo(dataUrl); };
+      img.onload = function() {
+        if (!img.naturalWidth || img.naturalWidth >= objetivo) { listo(dataUrl); return; }
+        try {
+          const escala = objetivo / img.naturalWidth;
+          const outW = objetivo;
+          const outH = Math.max(1, Math.round(img.naturalHeight * escala));
+          const c = document.createElement("canvas");
+          c.width = outW;
+          c.height = outH;
+          const ctx = c.getContext("2d");
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(img, 0, 0, outW, outH);
+          enfoqueSuave(ctx, outW, outH, 0.55);
+          const res = c.toDataURL("image/jpeg", 0.92);
+          portadaMejorada = { origen: dataUrl, resultado: res };
+          listo(res);
+        } catch (e) { listo(dataUrl); }
+      };
+      img.src = dataUrl;
+    }
+
     // Aplica la portada al banner del perfil y a la preview del modal
     function aplicarPortada(dataUrl) {
       const banner = document.getElementById("profileBanner");
       const preview = document.getElementById("modalCoverPreview");
       const icono = document.getElementById("modalCoverIcon");
-      const url = dataUrl ? 'url("' + dataUrl + '")' : "";
-      if (banner) banner.style.backgroundImage = url;
-      if (preview) preview.style.backgroundImage = url;
-      if (icono) icono.classList.toggle("hidden", !!dataUrl);
-      if (typeof lucide !== "undefined") lucide.createIcons();
+      const pintar = function(final) {
+        const url = final ? 'url("' + final + '")' : "";
+        if (banner) banner.style.backgroundImage = url;
+        if (preview) preview.style.backgroundImage = url;
+        if (icono) icono.classList.toggle("hidden", !!final);
+      };
+      ampliarPortadaHD(dataUrl, function(final) {
+        pintar(final);
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      });
     }
     window.aplicarPortada = aplicarPortada;
 
@@ -1577,8 +1698,8 @@
         mascara: false,
         maxW: 1600,
         maxH: 500,
-        calidad: 0.72,
-        maxBytes: 420 * 1024,
+        calidad: 0.88,
+        maxBytes: 600 * 1024,
         onListo: async function(dataUrl) {
           aplicarPortada(dataUrl);
           if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
