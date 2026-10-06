@@ -2335,8 +2335,31 @@
             if (msg.includes("password"))             return "La contraseña no cumple los requisitos mínimos (6+ caracteres).";
             if (msg.includes("rate limit"))           return "Demasiados intentos. Espera un momento.";
             if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
-            if (msg.includes("network"))              return "Sin conexión. Revisa tu internet.";
+            if (msg.includes("network") || msg.includes("failed to fetch"))
+                                    return "Sin conexión con el servidor. Revisa tu internet e inténtalo de nuevo.";
             return err?.message || "Ocurrió un error. Intenta nuevamente.";
+        }
+
+        /* ---------- Red: detección de fallas y reintento automático ---------- */
+        function esErrorDeRed(err) {
+            const m = (err?.message || String(err) || "").toLowerCase();
+            return m.includes("network") || m.includes("failed to fetch") ||
+                   m.includes("fetch failed") || m.includes("load failed") ||
+                   m.includes("err_connection") || m.includes("err_internet") ||
+                   m.includes("err_name_not_resolved");
+        }
+        function sinInternet() { return navigator.onLine === false; }
+        async function conReintento(fn, intentos = 2) {
+            let ultimo = null;
+            for (let i = 0; i < intentos; i++) {
+                try { return await fn(); }
+                catch (err) {
+                    ultimo = err;
+                    if (!esErrorDeRed(err) || i === intentos - 1) throw err;
+                    await new Promise(res => setTimeout(res, 1500));
+                }
+            }
+            throw ultimo;
         }
 
         window.togglePass = function(id, btn) {
@@ -2380,6 +2403,10 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3200);
         };
+
+        /* ---------- Avisos de conexión ---------- */
+        window.addEventListener("offline", () => showNotification("Se perdió la conexión a internet.", "error"));
+        window.addEventListener("online",  () => showNotification("Conexión restablecida.", "success"));
 
         /* ---------- Tabs ---------- */
         window.switchTab = function(tab) {
@@ -2494,12 +2521,16 @@
             if (!email || !password) {
                 showNotification("Completa correo y contraseña.", "warning"); return;
             }
+            if (sinInternet()) {
+                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles e inténtalo de nuevo.", "error");
+                return;
+            }
             const btn = document.getElementById("btn-login");
             const txt = document.getElementById("btn-login-text");
             btn.disabled = true; txt.textContent = "Validando...";
 
             try {
-                const res = await window.SupabaseAPI.login(email, password);
+                const res = await conReintento(() => window.SupabaseAPI.login(email, password));
                 if (res.perfil) {
                     window.renderDashboard(res.perfil);
                     showNotification("Sesión iniciada.", "success");
@@ -2524,8 +2555,12 @@
                 document.getElementById("login-email").focus();
                 return;
             }
+            if (sinInternet()) {
+                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles.", "error");
+                return;
+            }
             try {
-                await window.SupabaseAPI.resetPassword(email);
+                await conReintento(() => window.SupabaseAPI.resetPassword(email));
                 showNotification("Si el correo existe, recibirás un enlace.", "success");
             } catch (err) {
                 showNotification(traducirError(err), "error");
@@ -2587,6 +2622,10 @@
                 areas:            Array.from(document.querySelectorAll(".reg-area-cb:checked")).map(c => c.value)
             };
 
+            if (sinInternet()) {
+                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles antes de enviar.", "error");
+                return;
+            }
             const btn = document.getElementById("btn-submit");
             const txt = document.getElementById("btn-submit-text");
             btn.disabled = true; txt.textContent = "Guardando...";
