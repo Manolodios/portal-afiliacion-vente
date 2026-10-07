@@ -452,9 +452,14 @@
 
                         <!-- LOGIN -->
                         <div id="login-form-container" class="hidden space-y-4">
-                            <div class="text-center lg:text-left mb-2">
-                                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
-                                <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tu correo y contraseña</p>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-center lg:text-left">
+                                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
+                                    <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tu correo y contraseña</p>
+                                </div>
+                                <button type="button" onclick="closeAuthForms()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition" aria-label="Cancelar y volver">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
                             </div>
                             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3 sm:space-y-4" novalidate>
                                 <div>
@@ -486,14 +491,19 @@
 
                         <!-- REGISTRO -->
                         <div id="register-form-container" class="space-y-4">
-                            <div class="mb-3">
-                                <div class="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
-                                    <span id="step-label" class="truncate pr-2">Paso 1: Datos</span>
-                                    <span id="step-counter" class="text-vente-cyan whitespace-nowrap">1 / 4</span>
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <div class="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
+                                        <span id="step-label" class="truncate pr-2">Paso 1: Datos</span>
+                                        <span id="step-counter" class="text-vente-cyan whitespace-nowrap">1 / 4</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-1.5 sm:h-2 rounded-full overflow-hidden">
+                                        <div id="progress-bar" class="bg-vente-cyan h-full transition-all duration-300" style="width: 25%"></div>
+                                    </div>
                                 </div>
-                                <div class="w-full bg-slate-200 h-1.5 sm:h-2 rounded-full overflow-hidden">
-                                    <div id="progress-bar" class="bg-vente-cyan h-full transition-all duration-300" style="width: 25%"></div>
-                                </div>
+                                <button type="button" onclick="closeAuthForms()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition" aria-label="Cancelar y volver">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
                             </div>
 
                             <form id="register-wizard-form" onsubmit="handleRegisterSubmit(event)" novalidate>
@@ -725,12 +735,16 @@
       </div>
 
       <!-- FOOTER INFO -->
-      <div class="px-3 text-xs text-slate-500 border-t border-slate-800/80 pt-4 flex justify-between items-center gap-2">
+      <div class="px-3 text-xs text-slate-500 border-t border-slate-800/80 pt-4 space-y-3">
         <span class="flex items-center gap-1.5 min-w-0">
           <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-5 w-auto shrink-0 opacity-90">
           <span>© 2026</span>
         </span>
         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En línea</span>
+        <button onclick="closeDashboard(true)" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-800 transition-colors" title="Cerrar sesión">
+          <i class="fa-solid fa-right-from-bracket text-lg"></i>
+          <span class="font-medium">Cerrar sesión</span>
+        </button>
       </div>
     </aside>
 
@@ -2428,6 +2442,26 @@
                 regBtn.classList.add(...active);      regBtn.classList.remove(...inactive);
                 loginBtn.classList.remove(...active); loginBtn.classList.add(...inactive);
                 regForm.classList.remove("hidden");   loginForm.classList.add("hidden");
+            }
+            lucide.createIcons();
+        };
+
+        /* ---------- Cerrar formularios de autenticación (volver al hero) ---------- */
+        window.closeAuthForms = function() {
+            const loginForm = document.getElementById("login-form-container");
+            const regForm   = document.getElementById("register-form-container");
+            const loginBtn = document.getElementById("tab-btn-login");
+            const regBtn   = document.getElementById("tab-btn-register");
+
+            if (loginForm) loginForm.classList.add("hidden");
+            if (regForm) regForm.classList.add("hidden");
+            if (loginBtn) {
+                loginBtn.classList.remove("bg-white", "text-slate-900", "shadow-sm");
+                loginBtn.classList.add("text-slate-600");
+            }
+            if (regBtn) {
+                regBtn.classList.remove("bg-white", "text-slate-900", "shadow-sm");
+                regBtn.classList.add("text-slate-600");
             }
             lucide.createIcons();
         };
