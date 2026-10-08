@@ -150,7 +150,7 @@
 
         const escapeHtml = function(s) {
             return String(s).replace(/[&<>"']/g, function(ch) {
-                return { '&': '&', '<': '<', '>': '>', '"': '"', "'": ' }[ch];
+                return { '&': '&', '<': '<', '>': '>', '"': '"', "'": "'" }[ch];
             });
         };
         const fmtNumber = function(n) {
