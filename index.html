@@ -44,60 +44,7 @@
         };
 
         // Feed functions (legacy: la API de fxtwitter ya no devuelve timelines; ver loadFeed definitivo más abajo)
-        window._loadFeedLegacyA = async function() {
-            const container = document.getElementById("feed-content");
-            if (!container) { console.warn("feed-content no encontrado"); return; }
-            container.innerHTML = '<div class="text-center py-10 text-slate-500">Cargando publicaciones...</div>';
-            try {
-                const resp = await fetch("https://api.fxtwitter.com/MariaCorinaYa");
-                if (!resp.ok) throw new Error("HTTP " + resp.status);
-                const data = await resp.json();
-                const tweets = data.tweets || [];
-                if (!tweets.length) {
-                    container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay publicaciones recientes.</div>';
-                    return;
-                }
-                let html = "";
-                tweets.forEach(tw => {
-                    const text = tw.text || "";
-                    const media = tw.media && tw.media.all ? tw.media.all : [];
-                    let imgHtml = "";
-                    media.forEach(m => {
-                        if (m.type === "photo" && m.url) {
-                            imgHtml += '<img src="' + m.url + '" class="w-full h-auto object-cover rounded-xl mt-3" alt="media">';
-                        }
-                    });
-                    const timeAgo = tw.created_at || "";
-                    html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md transition hover:border-slate-700">'
-                        + '<div class="flex gap-3">'
-                        + '<img src="assets/avatar-marcorina.jpg" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="avatar">'
-                        + '<div class="flex-1 min-w-0">'
-                        + '<div class="flex items-center justify-between">'
-                        + '<div class="flex items-center gap-2 truncate">'
-                        + '<span class="font-bold text-slate-100 text-sm truncate">María Corina</span>'
-                        + '<span class="text-xs text-slate-500 truncate">@MariaCorinaYa</span>'
-                        + '<span class="text-xs text-slate-600">· ' + timeAgo + '</span>'
-                        + '</div>'
-                        + '<button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>'
-                        + '</div>'
-                        + '<p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">' + text + '</p>'
-                        + imgHtml
-                        + '<div class="flex items-center gap-6 mt-4 text-slate-500 text-xs pt-2 border-t border-slate-800/50">'
-                        + '<button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ' + (tw.replies || 0) + '</button>'
-                        + '<button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ' + (tw.reposts || 0) + '</button>'
-                        + '<button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ' + (tw.likes || 0) + '</button>'
-                        + '<button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>'
-                        + '</div>'
-                        + '</div>'
-                        + '</div>'
-                        + '</div>';
-                });
-                container.innerHTML = html;
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = '<div class="text-center py-10 text-rose-500">No se pudieron cargar las publicaciones. Intenta más tarde.</div>';
-            }
-        };
+        window.
 
         // === FEED DEFINITIVO: publicaciones reales de líderes y medios de la oposición ===
         // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
@@ -133,16 +80,86 @@
         // Estado de filtro actual
         let currentFilter = { type: 'all', value: null }; // 'leader' | 'topic' | 'all'
 
+        // === RSSHub CONFIG ===
+        const RSSHUB_BASE = 'https://rsshub.app';
+        const RSS_FEEDS = [
+            { url: RSSHUB_BASE + '/twitter/user/MariaCorinaYA', source: 'MariaCorinaYA', name: 'María Corina Machado' },
+            { url: RSSHUB_BASE + '/twitter/user/VenteVenezuela', source: 'VenteVenezuela', name: 'Vente Venezuela' },
+            { url: RSSHUB_BASE + '/twitter/search/q=%23VenteVenezuela', source: 'hashtag', name: '#VenteVenezuela' },
+            { url: RSSHUB_BASE + '/twitter/search/q=%23MariaCorina', source: 'hashtag', name: '#MariaCorina' },
+            { url: RSSHUB_BASE + '/twitter/search/q=%23VenezuelaLibre', source: 'hashtag', name: '#VenezuelaLibre' }
+        ];
+
+        const CACHE_KEY = 'vnte_rsshub_posts';
+        const CACHE_TTL = 30 * 60 * 1000;
+
+        function getCachedPosts() {
+            try {
+                var cached = localStorage.getItem(CACHE_KEY);
+                if (!cached) return null;
+                var parsed = JSON.parse(cached);
+                if (Date.now() - parsed.timestamp > CACHE_TTL) return null;
+                return parsed.posts;
+            } catch { return null; }
+        }
+
+        function setCachedPosts(posts) {
+            try { localStorage.setItem(CACHE_KEY, JSON.stringify({ posts: posts, timestamp: Date.now() })); } catch { }
+        }
+
+        function rssItemToPost(item, sourceFeed) {
+            var link = item.link || '';
+            var id = link.split('/').pop() || 'rss_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+            var pubDate = item.pubDate ? new Date(item.pubDate) : new Date();
+            var dateStr = pubDate.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: '2-digit' });
+            var timeStr = pubDate.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+            var content = item.content || item.contentSnippet || item.title || '';
+            var text = content.replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim().slice(0, 500);
+            var photos = [];
+            var imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+            if (imgMatch) photos.push(imgMatch[1]);
+            return { id: id, author: sourceFeed.source, text: text, date: dateStr, time: timeStr, replies: 0, reposts: 0, likes: 0, photos: photos, link: link };
+        }
+
+        async function fetchRSSHubFeeds() {
+            var cached = getCachedPosts();
+            if (cached && cached.length > 0) { console.log('[RSSHub] Usando posts cacheados:', cached.length); return cached; }
+            var controller = new AbortController();
+            var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
+            try {
+                var promises = RSS_FEEDS.map(function(feed) {
+                    return fetch(feed.url, { signal: controller.signal, headers: { Accept: 'application/json' } })
+                        .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error(feed.url + ': ' + r.status)); })
+                        .then(function(data) { var items = data.items || data.data || []; return items.slice(0, 5).map(function(item) { return rssItemToPost(item, feed); }); })
+                        .catch(function(e) { console.warn('[RSSHub] Fallo:', feed.url, e); return []; });
+                });
+                var results = await Promise.allSettled(promises);
+                clearTimeout(timeoutId);
+                var allPosts = [];
+                results.forEach(function(r) { if (r.status === 'fulfilled') allPosts = allPosts.concat(r.value); });
+                var unique = allPosts.filter(function(p, i, arr) { return arr.findIndex(function(x) { return x.link === p.link; }) === i; });
+                if (unique.length > 0) { setCachedPosts(unique); console.log('[RSSHub] Posts frescos obtenidos:', unique.length); }
+                return unique;
+            } catch (e) { clearTimeout(timeoutId); console.error('[RSSHub] Error general:', e); return []; }
+        }
+
+        function mergePosts(staticPosts, freshPosts) {
+            var freshLinks = new Set(freshPosts.map(function(p) { return p.link; }));
+            var staticUnique = staticPosts.filter(function(p) { return !freshLinks.has(p.link); });
+            return freshPosts.concat(staticUnique);
+        }
+
         const escapeHtml = function(s) {
             return String(s).replace(/[&<>"']/g, function(ch) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+                return { '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[ch];
             });
         };
         const fmtNumber = function(n) {
             return Number(n || 0).toLocaleString('es-VE');
         };
 
-        // Render grid de líderes
+
+        // Render grid de líderes// Render grid de líderes
         function renderLeadersGrid() {
             const grid = document.getElementById('leaders-grid');
             if (!grid) return;
@@ -213,57 +230,98 @@
             if (badge) badge.classList.add('hidden');
         };
 
-        window.loadFeed = function() {
+        window.loadFeed = async function() {
             const container = document.getElementById("feed-content");
             if (!container) { console.warn("feed-content no encontrado"); return; }
 
-            let posts = FEED_POSTS;
-            if (currentFilter.type === 'leader') {
-                posts = posts.filter(p => p.author === currentFilter.value);
-            } else if (currentFilter.type === 'topic') {
-                const tag = currentFilter.value.toLowerCase();
-                posts = posts.filter(p => p.text.toLowerCase().includes('#' + tag) || p.text.toLowerCase().includes(tag));
+            container.innerHTML = '<div class="text-center py-10 text-slate-500 flex flex-col items-center gap-3"><div class="animate-spin rounded-full h-8 w-8 border-3 border-sky-500 border-t-transparent"></div><span>Cargando publicaciones...</span></div>';
+
+            try {
+                var freshPosts = await fetchRSSHubFeeds();
+                var posts = mergePosts(FEED_POSTS, freshPosts);
+
+                if (currentFilter.type === 'leader') {
+                    posts = posts.filter(function(p) { return p.author === currentFilter.value; });
+                } else if (currentFilter.type === 'topic') {
+                    var tag = currentFilter.value.toLowerCase();
+                    posts = posts.filter(function(p) { return p.text.toLowerCase().includes('#' + tag) || p.text.toLowerCase().includes(tag); });
+                }
+
+                if (!posts.length) {
+                    container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay publicaciones para este filtro.</div>';
+                    return;
+                }
+
+                var cards = posts.map(function(p) {
+                    var leader = LEADERS.find(function(l) { return l.handle === p.author; }) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
+                    var photos = (p.photos || []).map(function(u) {
+                        return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicaci\u00f3n" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
+                    }).join('');
+
+                    return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">' +
+                        '<div class="flex gap-3">' +
+                            '<img src="' + leader.avatar + '" alt="' + leader.name + '" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ' + (leader.verified ? 'ring-sky-500' : 'ring-slate-700') + '">' +
+                            '<div class="flex-1 min-w-0">' +
+                                '<div class="flex items-start justify-between gap-2">' +
+                                    '<div class="min-w-0">' +
+                                        '<span class="font-bold text-slate-100 text-sm block truncate">' + leader.name + '</span>' +
+                                        '<span class="text-xs text-slate-500">@' + leader.handle + ' \u00b7 ' + p.date + ' \u00b7 ' + p.time + '</span>' +
+                                    '</div>' +
+                                    '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
+                                '</div>' +
+                                '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>' +
+                                photos +
+                                '<div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">' +
+                                    '<button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ' + fmtNumber(p.replies) + '</button>' +
+                                    '<button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ' + fmtNumber(p.reposts) + '</button>' +
+                                    '<button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ' + fmtNumber(p.likes) + '</button>' +
+                                    '<button aria-label="Guardar" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</article>';
+                }).join('');
+
+                container.innerHTML = cards;
+                lucide.createIcons();
+            } catch (e) {
+                console.error('[loadFeed] Error:', e);
+                container.innerHTML = '<div class="text-center py-10 text-rose-500">Error cargando publicaciones. Usando datos guardados.</div>';
+                var posts = FEED_POSTS;
+                if (currentFilter.type === 'leader') { posts = posts.filter(function(p) { return p.author === currentFilter.value; }); }
+                else if (currentFilter.type === 'topic') { var tag = currentFilter.value.toLowerCase(); posts = posts.filter(function(p) { return p.text.toLowerCase().includes('#' + tag) || p.text.toLowerCase().includes(tag); }); }
+                var cards = posts.map(function(p) {
+                    var leader = LEADERS.find(function(l) { return l.handle === p.author; }) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
+                    var photos = (p.photos || []).map(function(u) {
+                        return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicaci\u00f3n" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
+                    }).join('');
+                    return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">' +
+                        '<div class="flex gap-3">' +
+                            '<img src="' + leader.avatar + '" alt="' + leader.name + '" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ' + (leader.verified ? 'ring-sky-500' : 'ring-slate-700') + '">' +
+                            '<div class="flex-1 min-w-0">' +
+                                '<div class="flex items-start justify-between gap-2">' +
+                                    '<div class="min-w-0">' +
+                                        '<span class="font-bold text-slate-100 text-sm block truncate">' + leader.name + '</span>' +
+                                        '<span class="text-xs text-slate-500">@' + leader.handle + ' \u00b7 ' + p.date + ' \u00b7 ' + p.time + '</span>' +
+                                    '</div>' +
+                                    '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
+                                '</div>' +
+                                '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>' +
+                                photos +
+                                '<div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">' +
+                                    '<button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ' + fmtNumber(p.replies) + '</button>' +
+                                    '<button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ' + fmtNumber(p.reposts) + '</button>' +
+                                    '<button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ' + fmtNumber(p.likes) + '</button>' +
+                                    '<button aria-label="Guardar" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</article>';
+                }).join('');
+                container.innerHTML = cards;
+                lucide.createIcons();
             }
-
-            if (!posts.length) {
-                container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay publicaciones para este filtro.</div>';
-                return;
-            }
-
-            const cards = posts.map(p => {
-                const leader = LEADERS.find(l => l.handle === p.author) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
-                const photos = (p.photos || []).map(u => `
-                    <img src="${u}" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">`).join('');
-
-                return `<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">
-                    <div class="flex gap-3">
-                        <img src="${leader.avatar}" alt="${leader.name}" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ${leader.verified ? 'ring-sky-500' : 'ring-slate-700'}">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between gap-2">
-                                <div class="min-w-0">
-                                    <span class="font-bold text-slate-100 text-sm block truncate">${leader.name}</span>
-                                    <span class="text-xs text-slate-500">@${leader.handle} · ${p.date} · ${p.time}</span>
-                                </div>
-                                <a href="${p.link}" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X ↗</a>
-                            </div>
-                            <p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">${escapeHtml(p.text)}</p>
-                            ${photos}
-                            <div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">
-                                <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ${fmtNumber(p.replies)}</button>
-                                <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ${fmtNumber(p.reposts)}</button>
-                                <button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ${fmtNumber(p.likes)}</button>
-                                <button aria-label="Guardar" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </article>`;
-            }).join('');
-
-            container.innerHTML = cards;
-            lucide.createIcons();
-        };
-
-        window.toggleCredential = function() {
+        };window.toggleCredential = function() {
             const card = document.getElementById("credential-card");
             const overlay = document.getElementById("blur-overlay");
             const btn = document.getElementById("reveal-btn");
@@ -2958,57 +3016,7 @@ window.renderDashboard = async function(perfil) {
         };
 
         // (legacy: fxtwitter ya no sirve para timelines de usuario - 404)
-        window._loadFeedLegacyB = async function() {
-            const container = document.getElementById("feed-content");
-            if (!container) { console.warn("feed-content no encontrado"); return; }
-            container.innerHTML = '<div class="feed-loading">Cargando publicaciones...</div>';
-            try {
-                const resp = await fetch("https://api.fxtwitter.com/MariaCorinaYa");
-                if (!resp.ok) throw new Error("HTTP " + resp.status);
-                const data = await resp.json();
-                const tweets = data.tweets || [];
-                if (!tweets.length) {
-                    container.innerHTML = '<div class="feed-loading">No hay publicaciones recientes.</div>';
-                    return;
-                }
-                let html = "";
-                tweets.forEach(tw => {
-                    const text = tw.text || "";
-                    const media = tw.media && tw.media.all ? tw.media.all : [];
-                    let imgHtml = "";
-                    media.forEach(m => {
-                        if (m.type === "photo" && m.url) {
-                            imgHtml += '<img src="' + m.url + '" class="tweet-img" alt="media">';
-                        }
-                    });
-                    const timeAgo = tw.created_at || "";
-                    html += '<article class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 transition-colors p-4 cursor-pointer">'
-                        + '<div class="flex justify-between items-start">'
-                        + '<div class="flex gap-3">'
-                        + '<img src="assets/avatar-marcorina.jpg" class="w-12 h-12 rounded-full object-cover" alt="avatar">'
-                        + '<div>'
-                        + '<div class="flex flex-wrap items-center gap-x-1 gap-y-0.5 pr-6">'
-                        + '<span class="font-bold text-gray-900 text-[15px]">María Corina</span>'
-                        + '<svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M9.999 18.001L4.78 12.782l1.414-1.414 3.805 3.805 9.172-9.172 1.414 1.414z"></path></svg>'
-                        + '<span class="text-gray-500 text-[15px]">@MariaCorinaYa</span>'
-                        + '<span class="text-gray-500 text-[15px]">· ' + timeAgo + '</span>'
-                        + '</div></div></div>'
-                        + '<div class="text-gray-800"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g></svg></div></div>'
-                        + '<div class="mt-3 ml-[60px]"><p class="text-[15px] text-gray-900 leading-normal mb-3">' + text + '</p>'
-                        + imgHtml
-                        + '<div class="flex justify-between items-center text-gray-500 mt-4 max-w-md">'
-                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g></svg></div><span class="text-sm">' + (tw.replies || 0) + '</span></div>'
-                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></g></svg></div><span class="text-sm">' + (tw.reposts || 0) + '</span></div>'
-                        + '<div class="flex items-center gap-2"><div class="p-2 rounded-full"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g></svg></div><span class="text-sm">' + (tw.likes || 0) + '</span></div>'
-                        + '</div></div></article>';
-                });
-                container.innerHTML = html;
-                lucide.createIcons();
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = '<div class="feed-error">No se pudieron cargar las publicaciones. Intenta más tarde.</div>';
-            }
-        };
+        window.
 
         window.openDashboard = function() {
             const m = document.getElementById("member-dashboard-modal");
