@@ -2203,5 +2203,939 @@ window.renderDashboard = async function(perfil) {
     // asignación: la config válida es la del inicio de este archivo.
   
     </script>
+    <script>
+
+    const userState = {
+      displayName: "Yhojan Suarez",
+      username: "yhojansuarez",
+      bio: "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.",
+      location: "Cabimas, Zulia",
+      parroquia: "Carmen Herrera",
+      avatarUrl: "", // Empty string means default placeholder icon/initials
+      accentColor: "sky"
+    };
+
+    // SAMPLE INITIAL POSTS
+    let posts = [
+      {
+        id: 1,
+        authorName: "Vente Cabimas",
+        authorHandle: "ventecabimas",
+        authorAvatar: "",
+        content: "¡Bienvenidos a la plataforma digital renovada de Vente Cabimas! Haz clic en tu usuario en el menú lateral para personalizar tu perfil.",
+        time: "Hace 10m",
+        likes: 12
+      }
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      syncUIState();
+      renderPosts();
+    });
+
+    // CAJÓN DE NAVEGACIÓN EN MÓVIL (en md+ el sidebar es lateral fijo)
+    function toggleSidebar(forzar) {
+      const aside = document.getElementById('appSidebar');
+      const fondo = document.getElementById('sidebarBackdrop');
+      if (!aside) return;
+      const esMovil = window.innerWidth < 768;
+      const abierto = (typeof forzar === 'boolean')
+        ? forzar
+        : !aside.classList.contains('translate-x-0');
+      const ver = abierto && esMovil;
+      aside.classList.toggle('translate-x-0', ver);
+      aside.classList.toggle('-translate-x-full', !ver);
+      if (fondo) fondo.classList.toggle('hidden', !ver);
+      document.body.style.overflow = ver ? 'hidden' : '';
+    }
+    window.toggleSidebar = toggleSidebar;
+
+    // Al pasar a pantalla ancha el cajón queda cerrado (el sidebar siempre visible)
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 768) toggleSidebar(false);
+    });
+
+    // VIEW SWITCHER
+    function switchView(viewName) {
+      toggleSidebar(false); // al elegir una opción en móvil se cierra el menú
+      const feedView = document.getElementById('view-feed');
+      const profileView = document.getElementById('view-profile');
+      const leadersView = document.getElementById('view-leaders');
+      const topicsView = document.getElementById('view-topics');
+      const headerTitle = document.getElementById('mainHeaderTitle');
+      const headerSub = document.getElementById('mainHeaderSub');
+
+      // Update Nav Button Styles
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500', 'font-semibold');
+        btn.classList.add('text-slate-400', 'font-medium');
+      });
+
+      const activeNav = document.getElementById(`nav-${viewName}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-slate-400', 'font-medium');
+        activeNav.classList.add('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500', 'font-semibold');
+      }
+
+      // Hide all views first
+      [feedView, profileView, leadersView, topicsView].forEach(v => v && v.classList.add('hidden'));
+
+      if (viewName === 'feed') {
+        feedView.classList.remove('hidden');
+        if (currentFilter.type !== 'all') {
+          const badge = document.getElementById('filter-badge') || createFilterBadge();
+          const label = currentFilter.type === 'leader'
+            ? LEADERS.find(l => l.handle === currentFilter.value)?.name || currentFilter.value
+            : TOPICS.find(t => t.tag === currentFilter.value)?.label || currentFilter.value;
+          badge.querySelector('span').textContent = `Filtrado: ${label}`;
+          badge.classList.remove('hidden');
+        } else {
+          const badge = document.getElementById('filter-badge');
+          if (badge) badge.classList.add('hidden');
+        }
+        headerTitle.textContent = "Para ti";
+        headerSub.textContent = "Publicaciones de líderes y medios";
+        loadFeed();
+      } else if (viewName === 'profile') {
+        profileView.classList.remove('hidden');
+        headerTitle.textContent = "Perfil de Usuario";
+        headerSub.textContent = `@${userState.username}`;
+      } else if (viewName === 'leaders') {
+        leadersView.classList.remove('hidden');
+        headerTitle.textContent = "Líderes";
+        headerSub.textContent = "Fuentes verificadas y medios";
+      } else if (viewName === 'topics') {
+        topicsView.classList.remove('hidden');
+        headerTitle.textContent = "Temas";
+        headerSub.textContent = "Hashtags más usados";
+      }
+
+      // "Mi Perfil": en PC se oculta la barra de título para que la portada ocupe todo el alto
+      // (en móvil se mantiene, ahí sí se usa). Regla CSS en #mainHeader.en-perfil.
+      const cabecera = document.getElementById('mainHeader');
+      if (cabecera) cabecera.classList.toggle('en-perfil', viewName === 'profile');
+    }
+
+    // MODAL CONTROL
+    function openProfileModal() {
+      // Load current state into inputs
+      const elName = document.getElementById('inputDisplayName');
+      const elUser = document.getElementById('inputUsername');
+      const elBio = document.getElementById('inputBio');
+      const elLoc = document.getElementById('inputLocation');
+      const elWeb = document.getElementById('inputWebsite');
+
+      if (elName) elName.value = userState.displayName;
+      if (elUser) elUser.value = userState.username;
+      if (elBio) elBio.value = userState.bio;
+      if (elLoc) elLoc.value = userState.location;
+      if (elWeb) elWeb.value = userState.parroquia;
+
+      updateModalAvatarPreview(userState.avatarUrl);
+
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profileModal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    // AVATAR FILE UPLOAD / PRESET HANDLERS
+    function handleFileUpload(event) {
+      const input = event.target;
+      const file = input.files && input.files[0];
+      input.value = ""; // permite volver a elegir el mismo archivo
+      if (!file) return;
+      if (!file.type.startsWith("image/")) { notificar("El archivo debe ser una imagen.", "warning"); return; }
+      if (file.size > 8 * 1024 * 1024) { notificar("La imagen no puede superar 8 MB.", "warning"); return; }
+
+      editarImagen(file, {
+        titulo: "Foto de perfil",
+        subtitulo: "Arrastra la imagen y usa el zoom para encajar el rostro dentro del círculo.",
+        aspecto: 1,
+        mascara: true,
+        maxW: 512,
+        maxH: 512,
+        calidad: 0.85,
+        maxBytes: 350 * 1024,
+        onListo: function(imgUrl) {
+          userState.tempAvatarUrl = imgUrl;
+          updateModalAvatarPreview(imgUrl);
+        }
+      });
+    }
+
+    function setPresetAvatar(url) {
+      userState.tempAvatarUrl = url;
+      updateModalAvatarPreview(url);
+    }
+
+    function removeAvatarImage() {
+      userState.tempAvatarUrl = "";
+      updateModalAvatarPreview("");
+    }
+
+    // ========== FOTO DE PORTADA Y FOTO DE PERFIL ==========
+    function notificar(msg, tipo) {
+      if (typeof showNotification === "function") showNotification(msg, tipo || "success");
+      else if (typeof showToast === "function") showToast(msg, "");
+    }
+
+    // Redimensiona y comprime una imagen → dataURL (JPEG)
+    function comprimirImagen(file, maxW, maxH, calidadInicial, maxBytes) {
+      return new Promise(function(resolve) {
+        const reader = new FileReader();
+        reader.onerror = function() { resolve(null); };
+        reader.onload = function(ev) {
+          const img = new Image();
+          img.onerror = function() { resolve(null); };
+          img.onload = function() {
+            let w = img.width, h = img.height;
+            const escala = Math.min(1, maxW / w, maxH / h);
+            w = Math.max(1, Math.round(w * escala));
+            h = Math.max(1, Math.round(h * escala));
+
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#0f172a"; // evita fondos negros con PNG transparentes
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+
+            let calidad = calidadInicial;
+            let dataUrl = canvas.toDataURL("image/jpeg", calidad);
+            // piso en 0.5 y pasos de 0.1: nunca degrada hasta "bloques" visibles
+            while (dataUrl.length > maxBytes && calidad > 0.5) {
+              calidad -= 0.1;
+              dataUrl = canvas.toDataURL("image/jpeg", calidad);
+            }
+            resolve(dataUrl);
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ========== RECORTADOR DE IMAGEN (CROP) ==========
+    let recortador = null;
+    let cropConfig = null;
+    let cropZoomBase = 0; // escala (ancho/natural) con la que se ancló el slider
+
+    function leerDataURL(file) {
+      return new Promise(function(resolve) {
+        const reader = new FileReader();
+        reader.onerror = function() { resolve(null); };
+        reader.onload = function(ev) { resolve(ev.target.result); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Codifica un canvas a JPEG bajando la calidad hasta respetar maxBytes
+    function codificarCanvas(canvas, calidadInicial, maxBytes) {
+      let calidad = calidadInicial;
+      let dataUrl = canvas.toDataURL("image/jpeg", calidad);
+      // piso en 0.5 y pasos de 0.1: nunca degrada hasta "bloques" visibles
+      while (dataUrl.length > maxBytes && calidad > 0.5) {
+        calidad -= 0.1;
+        dataUrl = canvas.toDataURL("image/jpeg", calidad);
+      }
+      return dataUrl;
+    }
+
+    function recorteDisponible() {
+      return typeof Cropper !== "undefined";
+    }
+
+    // Punto de entrada: abre el recortador; si Cropper no carga, comprime directo
+    async function editarImagen(file, config) {
+      if (recorteDisponible()) {
+        const dataUrl = await leerDataURL(file);
+        if (!dataUrl) { notificar("No se pudo leer la imagen.", "error"); return; }
+        abrirRecortador(dataUrl, config);
+      } else {
+        const url = await comprimirImagen(file, config.maxW, config.maxH, config.calidad, config.maxBytes);
+        if (!url) { notificar("No se pudo leer la imagen.", "error"); return; }
+        config.onListo(url);
+      }
+    }
+
+    function actualizarMascaraRecorte() {
+      const capa = document.getElementById("cropMask");
+      const circulo = document.getElementById("cropMaskCircle");
+      if (!capa || !circulo || capa.classList.contains("hidden") || !recortador) return;
+      try {
+        const caja = recortador.getCropBoxData();
+        circulo.style.left = caja.left + "px";
+        circulo.style.top = caja.top + "px";
+        circulo.style.width = caja.width + "px";
+        circulo.style.height = caja.height + "px";
+      } catch (e) { /* aún no listo */ }
+    }
+
+    function ratioActualRecorte() {
+      try {
+        const d = recortador.getImageData();
+        return (d && d.naturalWidth) ? (d.width / d.naturalWidth) : 0;
+      } catch (e) { return 0; }
+    }
+
+    // Mantiene el slider en sincronía con el zoom real (botones, rueda, pellizco)
+    // Cropper dispara "zoom" ANTES de actualizar imageData, así que la
+    // sincronización se hace al terminar la tarea actual (con datos ya frescos)
+    let cropZoomTimer = null;
+
+    function actualizarSliderZoom() {
+      if (cropZoomTimer) clearTimeout(cropZoomTimer);
+      cropZoomTimer = setTimeout(function() {
+        cropZoomTimer = null;
+        refrescarSlider();
+      }, 0);
+    }
+
+    // Posición del slider = función pura del zoom real (sin estado acumulado,
+    // así no puede derivar): 50 en el anclaje inicial, ±25 por cada doblez
+    function refrescarSlider() {
+      const sl = document.getElementById("cropZoom");
+      if (!sl || !recortador || !cropZoomBase) return;
+      try {
+        const ratio = ratioActualRecorte();
+        if (!ratio) return;
+        const log = Math.log(ratio / cropZoomBase) / Math.LN2;
+        sl.value = String(Math.round(Math.max(0, Math.min(100, 50 + 25 * log))));
+      } catch (e) { /* ignorar */ }
+    }
+
+    // Aplica ya la actualización pendiente (Cropper dispara "zoom" antes de
+    // actualizar imageData, así que al terminar la tarea los datos ya están frescos)
+    function vaciarPendienteZoom() {
+      if (cropZoomTimer) {
+        clearTimeout(cropZoomTimer);
+        cropZoomTimer = null;
+        refrescarSlider();
+      }
+    }
+
+    window.abrirRecortador = function(dataUrl, config) {
+      if (!recorteDisponible() || !dataUrl || !config) {
+        if (config && typeof config.onListo === "function") config.onListo(dataUrl);
+        return;
+      }
+      const modal = document.getElementById("cropModal");
+      const img = document.getElementById("cropImage");
+      const titulo = document.getElementById("cropTitulo");
+      const sub = document.getElementById("cropSubtitulo");
+      const mascara = document.getElementById("cropMask");
+      const zoom = document.getElementById("cropZoom");
+      if (!modal || !img) return;
+
+      cropConfig = config;
+      cropZoomBase = 0; // se ancla cuando Cropper esté "ready"
+      if (titulo) titulo.textContent = config.titulo || "Ajustar imagen";
+      if (sub) sub.textContent = config.subtitulo || "Arrastra la imagen para posicionarla dentro del marco.";
+      if (mascara) mascara.classList.toggle("hidden", !config.mascara);
+      if (zoom) zoom.value = 50;
+      if (recortador) { try { recortador.destroy(); } catch (e) {} recortador = null; }
+
+      modal.classList.remove("opacity-0", "pointer-events-none");
+
+      function iniciar() {
+        if (recortador || cropConfig !== config) return; // ya abierto o cancelado
+        try {
+          recortador = new Cropper(img, {
+            viewMode: 1,
+            dragMode: "move",
+            aspectRatio: (config.aspecto && !isNaN(config.aspecto)) ? config.aspecto : NaN,
+            autoCropArea: 1,
+            responsive: true,
+            restore: false,
+            background: false,
+            guides: true,
+            highlight: false,
+            movable: true,
+            zoomable: true,
+            rotatable: true,
+            scalable: false,
+            ready: function() {
+              cropZoomBase = ratioActualRecorte(); // ancla del slider = zoom inicial
+              const sl = document.getElementById("cropZoom");
+              if (sl) sl.value = "50";
+              refrescarSlider();
+              actualizarMascaraRecorte();
+            },
+            crop: actualizarMascaraRecorte
+          });
+          // el slider se sincroniza con el zoom real (rueda, pellizco, botones)
+          img.removeEventListener("zoom", actualizarSliderZoom);
+          img.addEventListener("zoom", actualizarSliderZoom);
+        } catch (e) {
+          console.error("Error iniciando recortador:", e);
+        }
+      }
+
+      img.onload = iniciar;
+      img.removeAttribute("src");
+      img.src = dataUrl;
+      // red de seguridad por si el navegador no dispara "load"
+      setTimeout(iniciar, 500);
+    };
+
+    // Salida clásica (Cropper): depende del tamaño en pantalla del recortador,
+    // por eso solo se usa como respaldo si la imagen está rotada/invertida.
+    function recorteClasico(config) {
+      const cortado = recortador.getCroppedCanvas({
+        maxWidth: config.maxW,
+        maxHeight: config.maxH,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: "high"
+      });
+      if (!cortado || !cortado.width) { notificar("No se pudo recortar la imagen.", "error"); return; }
+
+      // fondo sólido: evita bordes negros si el original tiene transparencia
+      const fin = document.createElement("canvas");
+      fin.width = cortado.width;
+      fin.height = cortado.height;
+      const ctx = fin.getContext("2d");
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, fin.width, fin.height);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(cortado, 0, 0);
+
+      const url = codificarCanvas(fin, config.calidad, config.maxBytes);
+      cerrarRecortador();
+      if (typeof config.onListo === "function") config.onListo(url);
+    }
+
+    window.aplicarRecorte = function() {
+      const config = cropConfig;
+      if (!recortador || !config) { cerrarRecortador(); return; }
+      try {
+        const origen = document.getElementById("cropImage");
+        const info = (recortador.getImageData && recortador.getImageData()) || {};
+        const rect = (recortador.getData && recortador.getData()) || null;
+        const natW = origen ? origen.naturalWidth : 0;
+        const natH = origen ? origen.naturalHeight : 0;
+        const marcoValido = rect && rect.width > 1 && rect.height > 1 && natW && natH;
+        // En esta versión de Cropper, scaleX/scaleY/rotate pueden no venir en getImageData()
+        // (undefined = sin transformar). Si hay rotación o espejo, se usa la ruta clásica.
+        const escalaX = (info.scaleX === undefined) ? 1 : info.scaleX;
+        const escalaY = (info.scaleY === undefined) ? 1 : info.scaleY;
+        const sinTransformar = !info.rotate && !rect.rotate && escalaX === 1 && escalaY === 1;
+
+        if (!marcoValido || !sinTransformar) { recorteClasico(config); return; }
+
+        // getData() devuelve el marco en PÍXELES REALES de la foto (no de pantalla).
+        // Antes se usaba getCroppedCanvas, que recortaba al tamaño visible y dejaba
+        // la imagen pixelada al ampliarla en pantalla. Se escala al tamaño pedido.
+        const maxW = config.maxW || 1600;
+        const maxH = config.maxH || 1600;
+        const escala = Math.min(maxW / rect.width, maxH / rect.height);
+        const outW = Math.max(1, Math.round(rect.width * escala));
+        const outH = Math.max(1, Math.round(rect.height * escala));
+        const srcOrigen = origen.src;
+
+        const img = new Image();
+        img.onload = function() {
+          const fin = document.createElement("canvas");
+          fin.width = outW;
+          fin.height = outH;
+          const ctx = fin.getContext("2d");
+          ctx.fillStyle = "#0f172a"; // evita bordes negros con transparencias
+          ctx.fillRect(0, 0, outW, outH);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          // el marco puede sobresalir de la foto: se dibuja solo la parte real
+          const x0 = Math.max(0, rect.x), y0 = Math.max(0, rect.y);
+          const x1 = Math.min(natW, rect.x + rect.width);
+          const y1 = Math.min(natH, rect.y + rect.height);
+          if (x1 > x0 && y1 > y0) {
+            ctx.drawImage(img, x0, y0, x1 - x0, y1 - y0,
+              (x0 - rect.x) * escala, (y0 - rect.y) * escala,
+              (x1 - x0) * escala, (y1 - y0) * escala);
+          }
+          const url = codificarCanvas(fin, config.calidad, config.maxBytes);
+          cerrarRecortador();
+          if (typeof config.onListo === "function") config.onListo(url);
+        };
+        img.onerror = function() { recorteClasico(config); };
+        img.src = srcOrigen;
+      } catch (e) {
+        console.error(e);
+        notificar("No se pudo recortar la imagen.", "error");
+      }
+    };
+
+    function cerrarRecortador() {
+      const modal = document.getElementById("cropModal");
+      if (modal) modal.classList.add("opacity-0", "pointer-events-none");
+      if (recortador) { try { recortador.destroy(); } catch (e) {} recortador = null; }
+      cropConfig = null;
+    }
+    window.cancelarRecorte = cerrarRecortador;
+
+    window.recorteZoom = function(delta) {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      const actual = ratioActualRecorte();
+      if (actual > 0) recortador.zoomTo(actual * (1 + delta)); // paso proporcional exacto
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    window.recorteZoomSlider = function(valor) {
+      if (!recortador || !cropZoomBase) return;
+      try {
+        vaciarPendienteZoom();
+        const v = Math.max(0, Math.min(100, Number(valor)));
+        const objetivo = cropZoomBase * Math.pow(2, (v - 50) / 25);
+        if (objetivo > 0) recortador.zoomTo(objetivo); // escala absoluta, sin deriva
+        refrescarSlider(); // refleja el zoom real (Cropper lo limita si no cabe)
+        actualizarMascaraRecorte();
+      } catch (e) { /* ignorar */ }
+    };
+
+    window.recorteRotar = function(grados) {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      const sl = document.getElementById("cropZoom");
+      const vAntes = (sl && !isNaN(Number(sl.value))) ? Number(sl.value) : 50;
+      recortador.rotate(grados);
+      // reanclaje para que la girar no mueva el valor mostrado
+      const r = ratioActualRecorte();
+      if (r) cropZoomBase = r * Math.pow(2, (50 - vAntes) / 25);
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    window.recorteReset = function() {
+      if (!recortador) return;
+      vaciarPendienteZoom();
+      recortador.reset();
+      cropZoomBase = ratioActualRecorte(); // nuevo ancla en el estado inicial
+      const sl = document.getElementById("cropZoom");
+      if (sl) sl.value = "50";
+      refrescarSlider();
+      actualizarMascaraRecorte();
+    };
+
+    // Esc cierra el recortador sin aplicar
+    document.addEventListener("keydown", function(e) {
+      if (e.key !== "Escape") return;
+      const modal = document.getElementById("cropModal");
+      if (modal && !modal.classList.contains("opacity-0")) cerrarRecortador();
+    });
+
+    // Guarda el campo en Supabase y avisa el resultado
+    async function guardarCampoPerfil(campos, msgOk) {
+      try {
+        const api = window.SupabaseAPI;
+        if (!api || !api.guardarPerfil) return;
+        const res = await api.guardarPerfil(campos);
+        if (res.ok) notificar(msgOk, "success");
+        else if (res.sinSesion || res.demo) notificar(msgOk + " (guardada solo en esta sesión)", "warning");
+        else notificar("No se pudo guardar en tu perfil: " + (res.error || "error"), "error");
+      } catch (e) {
+        notificar("No se pudo guardar en tu perfil.", "error");
+      }
+    }
+
+    // Sube la foto al Storage y devuelve el valor a guardar en la base. Si Storage
+    // no responde, se devuelve el base64 de siempre: nunca se pierde la foto.
+    async function guardarFotoEnStorage(campo, dataUrl) {
+      if (!dataUrl) return null;
+      const api = window.SupabaseAPI;
+      if (!api || !api.subirFoto) return dataUrl;
+      try {
+        return await api.subirFoto(campo, dataUrl);
+      } catch (e) {
+        console.warn("[Vente] Storage no disponible, se guarda la foto embebida:", e.message);
+        return dataUrl;
+      }
+    }
+
+    // Si la foto sigue en base64, la mueve a Storage (sin bloquear la interfaz)
+    const fotosMigradas = new Set();
+    function migrarFotoASiStorage(perfil, campo) {
+      const api = window.SupabaseAPI;
+      const clave = (perfil && perfil.id ? perfil.id : "?") + ":" + campo;
+      if (!api || !api.subirFoto || !api.guardarPerfil) return;
+      if (fotosMigradas.has(clave)) return;
+      fotosMigradas.add(clave);
+      api.subirFoto(campo, perfil[campo])
+        .then(ruta => api.guardarPerfil({ [campo]: ruta }))
+        .then(res => { if (res && res.ok) console.info("[Vente] Foto '" + campo + "' movida a Storage."); })
+        .catch(e => { fotosMigradas.delete(clave); console.warn("[Vente] No se pudo mover la foto a Storage:", e.message); });
+    }
+
+    // Devuelve la foto que se puede mostrar: URL firmada si está en Storage,
+    // base64/URL directa si es antigua (y entonces se migra en segundo plano).
+    async function resolverFotoPerfil(perfil, campo) {
+      const valor = perfil ? perfil[campo] : "";
+      if (typeof valor !== "string" || !valor) return "";
+      const api = window.SupabaseAPI;
+      if (valor.startsWith("perfil/")) {
+        if (api && api.urlFirmada) {
+          try { return await api.urlFirmada(valor); } catch (e) { console.warn("[Vente] URL firmada falló:", e.message); }
+        }
+        return "";
+      }
+      if (valor.startsWith("data:")) migrarFotoASiStorage(perfil, campo);
+      return valor;
+    }
+
+    // --- Portada en HD al mostrar ---
+    // Si la foto guardada tiene menos píxeles que los que se van a mostrar, se amplía
+    // en memoria con suavizado y un enfoque suave. Es solo visual: no se modifica lo
+    // guardado en la base de datos.
+    let portadaMejorada = { origen: null, resultado: null };
+
+    function enfoqueSuave(ctx, w, h, fuerza) {
+      if (w * h > 4000000) return; // imágenes muy grandes: se omite por rendimiento
+      const datos = ctx.getImageData(0, 0, w, h);
+      const s = datos.data;
+      const copia = new Uint8ClampedArray(s);
+      const paso = w * 4;
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = (y * w + x) * 4;
+          for (let c = 0; c < 3; c++) {
+            const vecinos = s[i - 4 + c] + s[i + 4 + c] + s[i - paso + c] + s[i + paso + c];
+            const centro = s[i + c];
+            const enfocado = centro * 5 - vecinos;
+            copia[i + c] = centro * (1 - fuerza) + enfocado * fuerza;
+          }
+        }
+      }
+      datos.data.set(copia);
+      ctx.putImageData(datos, 0, 0);
+    }
+
+    function ampliarPortadaHD(dataUrl, listo) {
+      if (!dataUrl) { listo(""); return; }
+      if (portadaMejorada.origen === dataUrl) { listo(portadaMejorada.resultado); return; }
+      const banner = document.getElementById("profileBanner");
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const visible = (banner && banner.offsetWidth) ? banner.offsetWidth : (window.innerWidth || 1280);
+      const objetivo = Math.max(1200, Math.round(visible * dpr));
+      const img = new Image();
+      // La foto puede venir de Storage (otro dominio): sin CORS el canvas quedaría
+      // "tocado" y getImageData/toDataURL fallarían y se perdería el retoque HD.
+      img.crossOrigin = "anonymous";
+      img.onerror = function() { listo(dataUrl); };
+      img.onload = function() {
+        if (!img.naturalWidth || img.naturalWidth >= objetivo) { listo(dataUrl); return; }
+        try {
+          const escala = objetivo / img.naturalWidth;
+          const outW = objetivo;
+          const outH = Math.max(1, Math.round(img.naturalHeight * escala));
+          const c = document.createElement("canvas");
+          c.width = outW;
+          c.height = outH;
+          const ctx = c.getContext("2d");
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(img, 0, 0, outW, outH);
+          enfoqueSuave(ctx, outW, outH, 0.55);
+          const res = c.toDataURL("image/jpeg", 0.92);
+          portadaMejorada = { origen: dataUrl, resultado: res };
+          listo(res);
+        } catch (e) { listo(dataUrl); }
+      };
+      img.src = dataUrl;
+    }
+
+    // Aplica la portada al banner del perfil y a la preview del modal
+    function aplicarPortada(dataUrl) {
+      const banner = document.getElementById("profileBanner");
+      const preview = document.getElementById("modalCoverPreview");
+      const icono = document.getElementById("modalCoverIcon");
+      const pintar = function(final) {
+        const url = final ? 'url("' + final + '")' : "";
+        if (banner) banner.style.backgroundImage = url;
+        if (preview) preview.style.backgroundImage = url;
+        if (icono) icono.classList.toggle("hidden", !!final);
+      };
+      ampliarPortadaHD(dataUrl, function(final) {
+        pintar(final);
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      });
+    }
+    window.aplicarPortada = aplicarPortada;
+
+    // Subida de portada (desde el botón del banner o desde el modal)
+    window.handleCoverUpload = async function(event) {
+      const input = event.target;
+      const file = input.files && input.files[0];
+      input.value = "";
+      if (!file) return;
+      if (!file.type.startsWith("image/")) { notificar("El archivo debe ser una imagen.", "warning"); return; }
+      if (file.size > 8 * 1024 * 1024) { notificar("La imagen no puede superar 8 MB.", "warning"); return; }
+
+      // Proporción real del banner: lo que veas en el recorte es lo que se mostrará
+      const banner = document.getElementById("profileBanner");
+      const aspecto = (banner && banner.offsetWidth && banner.offsetHeight)
+        ? banner.offsetWidth / banner.offsetHeight
+        : NaN;
+
+      editarImagen(file, {
+        titulo: "Foto de portada",
+        subtitulo: isNaN(aspecto)
+          ? "Arrastra la imagen y usa el zoom para encajarla como quieras."
+          : "Arrastra la imagen para encajarla en la cabecera de tu perfil (se recorta a la proporción del banner).",
+        aspecto: aspecto,
+        mascara: false,
+        maxW: 1600,
+        maxH: 500,
+        calidad: 0.88,
+        maxBytes: 600 * 1024,
+        onListo: async function(dataUrl) {
+          aplicarPortada(dataUrl);
+          if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
+          const guardado = await guardarFotoEnStorage("portada", dataUrl);
+          await guardarCampoPerfil({ portada: guardado }, "Portada actualizada.");
+        }
+      });
+    };
+
+    // Quita la portada y vuelve al degradado por defecto
+    window.quitarPortada = async function() {
+      aplicarPortada("");
+      if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = null;
+      await guardarCampoPerfil({ portada: null }, "Portada eliminada.");
+    };
+
+    // Aplica la foto de perfil en todos los lugares donde aparece
+    function aplicarFotoPerfil(dataUrl) {
+      const nombre = (typeof perfilActual !== "undefined" && perfilActual)
+        ? ((perfilActual.nombre || "V") + " " + (perfilActual.apellido || "")).trim()
+        : (userState.displayName || "Usuario");
+      const inicial = getInitials(nombre);
+
+      [["sidebarAvatarImg", "sidebarAvatarText"],
+       ["bigAvatarImg", "bigAvatarText"],
+       ["postBoxAvatarImg", "postBoxAvatarText"]].forEach(function(par) {
+        setAvatarElement(par[0], par[1], dataUrl, inicial);
+      });
+
+      const dashAvatar = document.getElementById("dash-user-avatar");
+      if (dashAvatar) {
+        if (dataUrl) dashAvatar.innerHTML = '<img src="' + dataUrl + '" class="w-full h-full rounded-xl object-cover">';
+        else dashAvatar.textContent = getInitial(nombre);
+      }
+
+      userState.avatarUrl = dataUrl || "";
+      updateModalAvatarPreview(userState.avatarUrl);
+    }
+    window.aplicarFotoPerfil = aplicarFotoPerfil;
+
+    function updateModalAvatarPreview(url) {
+      const modalImg = document.getElementById('modalAvatarImg');
+      const modalText = document.getElementById('modalAvatarText');
+
+      if (url) {
+        modalImg.src = url;
+        modalImg.classList.remove('hidden');
+        modalText.classList.add('hidden');
+      } else {
+        modalImg.classList.add('hidden');
+        modalText.classList.remove('hidden');
+        modalText.textContent = getInitials(userState.displayName || "User");
+      }
+    }
+
+    // SAVE PROFILE CHANGES
+    async function saveProfileChanges() {
+      const elName = document.getElementById('inputDisplayName');
+      const elUser = document.getElementById('inputUsername');
+      const elBio = document.getElementById('inputBio');
+      const elLoc = document.getElementById('inputLocation');
+      const elWeb = document.getElementById('inputWebsite');
+
+      const newName = elName ? elName.value.trim() : "";
+      const newHandle = elUser ? elUser.value.trim().replace(/^@/, '') : "";
+      const newBio = elBio ? elBio.value.trim() : "";
+      const newLoc = elLoc ? elLoc.value.trim() : "";
+      const newParroquia = elWeb ? elWeb.value : "Carmen Herrera";
+
+      userState.displayName = newName || "Usuario";
+      userState.username = newHandle || "usuario";
+      userState.bio = newBio;
+      userState.location = newLoc;
+      userState.parroquia = newParroquia || "Carmen Herrera";
+
+      let fotoCambiada = false;
+      if (userState.tempAvatarUrl !== undefined) {
+        userState.avatarUrl = userState.tempAvatarUrl;
+        delete userState.tempAvatarUrl;
+        fotoCambiada = true;
+      }
+
+      syncUIState();
+      if (fotoCambiada) {
+        aplicarFotoPerfil(userState.avatarUrl);
+        const guardado = await guardarFotoEnStorage("foto", userState.avatarUrl || null);
+        guardarCampoPerfil({ foto: guardado }, "Foto de perfil actualizada.");
+      }
+      closeProfileModal();
+      showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
+    }
+
+    // SYNC DOM WITH STATE
+    function syncUIState() {
+      const name = userState.displayName;
+      const handle = `@${userState.username}`;
+      const initials = getInitials(name);
+
+      // Sidebar
+      document.getElementById('sidebarDisplayName').textContent = name;
+      document.getElementById('sidebarUsername').textContent = handle;
+      setAvatarElement('sidebarAvatarImg', 'sidebarAvatarText', userState.avatarUrl, initials);
+
+      // Post Box Avatar
+      setAvatarElement('postBoxAvatarImg', 'postBoxAvatarText', userState.avatarUrl, initials);
+
+      // Profile View Page
+      document.getElementById('profileViewDisplayName').textContent = name;
+      document.getElementById('profileViewUsername').textContent = handle;
+      document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
+      document.getElementById('profileViewLocation').innerHTML = `<i class="fa-solid fa-location-dot text-sky-400"></i> ${userState.location || 'Cabimas'}`;
+      document.getElementById('profileViewLink').innerHTML = `<i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia ${userState.parroquia || 'Carmen Herrera'}`;
+      setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
+    }
+
+    function setAvatarElement(imgId, textId, url, initials) {
+      const img = document.getElementById(imgId);
+      const txt = document.getElementById(textId);
+      if (img && txt) {
+        if (url) {
+          img.src = url;
+          img.classList.remove('hidden');
+          txt.classList.add('hidden');
+        } else {
+          img.classList.add('hidden');
+          txt.classList.remove('hidden');
+          txt.textContent = initials;
+        }
+      }
+    }
+
+    function getInitials(name) {
+      if (!name) return "U";
+      const parts = name.split(' ');
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    // NEW POST LOGIC
+    function addNewPost() {
+      const input = document.getElementById('newPostInput');
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      const newPost = {
+        id: Date.now(),
+        authorName: userState.displayName,
+        authorHandle: userState.username,
+        authorAvatar: userState.avatarUrl,
+        content: text,
+        time: "Justo ahora",
+        likes: 0
+      };
+
+      posts.unshift(newPost);
+      input.value = "";
+      renderPosts();
+      showToast("Publicación Enviada", "Tu mensaje ha sido compartido en la comunidad.");
+    }
+
+    function renderPosts() {
+      const list = document.getElementById('postsList');
+      const empty = document.getElementById('emptyState');
+
+      if (posts.length === 0) {
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+
+      if (empty) empty.classList.add('hidden');
+
+      list.innerHTML = posts.map(post => {
+        const initials = getInitials(post.authorName);
+        const avatarHtml = post.authorAvatar
+          ? `<img src="${post.authorAvatar}" class="w-full h-full object-cover" alt="${post.authorName}">`
+          : `<span>${initials}</span>`;
+
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md transition hover:border-slate-700">
+            <div class="flex gap-3">
+              <div class="w-10 h-10 rounded-full bg-sky-600 flex-shrink-0 flex items-center justify-center font-bold text-white overflow-hidden ring-2 ring-sky-500/20">
+                ${avatarHtml}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 truncate">
+                    <span class="font-bold text-slate-100 text-sm truncate">${post.authorName}</span>
+                    <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
+                    <span class="text-xs text-slate-600">• ${post.time}</span>
+                  </div>
+                  <button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+                <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${post.content}</p>
+                
+                <div class="flex items-center gap-6 mt-4 text-slate-500 text-xs pt-2 border-t border-slate-800/50">
+                  <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> 0</button>
+                  <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> 0</button>
+                  <button onclick="likePost(${post.id}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
+                  <button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function likePost(id, btn) {
+      const post = posts.find(p => p.id === id);
+      if (post) {
+        post.likes++;
+        const countSpan = btn.querySelector('.like-count');
+        const icon = btn.querySelector('i');
+        if (countSpan) countSpan.textContent = post.likes;
+        btn.classList.add('text-rose-500');
+        icon.classList.remove('fa-regular');
+        icon.classList.add('fa-solid');
+      }
+    }
+
+    function setAccentTheme(color) {
+      showToast("Tema de color", `Color de acento cambiado a ${color}`);
+    }
+
+    // TOAST NOTIFICATION HELPERS
+    function showToast(title, body) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastBody').textContent = body;
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+  
+    </script>
 </body>
 </html>
