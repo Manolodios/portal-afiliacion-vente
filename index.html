@@ -1473,7 +1473,14 @@
                     try {
                         const id = widgets[containerId];
                         if (id !== undefined && window.turnstile) {
-                            return window.turnstile.getResponse(id) || "";
+                            const r = window.turnstile.getResponse(id);
+                            if (r) return r;
+                        }
+                        // Fallback: leer del input hidden generado por Turnstile
+                        const el = document.getElementById(containerId);
+                        if (el) {
+                            const hidden = el.querySelector('input[name="cf-turnstile-response"]');
+                            if (hidden && hidden.value) return hidden.value;
                         }
                     } catch (e) { /* noop */ }
                     return "";
