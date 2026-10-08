@@ -1249,29 +1249,10 @@
   </div>
 
   <!-- JAVASCRIPT LOGIC ENGINE -->
-  <script>
-    const userState = {
-      displayName: "Yhojan Suarez",
-      username: "yhojansuarez",
-      bio: "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.",
-      location: "Cabimas, Zulia",
-      parroquia: "Carmen Herrera",
-      avatarUrl: "", // Empty string means default placeholder icon/initials
-      accentColor: "sky"
-    };
-
-    // SAMPLE INITIAL POSTS
-    let posts = [
-      {
-        id: 1,
-        authorName: "Vente Cabimas",
-        authorHandle: "ventecabimas",
-        authorAvatar: "",
-        content: "¡Bienvenidos a la plataforma digital renovada de Vente Cabimas! Haz clic en tu usuario en el menú lateral para personalizar tu perfil.",
-        time: "Hace 10m",
-        likes: 12
-      }
-    ];
+  <script>const FEED_POSTS = [
+    { id: '1', author: 'MariaCorinaYA', text: 'Test post 1', date: '10 oct 2025', time: '10:54', replies: 10, reposts: 20, likes: 30, photos: [], link: 'https://x.com/test' },
+    { id: '2', author: 'MariaCorinaYA', text: 'Test post 2', date: '10 oct 2025', time: '09:13', replies: 5, reposts: 10, likes: 15, photos: [], link: 'https://x.com/test2' }
+];
 
     window.addEventListener('DOMContentLoaded', () => {
       syncUIState();
