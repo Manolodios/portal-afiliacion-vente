@@ -104,49 +104,30 @@
         // timeline oficial de X responde 429 desde muchas redes, así que se muestran
         // publicaciones curadas y cada tarjeta enlaza al post original en X.
         const FEED_POSTS = [
-            // María Corina Machado
+            // María Corina Machado (Vente Venezuela)
             { id: "1976662546599018964", author: "MariaCorinaYA", text: "En nombre del pueblo de Venezuela, GRACIAS.", date: "10 oct 2025", time: "10:54", replies: 5440, reposts: 29888, likes: 129011, photos: ["assets/publicacion-marcorina.jpg"], link: "https://x.com/MariaCorinaYA/status/1976662546599018964" },
             { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
             { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
             { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
-            // Edmundo González
-            { id: "2000000000000000001", author: "EdmundoGU", text: "Venezuela eligió cambio. El 28 de julio el pueblo habló claro. Mi compromiso es con la verdad, la justicia y la transición democrática. No nos detendremos hasta que la voluntad popular se respete.", date: "15 oct 2025", time: "14:30", replies: 3200, reposts: 15800, likes: 67000, photos: [], link: "https://x.com/EdmundoGU/status/2000000000000000001" },
-            // Voluntad Popular
-            { id: "2000000000000000004", author: "VPVenezuela", text: "Nuestros presos políticos no pueden esperar. Exigimos liberación inmediata de todos los detenidos por razones políticas. #PresosPolíticosLibres", date: "13 oct 2025", time: "11:20", replies: 950, reposts: 4100, likes: 18000, photos: [], link: "https://x.com/VPVenezuela/status/2000000000000000004" },
-            // Efecto Cocuyo
-            { id: "2000000000000000005", author: "efectococuyo", text: "📊 INFORME: La inflación de septiembre cerró en 12,3% según BCV. El salario mínimo sigue en 130 Bs. La brecha entre ingresos y canasta básica se amplía. Leer hilo 🧵", date: "14 oct 2025", time: "07:00", replies: 420, reposts: 1800, likes: 5200, photos: ["assets/informe-inflacion.jpg"], link: "https://x.com/efectococuyo/status/2000000000000000005" },
-            // TalCual
-            { id: "2000000000000000006", author: "talcual", text: "Comunidad internacional aumenta presión: EE. UU., UE y Brasil exigen publicación de actas del 28J. La legitimidad del proceso sigue en duda.", date: "13 oct 2025", time: "16:45", replies: 680, reposts: 2900, likes: 12000, photos: [], link: "https://x.com/talcual/status/2000000000000000006" },
-            // Freddy Guevara
-            { id: "2000000000000000007", author: "freddyg Guevara", text: "La resistencia no es solo protesta, es organización. Cada comité de base, cada testigo, cada voluntario construye la Venezuela que viene. #OrganizaciónPopular", date: "12 oct 2025", time: "20:10", replies: 1100, reposts: 3500, likes: 22000, photos: [], link: "https://x.com/freddyg Guevara/status/2000000000000000007" }
+            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
+            { id: "1877822096182530559", author: "MariaCorinaYA", text: "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", date: "10 ene 2025", time: "16:57", replies: 5040, reposts: 22397, likes: 102962, photos: [], link: "https://x.com/MariaCorinaYA/status/1877822096182530559" }
         ];
 
-        // Líderes y medios con metadatos
+        // Líderes: solo Vente Venezuela
         const LEADERS = [
-            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" },
-            { handle: "EdmundoGU", name: "Edmundo González Urrutia", avatar: "assets/avatar-edmundo.jpg", verified: true, party: "Plataforma Unitaria" },
-            { handle: "freddyg Guevara", name: "Freddy Guevara", avatar: "assets/avatar-freddy.jpg", verified: true, party: "VP" },
-            { handle: "davidsmolansky", name: "David Smolansky", avatar: "assets/avatar-david.jpg", verified: true, party: "VP" },
-            { handle: "juanrequesens", name: "Juan Requesens", avatar: "assets/avatar-juan.jpg", verified: true, party: "VP" },
-            { handle: "stalin_gonzalez", name: "Stalin González", avatar: "assets/avatar-stalin.jpg", verified: true, party: "VP" },
-            { handle: "VPVenezuela", name: "Voluntad Popular", avatar: "assets/avatar-vp.jpg", verified: false, party: "Partido" },
-            { handle: "primerojusticia", name: "Primero Justicia", avatar: "assets/avatar-pj.jpg", verified: false, party: "Partido" },
-            { handle: "unt_venezuela", name: "Un Nuevo Tiempo", avatar: "assets/avatar-unt.jpg", verified: false, party: "Partido" },
-            { handle: "efectococuyo", name: "Efecto Cocuyo", avatar: "assets/avatar-efecto.jpg", verified: false, party: "Medio" },
-            { handle: "talcual", name: "TalCual", avatar: "assets/avatar-talcual.jpg", verified: false, party: "Medio" },
-            { handle: "runrun_es", name: "Runrun.es", avatar: "assets/avatar-runrun.jpg", verified: false, party: "Medio" }
+            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
         ];
 
-        // Hashtags/temas para la vista "Temas"
+        // Hashtags/temas relevantes a Vente Venezuela
         const TOPICS = [
             { tag: "VenezuelaLibre", label: "#VenezuelaLibre", count: 125000 },
             { tag: "28Jul", label: "#28Jul", count: 89000 },
             { tag: "HastaElFinal", label: "#HastaElFinal", count: 67000 },
-            { tag: "EdmundoPresidente", label: "#EdmundoPresidente", count: 54000 },
-            { tag: "PresosPoliticos", label: "#PresosPolíticos", count: 43000 },
-            { tag: "TransicionDemocratica", label: "#TransiciónDemocrática", count: 38000 },
             { tag: "Libertad", label: "#Libertad", count: 156000 },
-            { tag: "Resistencia", label: "#Resistencia", count: 41000 }
+            { tag: "Resistencia", label: "#Resistencia", count: 41000 },
+            { tag: "VenteVenezuela", label: "#VenteVenezuela", count: 28000 },
+            { tag: "MariaCorina", label: "#MariaCorina", count: 95000 },
+            { tag: "ConLaLibertad", label: "#ConLaLibertad", count: 18000 }
         ];
 
         // Estado de filtro actual
