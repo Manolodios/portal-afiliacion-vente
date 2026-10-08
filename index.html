@@ -335,6 +335,8 @@
                                     <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                                     <span>Continuar con Google</span>
                                 </button>
+                                <!-- Captcha anti-bot -->
+                                <div id="login-turnstile" data-turnstile class="flex justify-center"></div>
                                 <button type="submit" id="btn-login" class="w-full py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
                                     <span id="btn-login-text">Ingresar</span>
                                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -503,6 +505,9 @@
                                         Acepto los términos y la política de tratamiento de datos.
                                     </label>
                                 </div>
+
+                                <!-- Captcha anti-bot -->
+                                <div id="register-turnstile" data-turnstile class="flex justify-center py-2"></div>
 
                                 <div class="flex justify-between items-center gap-2 pt-3 sm:pt-4 border-t border-slate-200 mt-3 sm:mt-4">
                                     <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs transition-all">Atrás</button>
@@ -1419,6 +1424,88 @@
         </div>
     </footer>
 
+    <!-- ==================== CLOUDFLARE TURNSTILE (CAPTCHA) ==================== -->
+    <script>
+        /* -----------------------------------------------------------------
+           PROTECCIÓN ANTI-BOT (Cloudflare Turnstile)
+           -----------------------------------------------------------------
+           1) Crea un widget en https://dash.cloudflare.com -> Turnstile
+              (hostname: manolodios.github.io)
+           2) Pega aquí abajo el "Site Key" (clave PÚBLICA).
+           3) En Supabase Dashboard -> Auth -> Bot and Abuse Protection
+              activa "CAPTCHA protection", elige Turnstile y pega el
+              "Secret Key" (clave PRIVADA).
+
+           Si VENTE_TURNSTILE_SITEKEY queda vacío, el captcha no se muestra
+           y el portal funciona igual (útil para desplegar sin romper nada).
+        ------------------------------------------------------------------ */
+        window.VENTE_TURNSTILE_SITEKEY = "";
+
+        (function () {
+            const SITEKEY = window.VENTE_TURNSTILE_SITEKEY;
+            const widgets = {}; // containerId -> widgetId
+            const tokens  = {}; // containerId -> token
+
+            window.VenteCaptcha = {
+                activo: !!SITEKEY,
+
+                // Renderiza el widget dentro del contenedor (si aún no existe)
+                render(containerId) {
+                    if (!SITEKEY || !window.turnstile) return;
+                    const el = document.getElementById(containerId);
+                    if (!el || widgets[containerId] !== undefined) return;
+                    // No renderizar mientras está oculto (Turnstile necesita tamaño real)
+                    if (el.offsetParent === null) return;
+                    widgets[containerId] = window.turnstile.render(el, {
+                        sitekey: SITEKEY,
+                        theme: "light",
+                        size: "flexible",
+                        callback:           (t) => { tokens[containerId] = t; },
+                        "error-callback":   ()  => { tokens[containerId] = ""; },
+                        "expired-callback": ()  => { tokens[containerId] = ""; }
+                    });
+                },
+
+                // Devuelve el token actual (o ""), null si el captcha está desactivado
+                token(containerId) {
+                    if (!SITEKEY) return null;
+                    if (tokens[containerId]) return tokens[containerId];
+                    try {
+                        const id = widgets[containerId];
+                        if (id !== undefined && window.turnstile) {
+                            return window.turnstile.getResponse(id) || "";
+                        }
+                    } catch (e) { /* noop */ }
+                    return "";
+                },
+
+                reset(containerId) {
+                    if (!SITEKEY) return;
+                    tokens[containerId] = "";
+                    try {
+                        const id = widgets[containerId];
+                        if (id !== undefined && window.turnstile) window.turnstile.reset(id);
+                    } catch (e) { /* noop */ }
+                }
+            };
+
+            // Cargar el script de Turnstile solo si hay Site Key configurada
+            if (SITEKEY) {
+                const s = document.createElement("script");
+                s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+                s.async = true;
+                s.defer = true;
+                s.onload = function () {
+                    // Renderizar los widgets que ya estén visibles
+                    document.querySelectorAll("[data-turnstile]").forEach(function (el) {
+                        window.VenteCaptcha.render(el.id);
+                    });
+                };
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
+
     <!-- ==================== SUPABASE MODULE ==================== -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
@@ -1472,19 +1559,22 @@
         window.SupabaseAPI = {
             configurado: CONFIGURADO,
 
-            async register(datos, password) {
+            async register(datos, password, captchaToken) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 500));
                     return { ok: true, uid: "demo-" + Date.now() };
                 }
 
                 // 1) Crear usuario en Auth
+                const signUpOptions = {
+                    emailRedirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
+                };
+                if (captchaToken) signUpOptions.captchaToken = captchaToken;
+
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: datos.email,
                     password,
-                    options: {
-                        emailRedirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
-                    }
+                    options: signUpOptions
                 });
                 if (authError) throw authError;
 
@@ -1516,12 +1606,14 @@
                 return { ok: true, uid: userId };
             },
 
-            async login(email, password) {
+            async login(email, password, captchaToken) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 400));
                     return { ok: true, uid: "demo-" + Date.now(), perfil: null };
                 }
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                const credenciales = { email, password };
+                if (captchaToken) credenciales.options = { captchaToken };
+                const { data, error } = await supabase.auth.signInWithPassword(credenciales);
                 if (error) throw error;
                 const perfil = await cargarPerfil(data.user.id);
                 return { ok: true, uid: data.user.id, perfil };
@@ -1532,11 +1624,13 @@
                 await supabase.auth.signOut();
             },
 
-            async resetPassword(email) {
+            async resetPassword(email, captchaToken) {
                 if (!CONFIGURADO) { await new Promise(r => setTimeout(r, 300)); return; }
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const opciones = {
                     redirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
-                });
+                };
+                if (captchaToken) opciones.captchaToken = captchaToken;
+                const { error } = await supabase.auth.resetPasswordForEmail(email, opciones);
                 if (error) throw error;
             },
 
@@ -1731,6 +1825,10 @@
                 loginBtn.classList.remove(...active); loginBtn.classList.add(...inactive);
                 regForm.classList.remove("hidden");   loginForm.classList.add("hidden");
             }
+            // Renderizar el captcha del formulario activo (Turnstile necesita ser visible)
+            if (window.VenteCaptcha) {
+                window.VenteCaptcha.render(tab === "login" ? "login-turnstile" : "register-turnstile");
+            }
             lucide.createIcons();
         };
 
@@ -1769,6 +1867,12 @@
             document.getElementById("btn-prev").classList.toggle("hidden", currentStep === 1);
             document.getElementById("btn-next").classList.toggle("hidden", currentStep === totalSteps);
             document.getElementById("btn-submit").classList.toggle("hidden", currentStep !== totalSteps);
+            // Renderizar el captcha si el paso actual lo contiene (p. ej. paso 4)
+            if (window.VenteCaptcha) {
+                document.querySelectorAll(`#wizard-step-${currentStep} [data-turnstile]`).forEach(function (el) {
+                    window.VenteCaptcha.render(el.id);
+                });
+            }
             lucide.createIcons();
         };
 
@@ -1849,12 +1953,17 @@
                 showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles e inténtalo de nuevo.", "error");
                 return;
             }
+            const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("login-turnstile") : null;
+            if (captchaToken === "") {
+                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                return;
+            }
             const btn = document.getElementById("btn-login");
             const txt = document.getElementById("btn-login-text");
             btn.disabled = true; txt.textContent = "Validando...";
 
             try {
-                const res = await conReintento(() => window.SupabaseAPI.login(email, password));
+                const res = await conReintento(() => window.SupabaseAPI.login(email, password, captchaToken));
                 if (res.perfil) {
                     window.renderDashboard(res.perfil);
                     showNotification("Sesión iniciada.", "success");
@@ -1867,6 +1976,7 @@
                 showNotification(traducirError(err), "error");
             } finally {
                 btn.disabled = false; txt.textContent = "Ingresar";
+                if (window.VenteCaptcha) window.VenteCaptcha.reset("login-turnstile");
             }
         };
 
@@ -1883,11 +1993,18 @@
                 showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles.", "error");
                 return;
             }
+            const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("login-turnstile") : null;
+            if (captchaToken === "") {
+                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                return;
+            }
             try {
-                await conReintento(() => window.SupabaseAPI.resetPassword(email));
+                await conReintento(() => window.SupabaseAPI.resetPassword(email, captchaToken));
                 showNotification("Si el correo existe, recibirás un enlace.", "success");
             } catch (err) {
                 showNotification(traducirError(err), "error");
+            } finally {
+                if (window.VenteCaptcha) window.VenteCaptcha.reset("login-turnstile");
             }
         };
 
@@ -1967,12 +2084,17 @@
                 showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles antes de enviar.", "error");
                 return;
             }
+            const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("register-turnstile") : null;
+            if (captchaToken === "") {
+                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                return;
+            }
             const btn = document.getElementById("btn-submit");
             const txt = document.getElementById("btn-submit-text");
             btn.disabled = true; txt.textContent = "Guardando...";
 
             try {
-                const res = await window.SupabaseAPI.register(payload, pass1);
+                const res = await window.SupabaseAPI.register(payload, pass1, captchaToken);
 
                 if (res.needsConfirmation) {
                     showConfirmEmail(payload.email);
@@ -2005,6 +2127,7 @@
                 showNotification(traducirError(err), "error");
             } finally {
                 btn.disabled = false; txt.textContent = "Completar";
+                if (window.VenteCaptcha) window.VenteCaptcha.reset("register-turnstile");
             }
         };
 
