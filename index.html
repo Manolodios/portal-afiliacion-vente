@@ -694,13 +694,7 @@
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
               <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i> Cabimas, Zulia</span>
               <span id="profileViewLink" class="flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia Carmen Herrera</span>
-              <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Se unió en Septiembre 2026</span>
-            </div>
-
-            <!-- STATS -->
-            <div class="flex gap-6 pt-3 border-t border-slate-800 text-xs">
-              <div><strong class="text-white font-extrabold text-sm">142</strong> <span class="text-slate-400">Siguiendo</span></div>
-              <div><strong class="text-white font-extrabold text-sm">528</strong> <span class="text-slate-400">Seguidores</span></div>
+              <span id="profileViewJoined" class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Miembro de Vente</span>
             </div>
           </div>
         
@@ -2061,12 +2055,24 @@ window.renderDashboard = async function(perfil) {
             const profileViewUsername = document.getElementById("profileViewUsername");
             const profileViewBio = document.getElementById("profileViewBio");
             const profileViewLocation = document.getElementById("profileViewLocation");
+            const profileViewJoined = document.getElementById("profileViewJoined");
             const bigAvatarText = document.getElementById("bigAvatarText");
             const bigAvatarImg = document.getElementById("bigAvatarImg");
             if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
             if (profileViewUsername) profileViewUsername.textContent = handle;
             if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
             if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
+            if (profileViewJoined) {
+                let fechaTxt = "Miembro de Vente";
+                if (perfil.created_at) {
+                    const d = new Date(perfil.created_at);
+                    if (!isNaN(d.getTime())) {
+                        const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+                        fechaTxt = "Se unió en " + meses[d.getMonth()] + " " + d.getFullYear();
+                    }
+                }
+                profileViewJoined.innerHTML = '<i class="fa-regular fa-calendar text-slate-500"></i> ' + fechaTxt;
+            }
             if (bigAvatarText) bigAvatarText.textContent = inicial;
             if (bigAvatarImg) {
                 if (fotoUrl) {
