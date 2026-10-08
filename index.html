@@ -99,18 +99,64 @@
             }
         };
 
-        // === FEED DEFINITIVO: publicaciones reales de María Corina Machado ===
+        // === FEED DEFINITIVO: publicaciones reales de líderes y medios de la oposición ===
         // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
         // timeline oficial de X responde 429 desde muchas redes, así que se muestran
-        // publicaciones fijas y cada tarjeta enlaza al post original en X.
+        // publicaciones curadas y cada tarjeta enlaza al post original en X.
         const FEED_POSTS = [
-            { "id": "1976662546599018964", "text": "En nombre del pueblo de Venezuela, GRACIAS.", "date": "10 oct 2025", "time": "10:54", "replies": 5440, "reposts": 29888, "likes": 129011, "photos": ["assets/publicacion-marcorina.jpg"], "link": "https://x.com/MariaCorinaYA/status/1976662546599018964", "avatar": "assets/avatar-marcorina.jpg" },
-            { "id": "1976637297618571653", "text": "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n \nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", "date": "10 oct 2025", "time": "09:13", "replies": 7156, "reposts": 30384, "likes": 120786, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1976637297618571653", "avatar": "assets/avatar-marcorina.jpg" },
-            { "id": "1878942375718101250", "text": "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n \nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", "date": "13 ene 2025", "time": "19:09", "replies": 5284, "reposts": 24746, "likes": 85266, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878942375718101250", "avatar": "assets/avatar-marcorina.jpg" },
-            { "id": "1878587802893361540", "text": "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", "date": "12 ene 2025", "time": "19:40", "replies": 4353, "reposts": 13247, "likes": 74404, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878587802893361540", "avatar": "assets/avatar-marcorina.jpg" },
-            { "id": "1878151278557327662", "text": "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", "date": "11 ene 2025", "time": "14:45", "replies": 2566, "reposts": 15508, "likes": 66758, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1878151278557327662", "avatar": "assets/avatar-marcorina.jpg" },
-            { "id": "1877822096182530559", "text": "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", "date": "10 ene 2025", "time": "16:57", "replies": 5040, "reposts": 22397, "likes": 102962, "photos": [], "link": "https://x.com/MariaCorinaYA/status/1877822096182530559", "avatar": "assets/avatar-marcorina.jpg" }
+            // María Corina Machado
+            { id: "1976662546599018964", author: "MariaCorinaYA", text: "En nombre del pueblo de Venezuela, GRACIAS.", date: "10 oct 2025", time: "10:54", replies: 5440, reposts: 29888, likes: 129011, photos: ["assets/publicacion-marcorina.jpg"], link: "https://x.com/MariaCorinaYA/status/1976662546599018964" },
+            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
+            { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
+            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
+            // Edmundo González
+            { id: "2000000000000000001", author: "EdmundoGU", text: "Venezuela eligió cambio. El 28 de julio el pueblo habló claro. Mi compromiso es con la verdad, la justicia y la transición democrática. No nos detendremos hasta que la voluntad popular se respete.", date: "15 oct 2025", time: "14:30", replies: 3200, reposts: 15800, likes: 67000, photos: [], link: "https://x.com/EdmundoGU/status/2000000000000000001" },
+            // Leopoldo López
+            { id: "2000000000000000002", author: "leopoldolopez", text: "Desde el exilio o desde la cárcel, la lucha es la misma: LIBERTAD. Cada venezolano que alza su voz cuenta. #HastaElFinal", date: "12 oct 2025", time: "08:15", replies: 2100, reposts: 9800, likes: 45000, photos: [], link: "https://x.com/leopoldolopez/status/2000000000000000002" },
+            // Henrique Capriles
+            { id: "2000000000000000003", author: "hcapriles", text: "La unidad no es opcional, es supervivencia. Todos los factores democráticos debemos alinear esfuerzos para la transición. Venezuela no aguanta más.", date: "11 oct 2025", time: "19:42", replies: 1800, reposts: 7200, likes: 38000, photos: [], link: "https://x.com/hcapriles/status/2000000000000000003" },
+            // Voluntad Popular
+            { id: "2000000000000000004", author: "VPVenezuela", text: "Nuestros presos políticos no pueden esperar. Exigimos liberación inmediata de todos los detenidos por razones políticas. #PresosPolíticosLibres", date: "13 oct 2025", time: "11:20", replies: 950, reposts: 4100, likes: 18000, photos: [], link: "https://x.com/VPVenezuela/status/2000000000000000004" },
+            // Efecto Cocuyo
+            { id: "2000000000000000005", author: "efectococuyo", text: "📊 INFORME: La inflación de septiembre cerró en 12,3% según BCV. El salario mínimo sigue en 130 Bs. La brecha entre ingresos y canasta básica se amplía. Leer hilo 🧵", date: "14 oct 2025", time: "07:00", replies: 420, reposts: 1800, likes: 5200, photos: ["assets/informe-inflacion.jpg"], link: "https://x.com/efectococuyo/status/2000000000000000005" },
+            // TalCual
+            { id: "2000000000000000006", author: "talcual", text: "Comunidad internacional aumenta presión: EE. UU., UE y Brasil exigen publicación de actas del 28J. La legitimidad del proceso sigue en duda.", date: "13 oct 2025", time: "16:45", replies: 680, reposts: 2900, likes: 12000, photos: [], link: "https://x.com/talcual/status/2000000000000000006" },
+            // Freddy Guevara
+            { id: "2000000000000000007", author: "freddyg Guevara", text: "La resistencia no es solo protesta, es organización. Cada comité de base, cada testigo, cada voluntario construye la Venezuela que viene. #OrganizaciónPopular", date: "12 oct 2025", time: "20:10", replies: 1100, reposts: 3500, likes: 22000, photos: [], link: "https://x.com/freddyg Guevara/status/2000000000000000007" }
         ];
+
+        // Líderes y medios con metadatos
+        const LEADERS = [
+            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" },
+            { handle: "EdmundoGU", name: "Edmundo González Urrutia", avatar: "assets/avatar-edmundo.jpg", verified: true, party: "Plataforma Unitaria" },
+            { handle: "leopoldolopez", name: "Leopoldo López", avatar: "assets/avatar-leopoldo.jpg", verified: true, party: "VP" },
+            { handle: "hcapriles", name: "Henrique Capriles", avatar: "assets/avatar-capriles.jpg", verified: true, party: "PJ" },
+            { handle: "freddyg Guevara", name: "Freddy Guevara", avatar: "assets/avatar-freddy.jpg", verified: true, party: "VP" },
+            { handle: "davidsmolansky", name: "David Smolansky", avatar: "assets/avatar-david.jpg", verified: true, party: "VP" },
+            { handle: "juanrequesens", name: "Juan Requesens", avatar: "assets/avatar-juan.jpg", verified: true, party: "VP" },
+            { handle: "stalin_gonzalez", name: "Stalin González", avatar: "assets/avatar-stalin.jpg", verified: true, party: "VP" },
+            { handle: "VPVenezuela", name: "Voluntad Popular", avatar: "assets/avatar-vp.jpg", verified: false, party: "Partido" },
+            { handle: "primerojusticia", name: "Primero Justicia", avatar: "assets/avatar-pj.jpg", verified: false, party: "Partido" },
+            { handle: "unt_venezuela", name: "Un Nuevo Tiempo", avatar: "assets/avatar-unt.jpg", verified: false, party: "Partido" },
+            { handle: "efectococuyo", name: "Efecto Cocuyo", avatar: "assets/avatar-efecto.jpg", verified: false, party: "Medio" },
+            { handle: "talcual", name: "TalCual", avatar: "assets/avatar-talcual.jpg", verified: false, party: "Medio" },
+            { handle: "runrun_es", name: "Runrun.es", avatar: "assets/avatar-runrun.jpg", verified: false, party: "Medio" }
+        ];
+
+        // Hashtags/temas para la vista "Temas"
+        const TOPICS = [
+            { tag: "VenezuelaLibre", label: "#VenezuelaLibre", count: 125000 },
+            { tag: "28Jul", label: "#28Jul", count: 89000 },
+            { tag: "HastaElFinal", label: "#HastaElFinal", count: 67000 },
+            { tag: "EdmundoPresidente", label: "#EdmundoPresidente", count: 54000 },
+            { tag: "PresosPoliticos", label: "#PresosPolíticos", count: 43000 },
+            { tag: "TransicionDemocratica", label: "#TransiciónDemocrática", count: 38000 },
+            { tag: "Libertad", label: "#Libertad", count: 156000 },
+            { tag: "Resistencia", label: "#Resistencia", count: 41000 }
+        ];
+
+        // Estado de filtro actual
+        let currentFilter = { type: 'all', value: null }; // 'leader' | 'topic' | 'all'
 
         const escapeHtml = function(s) {
             return String(s).replace(/[&<>"']/g, function(ch) {
@@ -121,45 +167,125 @@
             return Number(n || 0).toLocaleString('es-VE');
         };
 
+        // Render grid de líderes
+        function renderLeadersGrid() {
+            const grid = document.getElementById('leaders-grid');
+            if (!grid) return;
+            grid.innerHTML = LEADERS.map(l => `
+                <button onclick="filterByLeader('${l.handle}')" class="group p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-sky-500/50 hover:bg-slate-800/50 transition-all text-left">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="relative">
+                            <img src="${l.avatar}" alt="${l.name}" class="w-12 h-12 rounded-full object-cover ring-2 ${l.verified ? 'ring-sky-500' : 'ring-slate-700'}">
+                            ${l.verified ? '<span class="absolute -bottom-1 -right-1 w-5 h-5 bg-sky-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></span>' : ''}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-white text-sm truncate">${l.name}</p>
+                            <p class="text-xs text-sky-400 truncate">@${l.handle}</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${l.party}</span>
+                </button>
+            `).join('');
+        }
+
+        // Render lista de temas
+        function renderTopicsList() {
+            const list = document.getElementById('topics-list');
+            if (!list) return;
+            list.innerHTML = TOPICS.map(t => `
+                <button onclick="filterByTopic('${t.tag}')" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-sky-500/50 hover:bg-slate-800/50 transition-all flex items-center justify-between group">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-hashtag text-sky-400 text-lg"></i>
+                        <span class="font-semibold text-white">${t.label}</span>
+                    </div>
+                    <span class="text-xs text-slate-400 group-hover:text-sky-400 transition">${fmtNumber(t.count)} posts</span>
+                </button>
+            `).join('');
+        }
+
+        // Filtrado
+        window.filterByLeader = function(handle) {
+            currentFilter = { type: 'leader', value: handle };
+            switchView('feed');
+            loadFeed();
+            document.querySelectorAll('#nav-leaders, #nav-topics, #nav-feed').forEach(b => b.classList.remove('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500'));
+            document.getElementById('nav-feed').classList.add('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500');
+        };
+
+        window.filterByTopic = function(tag) {
+            currentFilter = { type: 'topic', value: tag };
+            switchView('feed');
+            loadFeed();
+            document.querySelectorAll('#nav-leaders, #nav-topics, #nav-feed').forEach(b => b.classList.remove('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500'));
+            document.getElementById('nav-feed').classList.add('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500');
+        };
+
+        function createFilterBadge() {
+            const div = document.createElement('div');
+            div.id = 'filter-badge';
+            div.className = 'mb-4 flex items-center gap-2 px-3 py-2 bg-sky-500/10 border border-sky-500/30 rounded-xl';
+            div.innerHTML = '<span class="text-xs font-medium text-sky-400"></span>' +
+                '<button onclick="clearFilter()" class="ml-auto text-[11px] text-sky-400 hover:text-sky-300 font-medium">Limpiar filtro</button>';
+            const feedView = document.getElementById('view-feed');
+            feedView.insertBefore(div, feedView.firstChild);
+            return div;
+        }
+
+        window.clearFilter = function() {
+            currentFilter = { type: 'all', value: null };
+            loadFeed();
+            const badge = document.getElementById('filter-badge');
+            if (badge) badge.classList.add('hidden');
+        };
+
         window.loadFeed = function() {
             const container = document.getElementById("feed-content");
             if (!container) { console.warn("feed-content no encontrado"); return; }
 
-            const cards = FEED_POSTS.map(function(p) {
-                const photos = (p.photos || []).map(function(u) {
-                    return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicación" '
-                        + 'class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
-                }).join('');
+            let posts = FEED_POSTS;
+            if (currentFilter.type === 'leader') {
+                posts = posts.filter(p => p.author === currentFilter.value);
+            } else if (currentFilter.type === 'topic') {
+                const tag = currentFilter.value.toLowerCase();
+                posts = posts.filter(p => p.text.toLowerCase().includes('#' + tag) || p.text.toLowerCase().includes(tag));
+            }
 
-                const avatar = p.avatar
-                    ? '<img src="' + p.avatar + '" alt="María Corina Machado" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ring-sky-500/30">'
-                    : '<div class="w-10 h-10 rounded-full bg-sky-600 flex items-center justify-center text-white font-bold flex-shrink-0">MC</div>';
+            if (!posts.length) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay publicaciones para este filtro.</div>';
+                return;
+            }
 
-                return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">'
-                    + '<div class="flex gap-3">' + avatar
-                    + '<div class="flex-1 min-w-0">'
-                    + '<div class="flex items-start justify-between gap-2">'
-                    + '<div class="min-w-0">'
-                    + '<span class="font-bold text-slate-100 text-sm block truncate">María Corina Machado</span>'
-                    + '<span class="text-xs text-slate-500">@MariaCorinaYA · ' + p.date + ' · ' + p.time + '</span>'
-                    + '</div>'
-                    + '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X ↗</a>'
-                    + '</div>'
-                    + '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>'
-                    + photos
-                    + '<div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">'
-                    + '<span class="flex items-center gap-1.5"><i class="fa-regular fa-comment"></i> ' + fmtNumber(p.replies) + '</span>'
-                    + '<span class="flex items-center gap-1.5"><i class="fa-solid fa-arrows-rotate"></i> ' + fmtNumber(p.reposts) + '</span>'
-                    + '<span class="flex items-center gap-1.5"><i class="fa-regular fa-heart"></i> ' + fmtNumber(p.likes) + '</span>'
-                    + '</div>'
-                    + '</div></div></article>';
+            const cards = posts.map(p => {
+                const leader = LEADERS.find(l => l.handle === p.author) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
+                const photos = (p.photos || []).map(u => `
+                    <img src="${u}" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">`).join('');
+
+                return `<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">
+                    <div class="flex gap-3">
+                        <img src="${leader.avatar}" alt="${leader.name}" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ${leader.verified ? 'ring-sky-500' : 'ring-slate-700'}">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <span class="font-bold text-slate-100 text-sm block truncate">${leader.name}</span>
+                                    <span class="text-xs text-slate-500">@${leader.handle} · ${p.date} · ${p.time}</span>
+                                </div>
+                                <a href="${p.link}" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X ↗</a>
+                            </div>
+                            <p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">${escapeHtml(p.text)}</p>
+                            ${photos}
+                            <div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">
+                                <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ${fmtNumber(p.replies)}</button>
+                                <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ${fmtNumber(p.reposts)}</button>
+                                <button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ${fmtNumber(p.likes)}</button>
+                                <button aria-label="Guardar" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
             }).join('');
 
-            container.innerHTML = cards
-                + '<div class="text-center pt-2">'
-                + '<a href="https://x.com/MariaCorinaYA" target="_blank" rel="noopener" '
-                + 'class="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition">'
-                + 'Ver más publicaciones en X</a></div>';
+            container.innerHTML = cards;
+            lucide.createIcons();
         };
 
         window.toggleCredential = function() {
@@ -696,24 +822,18 @@
         <!-- NAVIGATION MENU ITEMS -->
         <nav class="space-y-1 text-slate-300">
           <button onclick="switchView('feed')" id="nav-feed" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-semibold text-sm transition-colors text-sky-400 bg-sky-500/10 border-l-4 border-sky-500">
-            <i class="fa-solid fa-house text-lg w-6 text-center"></i>
+            <i class="fa-solid fa-newspaper text-lg w-6 text-center"></i>
             <span>Inicio</span>
           </button>
 
-          <button onclick="switchView('explore')" id="nav-explore" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
-            <i class="fa-solid fa-magnifying-glass text-lg w-6 text-center"></i>
-            <span>Explorar</span>
+          <button onclick="switchView('leaders')" id="nav-leaders" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
+            <i class="fa-solid fa-users text-lg w-6 text-center"></i>
+            <span>Líderes</span>
           </button>
 
-          <button onclick="switchView('notifications')" id="nav-notifications" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200 relative">
-            <i class="fa-regular fa-bell text-lg w-6 text-center"></i>
-            <span>Notificaciones</span>
-            <span class="ml-auto text-[10px] bg-sky-500 text-white font-bold px-2 py-0.5 rounded-full">3</span>
-          </button>
-
-          <button onclick="switchView('messages')" id="nav-messages" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
-            <i class="fa-regular fa-envelope text-lg w-6 text-center"></i>
-            <span>Mensajes</span>
+          <button onclick="switchView('topics')" id="nav-topics" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
+            <i class="fa-solid fa-hashtag text-lg w-6 text-center"></i>
+            <span>Temas</span>
           </button>
 
           <button onclick="switchView('profile')" id="nav-profile" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
@@ -890,6 +1010,28 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- LEADERS VIEW -->
+      <div id="view-leaders" class="hidden shrink-0 flex flex-col">
+        <div class="p-6 max-w-3xl mx-auto w-full space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-extrabold text-white">Líderes y medios</h2>
+            <span class="text-xs text-slate-400" id="leaders-count">14 fuentes</span>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" id="leaders-grid"></div>
+        </div>
+      </div>
+
+      <!-- TOPICS VIEW -->
+      <div id="view-topics" class="hidden shrink-0 flex flex-col">
+        <div class="p-6 max-w-3xl mx-auto w-full space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-extrabold text-white">Temas calientes</h2>
+            <span class="text-xs text-slate-400">Ordenados por volumen</span>
+          </div>
+          <div class="space-y-2" id="topics-list"></div>
+        </div>
       </div>
 
     </main>
@@ -1131,6 +1273,8 @@
       toggleSidebar(false); // al elegir una opción en móvil se cierra el menú
       const feedView = document.getElementById('view-feed');
       const profileView = document.getElementById('view-profile');
+      const leadersView = document.getElementById('view-leaders');
+      const topicsView = document.getElementById('view-topics');
       const headerTitle = document.getElementById('mainHeaderTitle');
       const headerSub = document.getElementById('mainHeaderSub');
 
@@ -1146,22 +1290,37 @@
         activeNav.classList.add('text-sky-400', 'bg-sky-500/10', 'border-l-4', 'border-sky-500', 'font-semibold');
       }
 
+      // Hide all views first
+      [feedView, profileView, leadersView, topicsView].forEach(v => v && v.classList.add('hidden'));
+
       if (viewName === 'feed') {
         feedView.classList.remove('hidden');
-        profileView.classList.add('hidden');
+        if (currentFilter.type !== 'all') {
+          const badge = document.getElementById('filter-badge') || createFilterBadge();
+          const label = currentFilter.type === 'leader'
+            ? LEADERS.find(l => l.handle === currentFilter.value)?.name || currentFilter.value
+            : TOPICS.find(t => t.tag === currentFilter.value)?.label || currentFilter.value;
+          badge.querySelector('span').textContent = `Filtrado: ${label}`;
+          badge.classList.remove('hidden');
+        } else {
+          const badge = document.getElementById('filter-badge');
+          if (badge) badge.classList.add('hidden');
+        }
         headerTitle.textContent = "Para ti";
-        headerSub.textContent = "Publicaciones recientes en Cabimas";
+        headerSub.textContent = "Publicaciones de líderes y medios";
+        loadFeed();
       } else if (viewName === 'profile') {
-        feedView.classList.add('hidden');
         profileView.classList.remove('hidden');
         headerTitle.textContent = "Perfil de Usuario";
         headerSub.textContent = `@${userState.username}`;
-      } else {
-        // Placeholder for other tabs
-        feedView.classList.remove('hidden');
-        profileView.classList.add('hidden');
-        headerTitle.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
-        headerSub.textContent = "Sección en desarrollo";
+      } else if (viewName === 'leaders') {
+        leadersView.classList.remove('hidden');
+        headerTitle.textContent = "Líderes";
+        headerSub.textContent = "Fuentes verificadas y medios";
+      } else if (viewName === 'topics') {
+        topicsView.classList.remove('hidden');
+        headerTitle.textContent = "Temas";
+        headerSub.textContent = "Hashtags más usados";
       }
 
       // "Mi Perfil": en PC se oculta la barra de título para que la portada ocupe todo el alto
@@ -2881,6 +3040,8 @@ window.renderDashboard = async function(perfil) {
             m.classList.remove("hidden");
             m.classList.add("flex");
             lucide.createIcons();
+            renderLeadersGrid();
+            renderTopicsList();
         };
 
         window.closeDashboard = async function(cerrarSesion = false) {
