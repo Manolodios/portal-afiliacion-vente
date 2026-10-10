@@ -2262,6 +2262,9 @@ window.renderDashboard = async function(perfil) {
             const handle = "@" + email.split("@")[0];
             const inicial = getInitial(perfil.nombre || "V");
 
+            // Actualizar userState con email para isAdmin()
+            userState.email = perfil.email;
+
             // Actualizar sidebar
             const sidebarName = document.getElementById("sidebarDisplayName");
             const sidebarUsername = document.getElementById("sidebarUsername");
