@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vente Venezuela - Portal de Afiliación y Registro</title>
+    <title>Vente Venezuela - Portal de AfiliaciÃ³n y Registro</title>
 
     <!-- Compartir en WhatsApp / Telegram / redes -->
-    <meta name="description" content="Portal de afiliación de Vente en Cabimas: regístrate en 4 pasos, verifica tu correo y obtén tu credencial de afiliado.">
+    <meta name="description" content="Portal de afiliaciÃ³n de Vente en Cabimas: regÃ­strate en 4 pasos, verifica tu correo y obtÃ©n tu credencial de afiliado.">
     <meta name="theme-color" content="#030811">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Vente Cabimas">
-    <meta property="og:title" content="Vente Venezuela - Portal de Afiliación y Registro">
-    <meta property="og:description" content="Regístrate en 4 pasos, verifica tu correo y obtén tu credencial de afiliado.">
+    <meta property="og:title" content="Vente Venezuela - Portal de AfiliaciÃ³n y Registro">
+    <meta property="og:description" content="RegÃ­strate en 4 pasos, verifica tu correo y obtÃ©n tu credencial de afiliado.">
     <meta property="og:url" content="https://manolodios.github.io/portal-afiliacion-vente/">
     <meta property="og:image" content="https://manolodios.github.io/portal-afiliacion-vente/assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png">
     <meta property="og:image:width" content="600">
@@ -20,7 +20,7 @@
 
     <link rel="icon" type="image/svg+xml" href="assets/logo-vente-cabimas.svg">
 
-    <!-- lucide fijado a 1.52.0: con "latest" una actualización puede romper los iconos sin aviso -->
+    <!-- lucide fijado a 1.52.0: con "latest" una actualizaciÃ³n puede romper los iconos sin aviso -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@1.52.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
@@ -174,15 +174,15 @@
       animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* ===== "Mi Perfil": barra de título ===== */
+    /* ===== "Mi Perfil": barra de tÃ­tulo ===== */
     /* En PC (>=768px) se oculta la barra superior con "Perfil de Usuario" para que la
        portada ocupe todo el alto (el sidebar ya muestra logo y usuario).
-       En móvil (<768px) se mantiene visible. Solo cuando la vista activa es el perfil. */
+       En mÃ³vil (<768px) se mantiene visible. Solo cuando la vista activa es el perfil. */
     @media (min-width: 768px) {
       #mainHeader.en-perfil { display: none; }
     }
 
-    /* ===== Recortador de imágenes (crop) ===== */
+    /* ===== Recortador de imÃ¡genes (crop) ===== */
     .crop-area {
       position: relative;
       width: 100%;
@@ -253,14 +253,14 @@
             </nav>
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <button type="button" onclick="switchTab('login')" class="text-slate-300 hover:text-white px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors">Entrar</button>
-                <button type="button" onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">Únete</button>
+                <button type="button" onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">Ãšnete</button>
             </div>
         </div>
     </header>
 
     <!-- Banner modo demo -->
     <div id="demo-warning" class="hidden bg-amber-100 border-b border-amber-300 text-amber-900 text-[11px] sm:text-xs font-semibold px-4 py-2 text-center">
-        ⚠ Modo demo activo: configura <code class="font-mono">SUPABASE_ANON_KEY</code> para guardar afiliaciones reales.
+        âš  Modo demo activo: configura <code class="font-mono">SUPABASE_ANON_KEY</code> para guardar afiliaciones reales.
     </div>
 
     <!-- Hero Section -->
@@ -272,18 +272,18 @@
                 <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
                     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-vente-cyan text-[10px] sm:text-xs font-semibold tracking-wide uppercase">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                        Portal Oficial de Afiliación
+                        Portal Oficial de AfiliaciÃ³n
                     </div>
                     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
                         Forma parte del movimiento por la <span class="text-transparent bg-clip-text bg-gradient-to-r from-vente-cyan to-vente-accent">Libertad</span>
                     </h1>
                     <p class="text-slate-300 text-sm sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        Súmate a la red de afiliados y voluntarios que construyen activamente una república próspera, libre e institucional.
+                        SÃºmate a la red de afiliados y voluntarios que construyen activamente una repÃºblica prÃ³spera, libre e institucional.
                     </p>
                     <div class="hidden sm:grid pt-4 grid-cols-3 gap-4 border-t border-slate-800/80 max-w-md mx-auto lg:mx-0">
                         <div><div class="text-xl lg:text-2xl font-bold text-white">24</div><div class="text-[10px] lg:text-xs text-slate-400">Estados</div></div>
                         <div><div class="text-xl lg:text-2xl font-bold text-vente-cyan">100%</div><div class="text-[10px] lg:text-xs text-slate-400">Compromiso</div></div>
-                        <div><div class="text-xl lg:text-2xl font-bold text-white">Global</div><div class="text-[10px] lg:text-xs text-slate-400">Diáspora</div></div>
+                        <div><div class="text-xl lg:text-2xl font-bold text-white">Global</div><div class="text-[10px] lg:text-xs text-slate-400">DiÃ¡spora</div></div>
                     </div>
                 </div>
 
@@ -291,7 +291,7 @@
                     <div class="glass-card rounded-2xl p-5 sm:p-8 shadow-2xl text-slate-800 relative z-20">
 
                         <div class="flex rounded-xl bg-slate-200/80 p-1 mb-5">
-                            <button type="button" id="tab-btn-login" onclick="switchTab('login')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">Iniciar Sesión</button>
+                            <button type="button" id="tab-btn-login" onclick="switchTab('login')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">Iniciar SesiÃ³n</button>
                             <button type="button" id="tab-btn-register" onclick="switchTab('register')" class="flex-1 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">Afiliarse</button>
                         </div>
 
@@ -299,11 +299,11 @@
                         <div id="login-form-container" class="hidden space-y-4">
                             <div class="text-center lg:text-left mb-2">
                                 <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Bienvenido</h2>
-                                <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tu correo y contraseña</p>
+                                <p class="text-[11px] sm:text-xs text-slate-500">Ingresa con tu correo y contraseÃ±a</p>
                             </div>
                             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3 sm:space-y-4" novalidate>
                                 <div>
-                                    <label for="login-email" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Correo Electrónico</label>
+                                    <label for="login-email" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase mb-1">Correo ElectrÃ³nico</label>
                                     <div class="relative">
                                         <i data-lucide="mail" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                                         <input type="email" id="login-email" name="email" required autocomplete="email" placeholder="afiliado@ejemplo.com"
@@ -312,14 +312,14 @@
                                 </div>
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
-                                        <label for="login-password" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase">Contraseña</label>
-                                        <a href="#" onclick="handleResetPassword(event)" class="text-[10px] sm:text-xs text-vente-cyan font-medium hover:underline">¿Olvidaste tu clave?</a>
+                                        <label for="login-password" class="block text-[10px] sm:text-xs font-semibold text-slate-700 uppercase">ContraseÃ±a</label>
+                                        <a href="#" onclick="handleResetPassword(event)" class="text-[10px] sm:text-xs text-vente-cyan font-medium hover:underline">Â¿Olvidaste tu clave?</a>
                                     </div>
                                     <div class="relative">
                                         <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                        <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="••••••••"
+                                        <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                                             class="w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
-                                            <button type="button" onclick="togglePass('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseña"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                            <button type="button" onclick="togglePass('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseÃ±a"><i data-lucide="eye" class="w-4 h-4"></i></button>
                                     </div>
                                 </div>
                                 <!-- Google OAuth -->
@@ -328,7 +328,7 @@
                                         <div class="w-full border-t border-slate-300"></div>
                                     </div>
                                     <div class="relative flex justify-center text-sm">
-                                        <span class="px-2 bg-white text-slate-500">O continúa con</span>
+                                        <span class="px-2 bg-white text-slate-500">O continÃºa con</span>
                                     </div>
                                 </div>
                                 <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 sm:py-3 border border-slate-300 rounded-lg text-slate-700 font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
@@ -366,7 +366,7 @@
                                             <div class="w-full border-t border-slate-300"></div>
                                         </div>
                                         <div class="relative flex justify-center text-sm">
-                                            <span class="px-2 bg-white text-slate-500">O regístrate con</span>
+                                            <span class="px-2 bg-white text-slate-500">O regÃ­strate con</span>
                                         </div>
                                     </div>
                                     <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 sm:py-3 border border-slate-300 rounded-lg text-slate-700 font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
@@ -376,7 +376,7 @@
                                     <div class="grid grid-cols-2 gap-2 sm:gap-3">
                                         <div>
                                             <label for="reg-nombre" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Nombre</label>
-                                            <input type="text" id="reg-nombre" name="nombre" required placeholder="María"
+                                            <input type="text" id="reg-nombre" name="nombre" required placeholder="MarÃ­a"
                                                 class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
                                         </div>
                                         <div>
@@ -387,7 +387,7 @@
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                         <div>
-                                            <label for="reg-cedula" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Cédula</label>
+                                            <label for="reg-cedula" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">CÃ©dula</label>
                                             <div class="flex gap-1">
                                                 <select id="reg-tipo-id" name="tipoId" aria-label="Tipo de documento" class="px-1.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-vente-cyan">
                                                     <option value="V">V-</option>
@@ -404,7 +404,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label for="reg-email" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                                        <label for="reg-email" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Correo ElectrÃ³nico</label>
                                         <input type="email" id="reg-email" name="email" required autocomplete="email" placeholder="afiliado@ejemplo.com"
                                             class="w-full px-2.5 py-1.5 sm:py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan focus:outline-none">
                                     </div>
@@ -430,8 +430,8 @@
                                                     <option value="Miranda">Miranda</option>
                                                     <option value="Carabobo">Carabobo</option>
                                                     <option value="Lara">Lara</option>
-                                                    <option value="Anzoátegui">Anzoátegui</option>
-                                                    <option value="Táchira">Táchira</option>
+                                                    <option value="AnzoÃ¡tegui">AnzoÃ¡tegui</option>
+                                                    <option value="TÃ¡chira">TÃ¡chira</option>
                                                     <option value="Otro">Otro...</option>
                                                 </select>
                                             </div>
@@ -444,8 +444,8 @@
                                     </div>
                                     <div id="campos-exterior" class="hidden space-y-2.5 sm:space-y-3">
                                         <div>
-                                            <label for="reg-pais" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">País</label>
-                                            <input type="text" id="reg-pais" name="pais" placeholder="Ej. España"
+                                            <label for="reg-pais" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">PaÃ­s</label>
+                                            <input type="text" id="reg-pais" name="pais" placeholder="Ej. EspaÃ±a"
                                                 class="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-vente-cyan">
                                         </div>
                                     </div>
@@ -453,7 +453,7 @@
 
                                 <!-- STEP 3 -->
                                 <div id="wizard-step-3" class="wizard-step hidden space-y-2 sm:space-y-3">
-                                    <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-tight">¿En qué área quieres colaborar? <span class="text-slate-400">(elige al menos una)</span></p>
+                                    <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-tight">Â¿En quÃ© Ã¡rea quieres colaborar? <span class="text-slate-400">(elige al menos una)</span></p>
                                     <div class="space-y-1.5 sm:space-y-2 max-h-44 overflow-y-auto pr-1">
                                         <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
                                             <input type="checkbox" name="areas" value="Activismo de Calle" class="reg-area-cb rounded border-slate-300 text-vente-cyan mr-2">
@@ -468,12 +468,12 @@
                                             Defensores del Voto
                                         </label>
                                         <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
-                                            <input type="checkbox" name="areas" value="Logística y Eventos" class="reg-area-cb rounded border-slate-300 text-vente-cyan mr-2">
-                                            Logística y Eventos
+                                            <input type="checkbox" name="areas" value="LogÃ­stica y Eventos" class="reg-area-cb rounded border-slate-300 text-vente-cyan mr-2">
+                                            LogÃ­stica y Eventos
                                         </label>
                                         <label class="flex items-center p-2 bg-slate-50 border rounded-lg active:bg-slate-100 cursor-pointer text-[10px] sm:text-xs font-medium text-slate-700">
-                                            <input type="checkbox" name="areas" value="Formación y Capacitación" class="reg-area-cb rounded border-slate-300 text-vente-cyan mr-2">
-                                            Formación y Capacitación
+                                            <input type="checkbox" name="areas" value="FormaciÃ³n y CapacitaciÃ³n" class="reg-area-cb rounded border-slate-300 text-vente-cyan mr-2">
+                                            FormaciÃ³n y CapacitaciÃ³n
                                         </label>
                                     </div>
                                 </div>
@@ -481,28 +481,28 @@
                                 <!-- STEP 4 -->
                                 <div id="wizard-step-4" class="wizard-step hidden space-y-2.5 sm:space-y-3">
                                     <div class="p-2.5 bg-slate-100 rounded-lg border border-slate-200 text-[10px] sm:text-xs text-slate-600 leading-relaxed">
-                                        <p class="font-bold text-slate-800 mb-0.5">Adhesión Liberal:</p>
-                                        Declaro mi adhesión a los principios republicanos, el respeto a la propiedad privada y la libertad impulsados por Vente Venezuela.
+                                        <p class="font-bold text-slate-800 mb-0.5">AdhesiÃ³n Liberal:</p>
+                                        Declaro mi adhesiÃ³n a los principios republicanos, el respeto a la propiedad privada y la libertad impulsados por Vente Venezuela.
                                     </div>
                                     <div>
-                                        <label for="reg-password" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Crea tu Contraseña</label>
+                                        <label for="reg-password" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Crea tu ContraseÃ±a</label>
                                         <div class="relative">
-                                        <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" placeholder="Mínimo 8 caracteres"
+                                        <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" placeholder="MÃ­nimo 8 caracteres"
                                             class="w-full px-2.5 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan">
-                                            <button type="button" onclick="togglePass('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseña"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                            <button type="button" onclick="togglePass('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseÃ±a"><i data-lucide="eye" class="w-4 h-4"></i></button>
                                         </div>
                                     </div>
                                     <div>
-                                        <label for="reg-password2" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Confirmar Contraseña</label>
+                                        <label for="reg-password2" class="block text-[11px] sm:text-xs font-semibold text-slate-700 mb-1">Confirmar ContraseÃ±a</label>
                                         <div class="relative">
-                                        <input type="password" id="reg-password2" name="password2" required minlength="8" autocomplete="new-password" placeholder="Repite tu contraseña"
+                                        <input type="password" id="reg-password2" name="password2" required minlength="8" autocomplete="new-password" placeholder="Repite tu contraseÃ±a"
                                             class="w-full px-2.5 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-vente-cyan">
-                                            <button type="button" onclick="togglePass('reg-password2', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseña"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                            <button type="button" onclick="togglePass('reg-password2', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseÃ±a"><i data-lucide="eye" class="w-4 h-4"></i></button>
                                         </div>
                                     </div>
                                     <label class="flex items-start gap-2 text-[10px] sm:text-xs text-slate-600">
                                         <input type="checkbox" id="reg-acepto" required class="mt-0.5 rounded border-slate-300 text-vente-cyan">
-                                        Acepto los términos y la política de tratamiento de datos.
+                                        Acepto los tÃ©rminos y la polÃ­tica de tratamiento de datos.
                                     </label>
                                 </div>
 
@@ -510,7 +510,7 @@
                                 <div id="register-turnstile" data-turnstile class="flex justify-center py-2"></div>
 
                                 <div class="flex justify-between items-center gap-2 pt-3 sm:pt-4 border-t border-slate-200 mt-3 sm:mt-4">
-                                    <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs transition-all">Atrás</button>
+                                    <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-xs transition-all">AtrÃ¡s</button>
                                     <button type="button" id="btn-next" onclick="changeStep(1)" class="ml-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-vente-cyan hover:bg-vente-hover text-slate-950 font-bold rounded-lg text-xs transition-all shadow-md flex items-center gap-1">
                                         <span>Siguiente</span>
                                         <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
@@ -536,7 +536,7 @@
   <div class="flex h-full w-full overflow-hidden">
 
     <!-- SIDEBAR NAV (MATCHING SCREENSHOT WITH ENHANCEMENTS) -->
-    <!-- Móvil: cajón deslizante fuera de pantalla (fixed) · md+: lateral fijo (static) -->
+    <!-- MÃ³vil: cajÃ³n deslizante fuera de pantalla (fixed) Â· md+: lateral fijo (static) -->
     <aside id="appSidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-[#08101e] border-r border-[#1e293b] flex flex-col justify-between p-4 md:flex-shrink-0 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-out shadow-2xl md:shadow-none">
       <div class="space-y-6">
         
@@ -578,7 +578,7 @@
 
           <button onclick="switchView('leaders')" id="nav-leaders" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
             <i class="fa-solid fa-users text-lg w-6 text-center"></i>
-            <span>Líderes</span>
+            <span>LÃ­deres</span>
           </button>
 
           <button onclick="switchView('topics')" id="nav-topics" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
@@ -590,6 +590,13 @@
             <i class="fa-regular fa-user text-lg w-6 text-center"></i>
             <span>Mi Perfil</span>
           </button>
+
+          <!-- Admin nav (solo visible para admins) -->
+          <button onclick="switchView('admin')" id="nav-admin" class="hidden w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
+            <i class="fa-solid fa-shield-halved text-lg w-6 text-center"></i>
+            <span>Admin</span>
+          </button>
+
         </nav>
 
       </div>
@@ -598,17 +605,17 @@
       <div class="px-3 text-xs text-slate-500 border-t border-slate-800/80 pt-4 space-y-3">
         <span class="flex items-center gap-1.5 min-w-0">
           <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png" alt="Vente Cabimas" class="h-5 w-auto shrink-0 opacity-90">
-          <span>© 2026</span>
+          <span>Â© 2026</span>
         </span>
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En línea</span>
-        <button onclick="closeDashboard(true)" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-800 transition-colors" title="Cerrar sesión">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En lÃ­nea</span>
+        <button onclick="closeDashboard(true)" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-800 transition-colors" title="Cerrar sesiÃ³n">
           <i class="fa-solid fa-right-from-bracket text-lg"></i>
-          <span class="font-medium">Cerrar sesión</span>
+          <span class="font-medium">Cerrar sesiÃ³n</span>
         </button>
       </div>
     </aside>
 
-    <!-- FONDO DEL CAJÓN MÓVIL (solo se muestra con el menú abierto) -->
+    <!-- FONDO DEL CAJÃ“N MÃ“VIL (solo se muestra con el menÃº abierto) -->
     <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-sm"></div>
 
     <!-- MAIN CONTENT VIEW AREA -->
@@ -617,7 +624,7 @@
       <!-- TOP STICKY BAR -->
       <header id="mainHeader" class="sticky top-0 z-10 glass-effect border-b border-[#1e293b] px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
-          <button type="button" onclick="toggleSidebar()" aria-label="Abrir menú" title="Menú"
+          <button type="button" onclick="toggleSidebar()" aria-label="Abrir menÃº" title="MenÃº"
             class="md:hidden shrink-0 w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition">
             <i class="fa-solid fa-bars"></i>
           </button>
@@ -650,7 +657,7 @@
 
         <!-- PUBLICACIONES DE LA COMUNIDAD -->
         <div id="postsList" class="space-y-4"></div>
-        <div id="emptyState" class="hidden text-center py-6 text-slate-500 text-sm">Aún no hay publicaciones.</div>
+        <div id="emptyState" class="hidden text-center py-6 text-slate-500 text-sm">AÃºn no hay publicaciones.</div>
 
         <!-- FEED CONTENT -->
         <div id="feed-content"><div class="text-center py-10 text-slate-500">Cargando publicaciones...</div></div>
@@ -693,7 +700,7 @@
             </div>
 
             <p id="profileViewBio" class="text-slate-300 text-sm max-w-xl leading-relaxed">
-              Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
+              Miembro oficial de Vente Cabimas. Apasionado por la innovaciÃ³n y el desarrollo en nuestra comunidad.
             </p>
 
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
@@ -731,11 +738,11 @@
                 </div>
               </div>
               <div class="pt-2 border-t border-slate-800/80 z-10 text-[11px] text-slate-300 truncate">
-                <span class="font-semibold text-vente-cyan">Áreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
+                <span class="font-semibold text-vente-cyan">Ãreas:</span> <span id="dash-user-areas">Activismo de Calle</span>
               </div>
               <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
                 <div>
-                  <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
+                  <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Ãšnico</div>
                   <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
                 </div>
                 <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
@@ -760,7 +767,7 @@
       <div id="view-leaders" class="hidden shrink-0 flex flex-col">
         <div class="p-6 max-w-3xl mx-auto w-full space-y-4">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-extrabold text-white">Líderes y medios</h2>
+            <h2 class="text-xl font-extrabold text-white">LÃ­deres y medios</h2>
             <span class="text-xs text-slate-400" id="leaders-count">14 fuentes</span>
           </div>
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" id="leaders-grid"></div>
@@ -778,10 +785,103 @@
         </div>
       </div>
 
+      <!-- ADMIN VIEW -->
+      <div id="view-admin" class="hidden shrink-0 flex flex-col">
+        <div class="p-6 max-w-7xl mx-auto w-full space-y-6">
+          <!-- Header con stats -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-white">Panel de AdministraciÃ³n</h1>
+              <p class="text-sm text-slate-400">GestiÃ³n de afiliados de Vente Cabimas</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="adminExportCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Exportar CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="admin-stats">
+            <!-- Se llena dinÃ¡micamente -->
+          </div>
+
+          <!-- Filtros y bÃºsqueda -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="flex-1 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="admin-search" placeholder="Buscar por nombre, email, cÃ©dula..." class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              </div>
+              <select id="admin-filter-state" class="w-full sm:w-48 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <option value="">Todos los estados</option>
+              </select>
+              <select id="admin-filter-area" class="w-full sm:w-48 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <option value="">Todas las Ã¡reas</option>
+              </select>
+              <input type="date" id="admin-filter-from" class="w-full sm:w-40 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <input type="date" id="admin-filter-to" class="w-full sm:w-40 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <button onclick="adminClearFilters()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition flex items-center gap-2">
+                <i class="fa-solid fa-xmark"></i> Limpiar
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabla de afiliados -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full" id="admin-table">
+                <thead class="bg-slate-950 border-b border-slate-800">
+                  <tr>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Nombre</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">CÃ©dula</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">UbicaciÃ³n</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Ãreas</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</th>
+                    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-tbody" class="divide-y divide-slate-800">
+                  <!-- Se llena dinÃ¡micamente -->
+                </tbody>
+              </table>
+            </div>
+            <!-- PaginaciÃ³n -->
+            <div class="p-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div class="text-sm text-slate-400" id="admin-pagination-info">Mostrando 0 de 0</div>
+              <div class="flex items-center gap-2">
+                <button onclick="adminPrevPage()" id="admin-btn-prev" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="admin-page-info" class="text-sm text-slate-300 px-2">PÃ¡gina 1 / 1</span>
+                <button onclick="adminNextPage()" id="admin-btn-next" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal ver/editar afiliado -->
+          <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-white" id="admin-modal-title">Ver Afiliado</h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+              </div>
+              <div class="p-6 space-y-4" id="admin-modal-body">
+                <!-- Se llena dinÃ¡micamente -->
+              </div>
+              <div class="p-6 border-t border-slate-800 flex justify-end gap-3">
+                <button onclick="closeAdminModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg">Cerrar</button>
+                <button onclick="adminSaveUser()" id="admin-btn-save" class="hidden px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-lg">Guardar cambios</button>
+                <button onclick="adminConfirmDelete()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-lg">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <!-- MODAL DE PERSONALIZACIÓN DE PERFIL -->
+  <!-- MODAL DE PERSONALIZACIÃ“N DE PERFIL -->
   <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl transform scale-95 transition-all duration-300 animate-pop-in flex flex-col max-h-[90vh]">
       
@@ -793,7 +893,7 @@
           </div>
           <div>
             <h3 class="font-bold text-white text-base">Personalizar Tu Perfil</h3>
-            <p class="text-xs text-slate-400">Actualiza tus datos y apariencia pública</p>
+            <p class="text-xs text-slate-400">Actualiza tus datos y apariencia pÃºblica</p>
           </div>
         </div>
         <button onclick="closeProfileModal()" aria-label="Cerrar" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition">
@@ -804,7 +904,7 @@
       <!-- MODAL BODY FORM -->
       <div class="p-6 space-y-6 overflow-y-auto">
 
-        <!-- SECCIÓN DE FOTO DE PERFIL -->
+        <!-- SECCIÃ“N DE FOTO DE PERFIL -->
         <div class="space-y-3">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Foto de Perfil</label>
           <div class="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -825,13 +925,13 @@
                   Quitar
                 </button>
               </div>
-              <p class="text-[11px] text-slate-500">Formato recomendado: JPG, PNG o GIF (Máx. 2MB)</p>
+              <p class="text-[11px] text-slate-500">Formato recomendado: JPG, PNG o GIF (MÃ¡x. 2MB)</p>
             </div>
           </div>
 
           <!-- RAPID PRESET AVATARS -->
           <div>
-            <span class="text-xs text-slate-400 mb-2 block">O elige un avatar prediseñado:</span>
+            <span class="text-xs text-slate-400 mb-2 block">O elige un avatar prediseÃ±ado:</span>
             <div class="flex gap-2 overflow-x-auto pb-1">
               <button onclick="setPresetAvatar('assets/avatar-preset-1.jpg')" aria-label="Usar foto de perfil 1" class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-sky-400 transition focus:outline-none flex-shrink-0">
                 <img src="assets/avatar-preset-1.jpg" class="w-full h-full object-cover" alt="">
@@ -849,7 +949,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DE FOTO DE PORTADA -->
+        <!-- SECCIÃ“N DE FOTO DE PORTADA -->
         <div class="space-y-3">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Foto de Portada</label>
           <div class="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -869,12 +969,12 @@
                   Quitar
                 </button>
               </div>
-              <p class="text-[11px] text-slate-500">Recomendado: 1600×400 px. JPG, PNG o GIF (máx. 5MB)</p>
+              <p class="text-[11px] text-slate-500">Recomendado: 1600Ã—400 px. JPG, PNG o GIF (mÃ¡x. 5MB)</p>
             </div>
           </div>
         </div>
 
-        <!-- SECCIÓN DE NOMBRE Y USERNAME -->
+        <!-- SECCIÃ“N DE NOMBRE Y USERNAME -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1.5">
             <label for="inputDisplayName" class="block text-xs font-semibold text-slate-300">Nombre Visible</label>
@@ -890,16 +990,16 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DE BIOGRAFÍA -->
+        <!-- SECCIÃ“N DE BIOGRAFÃA -->
         <div class="space-y-1.5">
-          <label for="inputBio" class="block text-xs font-semibold text-slate-300">Biografía</label>
-          <textarea id="inputBio" rows="3" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl p-3 text-sm text-white focus:outline-none transition resize-none" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+          <label for="inputBio" class="block text-xs font-semibold text-slate-300">BiografÃ­a</label>
+          <textarea id="inputBio" rows="3" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl p-3 text-sm text-white focus:outline-none transition resize-none" placeholder="CuÃ©ntanos un poco sobre ti..."></textarea>
         </div>
 
-        <!-- UBICACIÓN Y PARROQUIA -->
+        <!-- UBICACIÃ“N Y PARROQUIA -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1.5">
-            <label for="inputLocation" class="block text-xs font-semibold text-slate-300">Ubicación</label>
+            <label for="inputLocation" class="block text-xs font-semibold text-slate-300">UbicaciÃ³n</label>
             <input type="text" id="inputLocation" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition" placeholder="Ej: Cabimas, Zulia">
           </div>
 
@@ -910,10 +1010,10 @@
               <option value="Carmen Herrera" selected>Carmen Herrera</option>
               <option value="La Rosa">La Rosa</option>
               <option value="San Benito">San Benito</option>
-              <option value="Jorge Hernández">Jorge Hernández</option>
-              <option value="Rómulo Betancourt">Rómulo Betancourt</option>
-              <option value="Germán Ríos Linares">Germán Ríos Linares</option>
-              <option value="Arístides Calvani">Arístides Calvani</option>
+              <option value="Jorge HernÃ¡ndez">Jorge HernÃ¡ndez</option>
+              <option value="RÃ³mulo Betancourt">RÃ³mulo Betancourt</option>
+              <option value="GermÃ¡n RÃ­os Linares">GermÃ¡n RÃ­os Linares</option>
+              <option value="ArÃ­stides Calvani">ArÃ­stides Calvani</option>
               <option value="Punta Gorda">Punta Gorda</option>
             </select>
           </div>
@@ -926,7 +1026,7 @@
             <button type="button" onclick="setAccentTheme('sky')" aria-label="Color de acento celeste" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white/20 hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></button>
             <button type="button" onclick="setAccentTheme('emerald')" aria-label="Color de acento verde" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition"></button>
             <button type="button" onclick="setAccentTheme('purple')" aria-label="Color de acento morado" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('amber')" aria-label="Color de acento ámbar" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" onclick="setAccentTheme('amber')" aria-label="Color de acento Ã¡mbar" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
             <button type="button" onclick="setAccentTheme('rose')" aria-label="Color de acento rosa" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition"></button>
           </div>
         </div>
@@ -954,7 +1054,7 @@
         <i class="fa-solid fa-check"></i>
       </div>
       <div>
-        <h4 id="toastTitle" class="font-bold text-xs text-white">¡Perfil Actualizado!</h4>
+        <h4 id="toastTitle" class="font-bold text-xs text-white">Â¡Perfil Actualizado!</h4>
         <p id="toastBody" class="text-[11px] text-slate-300">Tus datos han sido guardados correctamente.</p>
       </div>
     </div>
@@ -979,24 +1079,24 @@
             }
         };
 
-        // Feed functions (legacy: la API de fxtwitter ya no devuelve timelines; ver loadFeed definitivo más abajo)
-        // === FEED DEFINITIVO: publicaciones reales de líderes y medios de la oposición ===
-        // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
-        // timeline oficial de X responde 429 desde muchas redes, así que se muestran
+        // Feed functions (legacy: la API de fxtwitter ya no devuelve timelines; ver loadFeed definitivo mÃ¡s abajo)
+        // === FEED DEFINITIVO: publicaciones reales de lÃ­deres y medios de la oposiciÃ³n ===
+        // Nota: la API de fxtwitter dejÃ³ de servir timelines de usuario (404) y el
+        // timeline oficial de X responde 429 desde muchas redes, asÃ­ que se muestran
         // publicaciones curadas y cada tarjeta enlaza al post original en X.
         const FEED_POSTS = [
-            // María Corina Machado (Vente Venezuela)
+            // MarÃ­a Corina Machado (Vente Venezuela)
             { id: "1976662546599018964", author: "MariaCorinaYA", text: "En nombre del pueblo de Venezuela, GRACIAS.", date: "10 oct 2025", time: "10:54", replies: 5440, reposts: 29888, likes: 129011, photos: ["assets/publicacion-marcorina.jpg"], link: "https://x.com/MariaCorinaYA/status/1976662546599018964" },
-            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
-            { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
-            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
-            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
-            { id: "1877822096182530559", author: "MariaCorinaYA", text: "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", date: "10 ene 2025", time: "16:57", replies: 5040, reposts: 22397, likes: 102962, photos: [], link: "https://x.com/MariaCorinaYA/status/1877822096182530559" }
+            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy mÃ¡s que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de AmÃ©ricaâ€¦", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
+            { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la Ãºltima parte serÃ­a la mÃ¡s difÃ­cil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
+            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitiÃ³ su admiraciÃ³n y su apoyo a la lucha por la libertad del pueblo venezolano, asÃ­ como su exigencia al respeto a la SoberanÃ­a Popular expresada el 28 de julio.\n\nLe agradecÃ­ por el compromiso firme y solidario delâ€¦", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
+            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represiÃ³n, manteniÃ©ndose unido y firme frente a un rÃ©gimen criminal,â€¦", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
+            { id: "1877822096182530559", author: "MariaCorinaYA", text: "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la ConstituciÃ³n.\n\nVENEZUELA SERÃ LIBRE!", date: "10 ene 2025", time: "16:57", replies: 5040, reposts: 22397, likes: 102962, photos: [], link: "https://x.com/MariaCorinaYA/status/1877822096182530559" }
         ];
 
-        // Líderes: solo Vente Venezuela
+        // LÃ­deres: solo Vente Venezuela
         const LEADERS = [
-            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
+            { handle: "MariaCorinaYA", name: "MarÃ­a Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
         ];
 
         // Hashtags/temas relevantes a Vente Venezuela
@@ -1017,7 +1117,7 @@
         // === RSSHub CONFIG ===
         const RSSHUB_BASE = 'https://rsshub.app';
         const RSS_FEEDS = [
-            { url: RSSHUB_BASE + '/twitter/user/MariaCorinaYA', source: 'MariaCorinaYA', name: 'María Corina Machado' },
+            { url: RSSHUB_BASE + '/twitter/user/MariaCorinaYA', source: 'MariaCorinaYA', name: 'MarÃ­a Corina Machado' },
             { url: RSSHUB_BASE + '/twitter/user/VenteVenezuela', source: 'VenteVenezuela', name: 'Vente Venezuela' },
             { url: RSSHUB_BASE + '/twitter/search/q=%23VenteVenezuela', source: 'hashtag', name: '#VenteVenezuela' },
             { url: RSSHUB_BASE + '/twitter/search/q=%23MariaCorina', source: 'hashtag', name: '#MariaCorina' },
@@ -1093,7 +1193,7 @@
         };
 
 
-        // Render grid de líderes// Render grid de líderes
+        // Render grid de lÃ­deres// Render grid de lÃ­deres
         function renderLeadersGrid() {
             const grid = document.getElementById('leaders-grid');
             if (!grid) return;
@@ -1286,13 +1386,13 @@
             <div class="text-center mb-10">
                 <span class="inline-block px-3 py-1 rounded-full bg-cyan-100 text-vente-cyan text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3">Nuestros Principios</span>
                 <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Los pilares que nos definen</h2>
-                <p class="text-xs sm:text-sm text-slate-500 mt-2 max-w-2xl mx-auto">Defendemos la libertad como principio, la propiedad privada como derecho y la institucionalidad como garantía del progreso.</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-2 max-w-2xl mx-auto">Defendemos la libertad como principio, la propiedad privada como derecho y la institucionalidad como garantÃ­a del progreso.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-xl gradient-cyan text-slate-950 flex items-center justify-center mb-3"><i data-lucide="scale" class="w-5 h-5"></i></div>
                     <h3 class="font-extrabold text-sm text-slate-900 mb-1">Libertad</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Cada ciudadano es libre de decidir, crear y progresar sin la intervención indebida del Estado.</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">Cada ciudadano es libre de decidir, crear y progresar sin la intervenciÃ³n indebida del Estado.</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-xl gradient-cyan text-slate-950 flex items-center justify-center mb-3"><i data-lucide="home" class="w-5 h-5"></i></div>
@@ -1302,12 +1402,12 @@
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-xl gradient-cyan text-slate-950 flex items-center justify-center mb-3"><i data-lucide="landmark" class="w-5 h-5"></i></div>
                     <h3 class="font-extrabold text-sm text-slate-900 mb-1">Institucionalidad</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Reglas claras, justicia independiente y respeto a la Constitución como garantía de convivencia.</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">Reglas claras, justicia independiente y respeto a la ConstituciÃ³n como garantÃ­a de convivencia.</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
                     <div class="w-10 h-10 rounded-xl gradient-cyan text-slate-950 flex items-center justify-center mb-3"><i data-lucide="users" class="w-5 h-5"></i></div>
                     <h3 class="font-extrabold text-sm text-slate-900 mb-1">Unidad</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Venezolanos dentro y fuera del país, unidos por un mismo propósito: recuperar la república.</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">Venezolanos dentro y fuera del paÃ­s, unidos por un mismo propÃ³sito: recuperar la repÃºblica.</p>
                 </div>
             </div>
         </div>
@@ -1322,21 +1422,21 @@
             <div class="space-y-3">
                 <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
                     <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
-                        <span>¿Puedo afiliarme desde el extranjero?</span>
+                        <span>Â¿Puedo afiliarme desde el extranjero?</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
                     </div>
-                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Sí, al registrarte elige "En el Exterior" para conectarte con la red global.</p>
+                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">SÃ­, al registrarte elige "En el Exterior" para conectarte con la red global.</p>
                 </div>
                 <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
                     <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
-                        <span>¿Es gratuito el registro?</span>
+                        <span>Â¿Es gratuito el registro?</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
                     </div>
-                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Completamente gratuito. Tu participación es nuestro mayor valor.</p>
+                    <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Completamente gratuito. Tu participaciÃ³n es nuestro mayor valor.</p>
                 </div>
                 <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 sm:p-4 cursor-pointer" onclick="toggleFaq(this)">
                     <div class="flex justify-between items-center font-bold text-xs sm:text-sm text-slate-800">
-                        <span>¿Qué hace Vente Venezuela con mis datos?</span>
+                        <span>Â¿QuÃ© hace Vente Venezuela con mis datos?</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
                     </div>
                     <p class="text-[11px] sm:text-xs text-slate-600 mt-2 hidden">Tus datos se almacenan de forma segura y solo se usan para coordinar actividades del movimiento. No se comparten con terceros.</p>
@@ -1420,26 +1520,29 @@
             <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png"
                  alt="Vente Cabimas"
                  class="brand-logo h-10 sm:h-12 w-auto opacity-90">
-            <p>© 2026 Vente Venezuela • Todos los derechos reservados</p>
+            <p>Â© 2026 Vente Venezuela â€¢ Todos los derechos reservados</p>
         </div>
     </footer>
 
     <!-- ==================== CLOUDFLARE TURNSTILE (CAPTCHA) ==================== -->
     <script>
         /* -----------------------------------------------------------------
-           PROTECCIÓN ANTI-BOT (Cloudflare Turnstile)
+           PROTECCIÃ“N ANTI-BOT (Cloudflare Turnstile)
            -----------------------------------------------------------------
            1) Crea un widget en https://dash.cloudflare.com -> Turnstile
               (hostname: manolodios.github.io)
-           2) Pega aquí abajo el "Site Key" (clave PÚBLICA).
+           2) Pega aquÃ­ abajo el "Site Key" (clave PÃšBLICA).
            3) En Supabase Dashboard -> Auth -> Bot and Abuse Protection
               activa "CAPTCHA protection", elige Turnstile y pega el
               "Secret Key" (clave PRIVADA).
 
-           Si VENTE_TURNSTILE_SITEKEY queda vacío, el captcha no se muestra
-           y el portal funciona igual (útil para desplegar sin romper nada).
+           Si VENTE_TURNSTILE_SITEKEY queda vacÃ­o, el captcha no se muestra
+           y el portal funciona igual (Ãºtil para desplegar sin romper nada).
         ------------------------------------------------------------------ */
         window.VENTE_TURNSTILE_SITEKEY = "0x4AAAAAAFRwxMQlSYeGenUE";
+
+        // Admin emails permitidos para acceder a /admin (hash route: #/admin)
+        window.ADMIN_EMAILS = ["yhojansuarez@gmail.com"];
 
         (function () {
             const SITEKEY = window.VENTE_TURNSTILE_SITEKEY;
@@ -1449,12 +1552,12 @@
             window.VenteCaptcha = {
                 activo: !!SITEKEY,
 
-                // Renderiza el widget dentro del contenedor (si aún no existe)
+                // Renderiza el widget dentro del contenedor (si aÃºn no existe)
                 render(containerId) {
                     if (!SITEKEY || !window.turnstile) return;
                     const el = document.getElementById(containerId);
                     if (!el || widgets[containerId] !== undefined) return;
-                    // No renderizar mientras está oculto (Turnstile necesita tamaño real)
+                    // No renderizar mientras estÃ¡ oculto (Turnstile necesita tamaÃ±o real)
                     if (el.offsetParent === null) return;
                     widgets[containerId] = window.turnstile.render(el, {
                         sitekey: SITEKEY,
@@ -1466,7 +1569,7 @@
                     });
                 },
 
-                // Devuelve el token actual (o ""), null si el captcha está desactivado
+                // Devuelve el token actual (o ""), null si el captcha estÃ¡ desactivado
                 token(containerId) {
                     if (!SITEKEY) return null;
                     if (tokens[containerId]) return tokens[containerId];
@@ -1503,7 +1606,7 @@
                 s.async = true;
                 s.defer = true;
                 s.onload = function () {
-                    // Renderizar los widgets que ya estén visibles
+                    // Renderizar los widgets que ya estÃ©n visibles
                     document.querySelectorAll("[data-turnstile]").forEach(function (el) {
                         window.VenteCaptcha.render(el.id);
                     });
@@ -1528,11 +1631,11 @@
         let supabase = null;
 
         if (CONFIGURADO) {
-            // La sesión se guarda en este navegador (persistSession está activo por
-            // defecto): no hace falta volver a iniciar sesión en cada visita.
+            // La sesiÃ³n se guarda en este navegador (persistSession estÃ¡ activo por
+            // defecto): no hace falta volver a iniciar sesiÃ³n en cada visita.
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Si ya había sesión, se restaura y se abre el panel directamente
+            // Si ya habÃ­a sesiÃ³n, se restaura y se abre el panel directamente
             supabase.auth.getSession().then(async ({ data: { session } }) => {
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
@@ -1540,9 +1643,9 @@
                         window.renderDashboard(perfil);
                     }
                 }
-            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesión:", e));
+            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesiÃ³n:", e));
 
-            // Escuchar logout / expiración de sesión
+            // Escuchar logout / expiraciÃ³n de sesiÃ³n
             supabase.auth.onAuthStateChange((event) => {
                 if (event === "SIGNED_OUT") window.closeDashboard(false);
             });
@@ -1562,7 +1665,7 @@
             return data;
         }
 
-        /* ---------- API pública ---------- */
+        /* ---------- API pÃºblica ---------- */
         window.SupabaseAPI = {
             configurado: CONFIGURADO,
 
@@ -1588,7 +1691,7 @@
                 const userId = authData.user?.id;
                 if (!userId) throw new Error("No se pudo crear el usuario.");
 
-                // 2) Si requiere confirmación de email, no hay sesión → no podemos insertar
+                // 2) Si requiere confirmaciÃ³n de email, no hay sesiÃ³n â†’ no podemos insertar
                 if (!authData.session) {
                     return { ok: true, uid: userId, needsConfirmation: true };
                 }
@@ -1678,10 +1781,10 @@
             // ------------------------------------------------------------------
             async subirFoto(campo, dataUrl) {
                 if (!CONFIGURADO) throw new Error("Supabase no configurado");
-                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es válida");
-                // getSession lee el navegador (sin petición a la red)
+                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es vÃ¡lida");
+                // getSession lee el navegador (sin peticiÃ³n a la red)
                 const { data: { session } } = await supabase.auth.getSession();
-                if (!session || !session.user) throw new Error("Sesión expirada");
+                if (!session || !session.user) throw new Error("SesiÃ³n expirada");
                 const blob = await (await fetch(dataUrl)).blob();
                 const extension = ((blob.type || "").split("/")[1] || "jpg").replace("jpeg", "jpg");
                 const ruta = session.user.id + "/" + campo + "-" + Date.now() + "." + extension;
@@ -1731,21 +1834,21 @@
         }
         function traducirError(err) {
             const msg = (err?.message || String(err) || "").toLowerCase();
-            if (msg.includes("invalid login"))        return "Correo o contraseña incorrectos.";
+            if (msg.includes("invalid login"))        return "Correo o contraseÃ±a incorrectos.";
             if (msg.includes("email not confirmed"))  return "Debes confirmar tu correo antes de entrar.";
-            if (msg.includes("already registered"))   return "Ese correo ya está registrado.";
-            if (msg.includes("already been registered")) return "Ese correo ya está registrado.";
-            if (msg.includes("password"))             return "La contraseña no cumple los requisitos mínimos (6+ caracteres).";
+            if (msg.includes("already registered"))   return "Ese correo ya estÃ¡ registrado.";
+            if (msg.includes("already been registered")) return "Ese correo ya estÃ¡ registrado.";
+            if (msg.includes("password"))             return "La contraseÃ±a no cumple los requisitos mÃ­nimos (6+ caracteres).";
             if (msg.includes("rate limit"))           return "Demasiados intentos. Espera un momento.";
-            if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
+            if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cÃ©dula ya estÃ¡ registrada.";
             if (msg.includes("database error saving new user") || msg.includes("database error"))
-                                    return "No se pudo completar el registro ahora mismo. Espera unos minutos e inténtalo de nuevo.";
+                                    return "No se pudo completar el registro ahora mismo. Espera unos minutos e intÃ©ntalo de nuevo.";
             if (msg.includes("network") || msg.includes("failed to fetch"))
-                                    return "Sin conexión con el servidor. Revisa tu internet e inténtalo de nuevo.";
-            return err?.message || "Ocurrió un error. Intenta nuevamente.";
+                                    return "Sin conexiÃ³n con el servidor. Revisa tu internet e intÃ©ntalo de nuevo.";
+            return err?.message || "OcurriÃ³ un error. Intenta nuevamente.";
         }
 
-        /* ---------- Red: detección de fallas y reintento automático ---------- */
+        /* ---------- Red: detecciÃ³n de fallas y reintento automÃ¡tico ---------- */
         function esErrorDeRed(err) {
             const m = (err?.message || String(err) || "").toLowerCase();
             return m.includes("network") || m.includes("failed to fetch") ||
@@ -1809,9 +1912,9 @@
             }, 3200);
         };
 
-        /* ---------- Avisos de conexión ---------- */
-        window.addEventListener("offline", () => showNotification("Se perdió la conexión a internet.", "error"));
-        window.addEventListener("online",  () => showNotification("Conexión restablecida.", "success"));
+        /* ---------- Avisos de conexiÃ³n ---------- */
+        window.addEventListener("offline", () => showNotification("Se perdiÃ³ la conexiÃ³n a internet.", "error"));
+        window.addEventListener("online",  () => showNotification("ConexiÃ³n restablecida.", "success"));
 
         /* ---------- Tabs ---------- */
         window.switchTab = function(tab) {
@@ -1839,7 +1942,7 @@
             lucide.createIcons();
         };
 
-        /* ---------- Cerrar formularios de autenticación (volver al hero) ---------- */
+        /* ---------- Cerrar formularios de autenticaciÃ³n (volver al hero) ---------- */
         window.closeAuthForms = function() {
             const loginForm = document.getElementById("login-form-container");
             const regForm   = document.getElementById("register-form-container");
@@ -1868,7 +1971,7 @@
             document.getElementById("step-counter").textContent = `${currentStep} / ${totalSteps}`;
             document.getElementById("progress-bar").style.width = `${(currentStep / totalSteps) * 100}%`;
 
-            const labels = ["Paso 1: Datos", "Paso 2: Ubicación", "Paso 3: Voluntariado", "Paso 4: Confirmación"];
+            const labels = ["Paso 1: Datos", "Paso 2: UbicaciÃ³n", "Paso 3: Voluntariado", "Paso 4: ConfirmaciÃ³n"];
             document.getElementById("step-label").textContent = labels[currentStep - 1];
 
             document.getElementById("btn-prev").classList.toggle("hidden", currentStep === 1);
@@ -1889,7 +1992,7 @@
                 const requeridos = [
                     { id: "reg-nombre",   msg: "Ingresa tu nombre." },
                     { id: "reg-apellido", msg: "Ingresa tu apellido." },
-                    { id: "reg-cedula",   msg: "Ingresa tu cédula." },
+                    { id: "reg-cedula",   msg: "Ingresa tu cÃ©dula." },
                     { id: "reg-fnac",     msg: "Ingresa tu fecha de nacimiento." },
                     { id: "reg-email",    msg: "Ingresa tu correo." }
                 ];
@@ -1898,10 +2001,10 @@
                     if (!v) { showNotification(r.msg, "warning"); get(r.id).focus(); return false; }
                 }
                 if (!/^\d{6,10}$/.test(get("reg-cedula").value.trim())) {
-                    showNotification("Cédula inválida (6 a 10 dígitos).", "warning"); return false;
+                    showNotification("CÃ©dula invÃ¡lida (6 a 10 dÃ­gitos).", "warning"); return false;
                 }
                 if (!/^\S+@\S+\.\S+$/.test(get("reg-email").value.trim())) {
-                    showNotification("Correo inválido.", "warning"); return false;
+                    showNotification("Correo invÃ¡lido.", "warning"); return false;
                 }
                 return true;
             }
@@ -1913,7 +2016,7 @@
                     }
                 } else {
                     if (!get("reg-pais").value.trim()) {
-                        showNotification("Ingresa tu país.", "warning"); return false;
+                        showNotification("Ingresa tu paÃ­s.", "warning"); return false;
                     }
                 }
                 return true;
@@ -1921,7 +2024,7 @@
             if (step === 3) {
                 const areas = document.querySelectorAll(".reg-area-cb:checked");
                 if (areas.length === 0) {
-                    showNotification("Elige al menos un área de colaboración.", "warning"); return false;
+                    showNotification("Elige al menos un Ã¡rea de colaboraciÃ³n.", "warning"); return false;
                 }
                 return true;
             }
@@ -1937,7 +2040,7 @@
             }
         };
 
-        /* ---------- Ubicación ---------- */
+        /* ---------- UbicaciÃ³n ---------- */
         window.toggleUbicacionCampos = function(valor) {
             const v = document.getElementById("campos-venezuela");
             const e = document.getElementById("campos-exterior");
@@ -1954,15 +2057,15 @@
             const email    = document.getElementById("login-email").value.trim();
             const password = document.getElementById("login-password").value;
             if (!email || !password) {
-                showNotification("Completa correo y contraseña.", "warning"); return;
+                showNotification("Completa correo y contraseÃ±a.", "warning"); return;
             }
             if (sinInternet()) {
-                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles e inténtalo de nuevo.", "error");
+                showNotification("Sin conexiÃ³n a internet. Revisa tu wifi o datos mÃ³viles e intÃ©ntalo de nuevo.", "error");
                 return;
             }
             const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("login-turnstile") : null;
             if (captchaToken === "") {
-                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                showNotification("Completa la verificaciÃ³n de seguridad (captcha).", "warning");
                 return;
             }
             const btn = document.getElementById("btn-login");
@@ -1973,10 +2076,10 @@
                 const res = await conReintento(() => window.SupabaseAPI.login(email, password, captchaToken));
                 if (res.perfil) {
                     window.renderDashboard(res.perfil);
-                    showNotification("Sesión iniciada.", "success");
+                    showNotification("SesiÃ³n iniciada.", "success");
                 } else {
                     // Cuenta creada pero sin perfil (probablemente falta confirmar correo)
-                    showNotification("Tu cuenta no tiene perfil asociado. Verifica tu correo o regístrate de nuevo.", "warning");
+                    showNotification("Tu cuenta no tiene perfil asociado. Verifica tu correo o regÃ­strate de nuevo.", "warning");
                 }
             } catch (err) {
                 console.error(err);
@@ -1987,7 +2090,7 @@
             }
         };
 
-        /* ---------- Recuperar contraseña ---------- */
+        /* ---------- Recuperar contraseÃ±a ---------- */
         window.handleResetPassword = async function(ev) {
             ev.preventDefault();
             const email = document.getElementById("login-email").value.trim();
@@ -1997,17 +2100,17 @@
                 return;
             }
             if (sinInternet()) {
-                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles.", "error");
+                showNotification("Sin conexiÃ³n a internet. Revisa tu wifi o datos mÃ³viles.", "error");
                 return;
             }
             const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("login-turnstile") : null;
             if (captchaToken === "") {
-                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                showNotification("Completa la verificaciÃ³n de seguridad (captcha).", "warning");
                 return;
             }
             try {
                 await conReintento(() => window.SupabaseAPI.resetPassword(email, captchaToken));
-                showNotification("Si el correo existe, recibirás un enlace.", "success");
+                showNotification("Si el correo existe, recibirÃ¡s un enlace.", "success");
             } catch (err) {
                 showNotification(traducirError(err), "error");
             } finally {
@@ -2018,7 +2121,7 @@
         /* ---------- Google OAuth ---------- */
         window.handleGoogleSignIn = async function() {
             if (sinInternet()) {
-                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles.", "error");
+                showNotification("Sin conexiÃ³n a internet. Revisa tu wifi o datos mÃ³viles.", "error");
                 return;
             }
             try {
@@ -2058,13 +2161,13 @@
             const pass1 = document.getElementById("reg-password").value;
             const pass2 = document.getElementById("reg-password2").value;
             if (pass1.length < 8) {
-                showNotification("La contraseña debe tener al menos 8 caracteres.", "warning"); return;
+                showNotification("La contraseÃ±a debe tener al menos 8 caracteres.", "warning"); return;
             }
             if (pass1 !== pass2) {
-                showNotification("Las contraseñas no coinciden.", "warning"); return;
+                showNotification("Las contraseÃ±as no coinciden.", "warning"); return;
             }
             if (!document.getElementById("reg-acepto").checked) {
-                showNotification("Debes aceptar los términos.", "warning"); return;
+                showNotification("Debes aceptar los tÃ©rminos.", "warning"); return;
             }
 
             const tipoDocumento = document.getElementById("reg-tipo-id").value;
@@ -2088,12 +2191,12 @@
             };
 
             if (sinInternet()) {
-                showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles antes de enviar.", "error");
+                showNotification("Sin conexiÃ³n a internet. Revisa tu wifi o datos mÃ³viles antes de enviar.", "error");
                 return;
             }
             const captchaToken = window.VenteCaptcha ? window.VenteCaptcha.token("register-turnstile") : null;
             if (captchaToken === "") {
-                showNotification("Completa la verificación de seguridad (captcha).", "warning");
+                showNotification("Completa la verificaciÃ³n de seguridad (captcha).", "warning");
                 return;
             }
             const btn = document.getElementById("btn-submit");
@@ -2107,7 +2210,7 @@
                     showConfirmEmail(payload.email);
                     resetWizard();
                 } else {
-                    // Sesión activa: mostrar dashboard con lo que ya insertamos
+                    // SesiÃ³n activa: mostrar dashboard con lo que ya insertamos
                     window.renderDashboard({
                         id: res.uid,
                         nombre: payload.nombre,
@@ -2123,8 +2226,8 @@
                     });
                     showNotification(
                         window.SupabaseAPI.configurado
-                            ? "¡Afiliación guardada exitosamente!"
-                            : "Afiliación completada (modo demo).",
+                            ? "Â¡AfiliaciÃ³n guardada exitosamente!"
+                            : "AfiliaciÃ³n completada (modo demo).",
                         "success"
                     );
                     resetWizard();
@@ -2190,7 +2293,7 @@ window.renderDashboard = async function(perfil) {
             const bigAvatarImg = document.getElementById("bigAvatarImg");
             if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
             if (profileViewUsername) profileViewUsername.textContent = handle;
-            if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
+            if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovaciÃ³n y el desarrollo en nuestra comunidad.";
             if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
             if (profileViewJoined) {
                 let fechaTxt = "Miembro de Vente";
@@ -2198,7 +2301,7 @@ window.renderDashboard = async function(perfil) {
                     const d = new Date(perfil.created_at);
                     if (!isNaN(d.getTime())) {
                         const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-                        fechaTxt = "Se unió en " + meses[d.getMonth()] + " " + d.getFullYear();
+                        fechaTxt = "Se uniÃ³ en " + meses[d.getMonth()] + " " + d.getFullYear();
                     }
                 }
                 profileViewJoined.innerHTML = '<i class="fa-regular fa-calendar text-slate-500"></i> ' + fechaTxt;
@@ -2242,7 +2345,7 @@ window.renderDashboard = async function(perfil) {
                     : (perfil.pais || "") + ", Exterior";
             }
             const dashAreas = document.getElementById("dash-user-areas");
-            if (dashAreas) dashAreas.textContent = (perfil.areas || []).join(", ") || "Sin áreas";
+            if (dashAreas) dashAreas.textContent = (perfil.areas || []).join(", ") || "Sin Ã¡reas";
             const dashCode = document.getElementById("dash-user-code");
             if (dashCode) dashCode.textContent = codigoDesdeUUID(perfil.id);
             const dashAvatar = document.getElementById("dash-user-avatar");
@@ -2257,7 +2360,7 @@ window.renderDashboard = async function(perfil) {
                 m.classList.remove("hidden");
                 m.classList.add("flex");
             }
-            // Ocultar landing/login detrás del dashboard (si no, se ven mezclados)
+            // Ocultar landing/login detrÃ¡s del dashboard (si no, se ven mezclados)
             const landingHeader = document.querySelector("header");
             const landingInicio = document.getElementById("inicio");
             if (landingHeader) landingHeader.classList.add("hidden");
@@ -2305,7 +2408,7 @@ window.renderDashboard = async function(perfil) {
                 if (landingHeader) landingHeader.classList.remove("hidden");
                 if (landingInicio) landingInicio.classList.remove("hidden");
                 window.scrollTo(0, 0);
-                showNotification("Sesión cerrada.", "info");
+                showNotification("SesiÃ³n cerrada.", "info");
             }
         };
 
@@ -2313,7 +2416,7 @@ window.renderDashboard = async function(perfil) {
         window.copyAffiliationCode = async function() {
             if (!perfilActual) return;
             const code = document.getElementById("dash-user-code").textContent;
-            const texto = `Vente Venezuela · Credencial de Afiliado\nID: ${code}\nNombre: ${document.getElementById("dash-user-name").textContent}\nCédula: ${document.getElementById("dash-user-id").textContent}`;
+            const texto = `Vente Venezuela Â· Credencial de Afiliado\nID: ${code}\nNombre: ${document.getElementById("dash-user-name").textContent}\nCÃ©dula: ${document.getElementById("dash-user-id").textContent}`;
             try {
                 await navigator.clipboard.writeText(texto);
                 showNotification("Credencial copiada al portapapeles.", "success");
@@ -2322,7 +2425,7 @@ window.renderDashboard = async function(perfil) {
             }
         };
 
-        // Carga una librería solo cuando se necesita (ahorra ~400 KB en la carga inicial)
+        // Carga una librerÃ­a solo cuando se necesita (ahorra ~400 KB en la carga inicial)
         function cargarScript(src) {
             return new Promise(function(resolve, reject) {
                 const previo = document.querySelector('script[src="' + src + '"]');
@@ -2343,7 +2446,7 @@ window.renderDashboard = async function(perfil) {
         window.downloadCredential = async function() {
             const card = document.getElementById("credential-card");
             if (!card) {
-                showNotification("Función no disponible.", "warning"); return;
+                showNotification("FunciÃ³n no disponible.", "warning"); return;
             }
             showNotification("Generando PDF...", "info");
             try {
@@ -2390,12 +2493,12 @@ window.renderDashboard = async function(perfil) {
             if (icon) icon.classList.toggle("rotate-180");
         };
 
-    // IMPORTANTE: aquí existía una SEGUNDA asignación de tailwind.config (darkMode + colores
+    // IMPORTANTE: aquÃ­ existÃ­a una SEGUNDA asignaciÃ³n de tailwind.config (darkMode + colores
     // "brand") que pisaba la del <head> y obligaba a Tailwind a regenerar el CSS SIN los colores
     // "vente" (bg-vente-cyan, from-vente-cyan, text-vente-accent...). Resultado: botones con fondo
-    // transparente y texto negro, barra de progreso sin color y el título "Libertad" invisible
-    // (texto transparente con background-clip:text y sin degradado). No volver a añadir aquí otra
-    // asignación: la config válida es la del inicio de este archivo.
+    // transparente y texto negro, barra de progreso sin color y el tÃ­tulo "Libertad" invisible
+    // (texto transparente con background-clip:text y sin degradado). No volver a aÃ±adir aquÃ­ otra
+    // asignaciÃ³n: la config vÃ¡lida es la del inicio de este archivo.
   
     </script>
     <script>
@@ -2403,7 +2506,7 @@ window.renderDashboard = async function(perfil) {
     const userState = {
       displayName: "Yhojan Suarez",
       username: "yhojansuarez",
-      bio: "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.",
+      bio: "Miembro oficial de Vente Cabimas. Apasionado por la innovaciÃ³n y el desarrollo en nuestra comunidad.",
       location: "Cabimas, Zulia",
       parroquia: "Carmen Herrera",
       avatarUrl: "", // Empty string means default placeholder icon/initials
@@ -2417,7 +2520,7 @@ window.renderDashboard = async function(perfil) {
         authorName: "Vente Cabimas",
         authorHandle: "ventecabimas",
         authorAvatar: "",
-        content: "¡Bienvenidos a la plataforma digital renovada de Vente Cabimas! Haz clic en tu usuario en el menú lateral para personalizar tu perfil.",
+        content: "Â¡Bienvenidos a la plataforma digital renovada de Vente Cabimas! Haz clic en tu usuario en el menÃº lateral para personalizar tu perfil.",
         time: "Hace 10m",
         likes: 12
       }
@@ -2428,7 +2531,7 @@ window.renderDashboard = async function(perfil) {
       renderPosts();
     });
 
-    // CAJÓN DE NAVEGACIÓN EN MÓVIL (en md+ el sidebar es lateral fijo)
+    // CAJÃ“N DE NAVEGACIÃ“N EN MÃ“VIL (en md+ el sidebar es lateral fijo)
     function toggleSidebar(forzar) {
       const aside = document.getElementById('appSidebar');
       const fondo = document.getElementById('sidebarBackdrop');
@@ -2445,18 +2548,19 @@ window.renderDashboard = async function(perfil) {
     }
     window.toggleSidebar = toggleSidebar;
 
-    // Al pasar a pantalla ancha el cajón queda cerrado (el sidebar siempre visible)
+    // Al pasar a pantalla ancha el cajÃ³n queda cerrado (el sidebar siempre visible)
     window.addEventListener('resize', function() {
       if (window.innerWidth >= 768) toggleSidebar(false);
     });
 
     // VIEW SWITCHER
     function switchView(viewName) {
-      toggleSidebar(false); // al elegir una opción en móvil se cierra el menú
+      toggleSidebar(false); // al elegir una opciÃ³n en mÃ³vil se cierra el menÃº
       const feedView = document.getElementById('view-feed');
       const profileView = document.getElementById('view-profile');
       const leadersView = document.getElementById('view-leaders');
       const topicsView = document.getElementById('view-topics');
+      const adminView = document.getElementById('view-admin');
       const headerTitle = document.getElementById('mainHeaderTitle');
       const headerSub = document.getElementById('mainHeaderSub');
 
@@ -2473,7 +2577,7 @@ window.renderDashboard = async function(perfil) {
       }
 
       // Hide all views first
-      [feedView, profileView, leadersView, topicsView].forEach(v => v && v.classList.add('hidden'));
+      [feedView, profileView, leadersView, topicsView, adminView].forEach(v => v && v.classList.add('hidden'));
 
       if (viewName === 'feed') {
         feedView.classList.remove('hidden');
@@ -2489,7 +2593,7 @@ window.renderDashboard = async function(perfil) {
           if (badge) badge.classList.add('hidden');
         }
         headerTitle.textContent = "Para ti";
-        headerSub.textContent = "Publicaciones de líderes y medios";
+        headerSub.textContent = "Publicaciones de lÃ­deres y medios";
         loadFeed();
       } else if (viewName === 'profile') {
         profileView.classList.remove('hidden');
@@ -2497,16 +2601,21 @@ window.renderDashboard = async function(perfil) {
         headerSub.textContent = `@${userState.username}`;
       } else if (viewName === 'leaders') {
         leadersView.classList.remove('hidden');
-        headerTitle.textContent = "Líderes";
+        headerTitle.textContent = "LÃ­deres";
         headerSub.textContent = "Fuentes verificadas y medios";
       } else if (viewName === 'topics') {
         topicsView.classList.remove('hidden');
         headerTitle.textContent = "Temas";
-        headerSub.textContent = "Hashtags más usados";
+        headerSub.textContent = "Hashtags mÃ¡s usados";
+      } else if (viewName === 'admin') {
+        adminView.classList.remove('hidden');
+        headerTitle.textContent = "AdministraciÃ³n";
+        headerSub.textContent = "Panel de gestiÃ³n de afiliados";
+        adminLoad();
       }
 
-      // "Mi Perfil": en PC se oculta la barra de título para que la portada ocupe todo el alto
-      // (en móvil se mantiene, ahí sí se usa). Regla CSS en #mainHeader.en-perfil.
+      // "Mi Perfil": en PC se oculta la barra de tÃ­tulo para que la portada ocupe todo el alto
+      // (en mÃ³vil se mantiene, ahÃ­ sÃ­ se usa). Regla CSS en #mainHeader.en-perfil.
       const cabecera = document.getElementById('mainHeader');
       if (cabecera) cabecera.classList.toggle('en-perfil', viewName === 'profile');
     }
@@ -2553,7 +2662,7 @@ window.renderDashboard = async function(perfil) {
 
       editarImagen(file, {
         titulo: "Foto de perfil",
-        subtitulo: "Arrastra la imagen y usa el zoom para encajar el rostro dentro del círculo.",
+        subtitulo: "Arrastra la imagen y usa el zoom para encajar el rostro dentro del cÃ­rculo.",
         aspecto: 1,
         mascara: true,
         maxW: 512,
@@ -2583,7 +2692,7 @@ window.renderDashboard = async function(perfil) {
       else if (typeof showToast === "function") showToast(msg, "");
     }
 
-    // Redimensiona y comprime una imagen → dataURL (JPEG)
+    // Redimensiona y comprime una imagen â†’ dataURL (JPEG)
     function comprimirImagen(file, maxW, maxH, calidadInicial, maxBytes) {
       return new Promise(function(resolve) {
         const reader = new FileReader();
@@ -2623,7 +2732,7 @@ window.renderDashboard = async function(perfil) {
     // ========== RECORTADOR DE IMAGEN (CROP) ==========
     let recortador = null;
     let cropConfig = null;
-    let cropZoomBase = 0; // escala (ancho/natural) con la que se ancló el slider
+    let cropZoomBase = 0; // escala (ancho/natural) con la que se anclÃ³ el slider
 
     function leerDataURL(file) {
       return new Promise(function(resolve) {
@@ -2673,7 +2782,7 @@ window.renderDashboard = async function(perfil) {
         circulo.style.top = caja.top + "px";
         circulo.style.width = caja.width + "px";
         circulo.style.height = caja.height + "px";
-      } catch (e) { /* aún no listo */ }
+      } catch (e) { /* aÃºn no listo */ }
     }
 
     function ratioActualRecorte() {
@@ -2683,9 +2792,9 @@ window.renderDashboard = async function(perfil) {
       } catch (e) { return 0; }
     }
 
-    // Mantiene el slider en sincronía con el zoom real (botones, rueda, pellizco)
-    // Cropper dispara "zoom" ANTES de actualizar imageData, así que la
-    // sincronización se hace al terminar la tarea actual (con datos ya frescos)
+    // Mantiene el slider en sincronÃ­a con el zoom real (botones, rueda, pellizco)
+    // Cropper dispara "zoom" ANTES de actualizar imageData, asÃ­ que la
+    // sincronizaciÃ³n se hace al terminar la tarea actual (con datos ya frescos)
     let cropZoomTimer = null;
 
     function actualizarSliderZoom() {
@@ -2696,8 +2805,8 @@ window.renderDashboard = async function(perfil) {
       }, 0);
     }
 
-    // Posición del slider = función pura del zoom real (sin estado acumulado,
-    // así no puede derivar): 50 en el anclaje inicial, ±25 por cada doblez
+    // PosiciÃ³n del slider = funciÃ³n pura del zoom real (sin estado acumulado,
+    // asÃ­ no puede derivar): 50 en el anclaje inicial, Â±25 por cada doblez
     function refrescarSlider() {
       const sl = document.getElementById("cropZoom");
       if (!sl || !recortador || !cropZoomBase) return;
@@ -2709,8 +2818,8 @@ window.renderDashboard = async function(perfil) {
       } catch (e) { /* ignorar */ }
     }
 
-    // Aplica ya la actualización pendiente (Cropper dispara "zoom" antes de
-    // actualizar imageData, así que al terminar la tarea los datos ya están frescos)
+    // Aplica ya la actualizaciÃ³n pendiente (Cropper dispara "zoom" antes de
+    // actualizar imageData, asÃ­ que al terminar la tarea los datos ya estÃ¡n frescos)
     function vaciarPendienteZoom() {
       if (cropZoomTimer) {
         clearTimeout(cropZoomTimer);
@@ -2733,7 +2842,7 @@ window.renderDashboard = async function(perfil) {
       if (!modal || !img) return;
 
       cropConfig = config;
-      cropZoomBase = 0; // se ancla cuando Cropper esté "ready"
+      cropZoomBase = 0; // se ancla cuando Cropper estÃ© "ready"
       if (titulo) titulo.textContent = config.titulo || "Ajustar imagen";
       if (sub) sub.textContent = config.subtitulo || "Arrastra la imagen para posicionarla dentro del marco.";
       if (mascara) mascara.classList.toggle("hidden", !config.mascara);
@@ -2783,8 +2892,8 @@ window.renderDashboard = async function(perfil) {
       setTimeout(iniciar, 500);
     };
 
-    // Salida clásica (Cropper): depende del tamaño en pantalla del recortador,
-    // por eso solo se usa como respaldo si la imagen está rotada/invertida.
+    // Salida clÃ¡sica (Cropper): depende del tamaÃ±o en pantalla del recortador,
+    // por eso solo se usa como respaldo si la imagen estÃ¡ rotada/invertida.
     function recorteClasico(config) {
       const cortado = recortador.getCroppedCanvas({
         maxWidth: config.maxW,
@@ -2794,7 +2903,7 @@ window.renderDashboard = async function(perfil) {
       });
       if (!cortado || !cortado.width) { notificar("No se pudo recortar la imagen.", "error"); return; }
 
-      // fondo sólido: evita bordes negros si el original tiene transparencia
+      // fondo sÃ³lido: evita bordes negros si el original tiene transparencia
       const fin = document.createElement("canvas");
       fin.width = cortado.width;
       fin.height = cortado.height;
@@ -2820,17 +2929,17 @@ window.renderDashboard = async function(perfil) {
         const natW = origen ? origen.naturalWidth : 0;
         const natH = origen ? origen.naturalHeight : 0;
         const marcoValido = rect && rect.width > 1 && rect.height > 1 && natW && natH;
-        // En esta versión de Cropper, scaleX/scaleY/rotate pueden no venir en getImageData()
-        // (undefined = sin transformar). Si hay rotación o espejo, se usa la ruta clásica.
+        // En esta versiÃ³n de Cropper, scaleX/scaleY/rotate pueden no venir en getImageData()
+        // (undefined = sin transformar). Si hay rotaciÃ³n o espejo, se usa la ruta clÃ¡sica.
         const escalaX = (info.scaleX === undefined) ? 1 : info.scaleX;
         const escalaY = (info.scaleY === undefined) ? 1 : info.scaleY;
         const sinTransformar = !info.rotate && !rect.rotate && escalaX === 1 && escalaY === 1;
 
         if (!marcoValido || !sinTransformar) { recorteClasico(config); return; }
 
-        // getData() devuelve el marco en PÍXELES REALES de la foto (no de pantalla).
-        // Antes se usaba getCroppedCanvas, que recortaba al tamaño visible y dejaba
-        // la imagen pixelada al ampliarla en pantalla. Se escala al tamaño pedido.
+        // getData() devuelve el marco en PÃXELES REALES de la foto (no de pantalla).
+        // Antes se usaba getCroppedCanvas, que recortaba al tamaÃ±o visible y dejaba
+        // la imagen pixelada al ampliarla en pantalla. Se escala al tamaÃ±o pedido.
         const maxW = config.maxW || 1600;
         const maxH = config.maxH || 1600;
         const escala = Math.min(maxW / rect.width, maxH / rect.height);
@@ -2936,7 +3045,7 @@ window.renderDashboard = async function(perfil) {
         if (!api || !api.guardarPerfil) return;
         const res = await api.guardarPerfil(campos);
         if (res.ok) notificar(msgOk, "success");
-        else if (res.sinSesion || res.demo) notificar(msgOk + " (guardada solo en esta sesión)", "warning");
+        else if (res.sinSesion || res.demo) notificar(msgOk + " (guardada solo en esta sesiÃ³n)", "warning");
         else notificar("No se pudo guardar en tu perfil: " + (res.error || "error"), "error");
       } catch (e) {
         notificar("No se pudo guardar en tu perfil.", "error");
@@ -2971,7 +3080,7 @@ window.renderDashboard = async function(perfil) {
         .catch(e => { fotosMigradas.delete(clave); console.warn("[Vente] No se pudo mover la foto a Storage:", e.message); });
     }
 
-    // Devuelve la foto que se puede mostrar: URL firmada si está en Storage,
+    // Devuelve la foto que se puede mostrar: URL firmada si estÃ¡ en Storage,
     // base64/URL directa si es antigua (y entonces se migra en segundo plano).
     async function resolverFotoPerfil(perfil, campo) {
       const valor = perfil ? perfil[campo] : "";
@@ -2979,7 +3088,7 @@ window.renderDashboard = async function(perfil) {
       const api = window.SupabaseAPI;
       if (valor.startsWith("perfil/")) {
         if (api && api.urlFirmada) {
-          try { return await api.urlFirmada(valor); } catch (e) { console.warn("[Vente] URL firmada falló:", e.message); }
+          try { return await api.urlFirmada(valor); } catch (e) { console.warn("[Vente] URL firmada fallÃ³:", e.message); }
         }
         return "";
       }
@@ -2988,13 +3097,13 @@ window.renderDashboard = async function(perfil) {
     }
 
     // --- Portada en HD al mostrar ---
-    // Si la foto guardada tiene menos píxeles que los que se van a mostrar, se amplía
+    // Si la foto guardada tiene menos pÃ­xeles que los que se van a mostrar, se amplÃ­a
     // en memoria con suavizado y un enfoque suave. Es solo visual: no se modifica lo
     // guardado en la base de datos.
     let portadaMejorada = { origen: null, resultado: null };
 
     function enfoqueSuave(ctx, w, h, fuerza) {
-      if (w * h > 4000000) return; // imágenes muy grandes: se omite por rendimiento
+      if (w * h > 4000000) return; // imÃ¡genes muy grandes: se omite por rendimiento
       const datos = ctx.getImageData(0, 0, w, h);
       const s = datos.data;
       const copia = new Uint8ClampedArray(s);
@@ -3022,8 +3131,8 @@ window.renderDashboard = async function(perfil) {
       const visible = (banner && banner.offsetWidth) ? banner.offsetWidth : (window.innerWidth || 1280);
       const objetivo = Math.max(1200, Math.round(visible * dpr));
       const img = new Image();
-      // La foto puede venir de Storage (otro dominio): sin CORS el canvas quedaría
-      // "tocado" y getImageData/toDataURL fallarían y se perdería el retoque HD.
+      // La foto puede venir de Storage (otro dominio): sin CORS el canvas quedarÃ­a
+      // "tocado" y getImageData/toDataURL fallarÃ­an y se perderÃ­a el retoque HD.
       img.crossOrigin = "anonymous";
       img.onerror = function() { listo(dataUrl); };
       img.onload = function() {
@@ -3066,7 +3175,7 @@ window.renderDashboard = async function(perfil) {
     }
     window.aplicarPortada = aplicarPortada;
 
-    // Subida de portada (desde el botón del banner o desde el modal)
+    // Subida de portada (desde el botÃ³n del banner o desde el modal)
     window.handleCoverUpload = async function(event) {
       const input = event.target;
       const file = input.files && input.files[0];
@@ -3075,7 +3184,7 @@ window.renderDashboard = async function(perfil) {
       if (!file.type.startsWith("image/")) { notificar("El archivo debe ser una imagen.", "warning"); return; }
       if (file.size > 8 * 1024 * 1024) { notificar("La imagen no puede superar 8 MB.", "warning"); return; }
 
-      // Proporción real del banner: lo que veas en el recorte es lo que se mostrará
+      // ProporciÃ³n real del banner: lo que veas en el recorte es lo que se mostrarÃ¡
       const banner = document.getElementById("profileBanner");
       const aspecto = (banner && banner.offsetWidth && banner.offsetHeight)
         ? banner.offsetWidth / banner.offsetHeight
@@ -3085,7 +3194,7 @@ window.renderDashboard = async function(perfil) {
         titulo: "Foto de portada",
         subtitulo: isNaN(aspecto)
           ? "Arrastra la imagen y usa el zoom para encajarla como quieras."
-          : "Arrastra la imagen para encajarla en la cabecera de tu perfil (se recorta a la proporción del banner).",
+          : "Arrastra la imagen para encajarla en la cabecera de tu perfil (se recorta a la proporciÃ³n del banner).",
         aspecto: aspecto,
         mascara: false,
         maxW: 1600,
@@ -3181,7 +3290,7 @@ window.renderDashboard = async function(perfil) {
         guardarCampoPerfil({ foto: guardado }, "Foto de perfil actualizada.");
       }
       closeProfileModal();
-      showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
+      showToast("Â¡Perfil Actualizado!", "Tus cambios han sido guardados con Ã©xito.");
     }
 
     // SYNC DOM WITH STATE
@@ -3201,7 +3310,7 @@ window.renderDashboard = async function(perfil) {
       // Profile View Page
       document.getElementById('profileViewDisplayName').textContent = name;
       document.getElementById('profileViewUsername').textContent = handle;
-      document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
+      document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografÃ­a.";
       document.getElementById('profileViewLocation').innerHTML = `<i class="fa-solid fa-location-dot text-sky-400"></i> ${userState.location || 'Cabimas'}`;
       document.getElementById('profileViewLink').innerHTML = `<i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia ${userState.parroquia || 'Carmen Herrera'}`;
       setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
@@ -3252,7 +3361,7 @@ window.renderDashboard = async function(perfil) {
       posts.unshift(newPost);
       input.value = "";
       renderPosts();
-      showToast("Publicación Enviada", "Tu mensaje ha sido compartido en la comunidad.");
+      showToast("PublicaciÃ³n Enviada", "Tu mensaje ha sido compartido en la comunidad.");
     }
 
     function renderPosts() {
@@ -3283,9 +3392,9 @@ window.renderDashboard = async function(perfil) {
                   <div class="flex items-center gap-2 truncate">
                     <span class="font-bold text-slate-100 text-sm truncate">${post.authorName}</span>
                     <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
-                    <span class="text-xs text-slate-600">• ${post.time}</span>
+                    <span class="text-xs text-slate-600">â€¢ ${post.time}</span>
                   </div>
-                  <button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
+                  <button aria-label="MÃ¡s opciones de la publicaciÃ³n" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${post.content}</p>
                 
@@ -3293,7 +3402,7 @@ window.renderDashboard = async function(perfil) {
                   <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> 0</button>
                   <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> 0</button>
                   <button onclick="likePost(${post.id}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
-                  <button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
+                  <button aria-label="Guardar publicaciÃ³n" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
                 </div>
               </div>
             </div>
@@ -3330,7 +3439,315 @@ window.renderDashboard = async function(perfil) {
         toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
       }, 3500);
     }
-  
+// ============================================================
+    // ADMIN PANEL LOGIC
+    // ============================================================
+    let adminState = {
+      allUsers: [],
+      filteredUsers: [],
+      currentPage: 1,
+      pageSize: 50,
+      selectedUserId: null,
+      statesCache: [],
+      areasCache: []
+    };
+
+    // Verifica si el usuario actual es admin
+    function isAdmin() {
+      if (userState?.email) {
+        return window.ADMIN_EMAILS?.includes(userState.email) || false;
+      }
+      return false;
+    }
+
+    // Carga la vista admin
+    async function adminLoad() {
+      if (!isAdmin()) {
+        showToast("Acceso denegado", "No tienes permisos de administrador");
+        switchView('feed');
+        return;
+      }
+
+      // Mostrar nav admin
+      const navAdmin = document.getElementById('nav-admin');
+      if (navAdmin) navAdmin.classList.remove('hidden');
+
+      // Cargar usuarios
+      await adminFetchUsers();
+      // Poblar filtros
+      adminPopulateFilters();
+      // Render primera pÃ¡gina
+      adminRenderTable();
+      adminRenderStats();
+    }
+
+    // Obtener todos los afiliados de la BD
+    async function adminFetchUsers() {
+      if (!CONFIGURADO) {
+        // Demo: datos de prueba
+        adminState.allUsers = [
+          { id: '1', nombre: 'MarÃ­a', apellido: 'GonzÃ¡lez', email: 'maria@test.com', cedula: 'V-12345678', estado: 'Zulia', municipio: 'Cabimas', areas: ['Activismo de Calle', 'Redes Sociales'], created_at: '2026-01-15T10:00:00Z' },
+          { id: '2', nombre: 'Carlos', apellido: 'RodrÃ­guez', email: 'carlos@test.com', cedula: 'V-87654321', estado: 'Distrito Capital', municipio: 'Caracas', areas: ['LogÃ­stica', 'FormaciÃ³n'], created_at: '2026-02-20T14:30:00Z' },
+          { id: '3', nombre: 'Ana', apellido: 'MartÃ­nez', email: 'ana@test.com', cedula: 'V-11223344', estado: 'Zulia', municipio: 'Maracaibo', areas: ['Activismo de Calle'], created_at: '2026-03-10T09:15:00Z' },
+        ];
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('afiliados')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error cargando afiliados:', error);
+          showToast('Error', 'No se pudieron cargar los afiliados');
+          adminState.allUsers = [];
+          return;
+        }
+
+        adminState.allUsers = data || [];
+      } catch (e) {
+        console.error('Error adminFetchUsers:', e);
+        adminState.allUsers = [];
+      }
+    }
+
+    // Poblar selects de filtros con valores Ãºnicos
+    function adminPopulateFilters() {
+      const states = [...new Set(adminState.allUsers.map(u => u.estado).filter(Boolean))].sort();
+      const areas = [...new Set(adminState.allUsers.flatMap(u => u.areas || []))].sort();
+
+      const stateSel = document.getElementById('admin-filter-state');
+      const areaSel = document.getElementById('admin-filter-area');
+
+      if (stateSel) {
+        stateSel.innerHTML = '<option value="">Todos los estados</option>' +
+          states.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      }
+      if (areaSel) {
+        areaSel.innerHTML = '<option value="">Todas las Ã¡reas</option>' +
+          areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+      }
+    }
+
+    // Aplicar filtros y bÃºsqueda
+    function adminApplyFilters() {
+      const search = document.getElementById('admin-search')?.value?.toLowerCase() || '';
+      const state = document.getElementById('admin-filter-state')?.value || '';
+      const area = document.getElementById('admin-filter-area')?.value || '';
+      const from = document.getElementById('admin-filter-from')?.value || '';
+      const to = document.getElementById('admin-filter-to')?.value || '';
+
+      adminState.filteredUsers = adminState.allUsers.filter(u => {
+        if (search) {
+          const haystack = `${u.nombre} ${u.apellido} ${u.email} ${u.cedula}`.toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        if (state && u.estado !== state) return false;
+        if (area && !(u.areas || []).includes(area)) return false;
+        if (from && u.created_at && new Date(u.created_at) < new Date(from)) return false;
+        if (to && u.created_at && new Date(u.created_at) > new Date(to + 'T23:59:59')) return false;
+        return true;
+      });
+
+      adminState.currentPage = 1;
+      adminRenderTable();
+      adminRenderStats();
+    }
+
+    // Limpiar filtros
+    function adminClearFilters() {
+      document.getElementById('admin-search').value = '';
+      document.getElementById('admin-filter-state').value = '';
+      document.getElementById('admin-filter-area').value = '';
+      document.getElementById('admin-filter-from').value = '';
+      document.getElementById('admin-filter-to').value = '';
+      adminApplyFilters();
+    }
+
+    // Render tabla paginada
+    function adminRenderTable() {
+      const tbody = document.getElementById('admin-tbody');
+      if (!tbody) return;
+
+      const start = (adminState.currentPage - 1) * adminState.pageSize;
+      const end = start + adminState.pageSize;
+      const pageUsers = adminState.filteredUsers.slice(start, end);
+
+      tbody.innerHTML = pageUsers.map(u => {
+        const fecha = u.created_at ? new Date(u.created_at).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) : 'â€”';
+        const areas = (u.areas || []).slice(0, 2).join(', ') + ((u.areas || []).length > 2 ? ' +' + ((u.areas || []).length - 2) : '');
+
+        return `
+          <tr class="hover:bg-slate-800/50 transition">
+            <td class="p-3">
+              <div class="font-medium text-white">${escapeHtml(u.nombre)} ${escapeHtml(u.apellido)}</div>
+            </td>
+            <td class="p-3 text-sm text-slate-300 truncate max-w-xs">${escapeHtml(u.email)}</td>
+            <td class="p-3 text-sm text-slate-400 font-mono">${escapeHtml(u.cedula || 'â€”')}</td>
+            <td class="p-3 text-sm text-slate-300">${escapeHtml(u.estado || 'â€”')}, ${escapeHtml(u.municipio || 'â€”')}</td>
+            <td class="p-3 text-sm text-slate-400 truncate max-w-xs" title="${escapeHtml((u.areas || []).join(', '))}">${escapeHtml(areas)}</td>
+            <td class="p-3 text-sm text-slate-500">${fecha}</td>
+            <td class="p-3">
+              <div class="flex items-center gap-2">
+                <button onclick="adminOpenModal('${u.id}')" class="px-3 py-1.5 text-xs bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition" title="Ver/Editar"><i class="fa-solid fa-eye"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="7" class="p-6 text-center text-slate-500">No hay afiliados que coincidan</td></tr>';
+
+      // PaginaciÃ³n
+      const total = adminState.filteredUsers.length;
+      const totalPages = Math.max(1, Math.ceil(total / adminState.pageSize));
+      const showing = total === 0 ? '0' : `${start + 1} - ${Math.min(end, total)} de ${total}`;
+
+      document.getElementById('admin-pagination-info').textContent = `Mostrando ${showing}`;
+      document.getElementById('admin-page-info').textContent = `PÃ¡gina ${adminState.currentPage} / ${totalPages}`;
+      document.getElementById('admin-btn-prev').disabled = adminState.currentPage === 1;
+      document.getElementById('admin-btn-next').disabled = adminState.currentPage >= totalPages;
+    }
+
+    function adminPrevPage() { if (adminState.currentPage > 1) { adminState.currentPage--; adminRenderTable(); } }
+    function adminNextPage() { 
+      const totalPages = Math.max(1, Math.ceil(adminState.filteredUsers.length / adminState.pageSize));
+      if (adminState.currentPage < totalPages) { adminState.currentPage++; adminRenderTable(); }
+    }
+
+    // Render stats cards
+    function adminRenderStats() {
+      const container = document.getElementById('admin-stats');
+      if (!container) return;
+
+      const total = adminState.allUsers.length;
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      const thisWeek = adminState.allUsers.filter(u => u.created_at && new Date(u.created_at) >= weekAgo).length;
+      const thisMonth = adminState.allUsers.filter(u => u.created_at && new Date(u.created_at) >= monthAgo).length;
+
+      container.innerHTML = `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-3xl font-extrabold text-white">${total}</div>
+          <div class="text-xs text-slate-400">Total Afiliados</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-3xl font-extrabold text-emerald-400">${thisWeek}</div>
+          <div class="text-xs text-slate-400">Esta semana</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-3xl font-extrabold text-sky-400">${thisMonth}</div>
+          <div class="text-xs text-slate-400">Este mes</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-3xl font-extrabold text-vente-cyan">${adminState.filteredUsers.length}</div>
+          <div class="text-xs text-slate-400">Filtrados</div>
+        </div>
+      `;
+    }
+
+    // Modal ver/editar
+    let adminSelectedUser = null;
+
+    function adminOpenModal(userId) {
+      const user = adminState.allUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      adminSelectedUser = user;
+      const modal = document.getElementById('admin-modal');
+      const title = document.getElementById('admin-modal-title');
+      const body = document.getElementById('admin-modal-body');
+      const btnSave = document.getElementById('admin-btn-save');
+
+      title.textContent = 'Ver Afiliado';
+      btnSave.classList.add('hidden');
+
+      body.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+          <div><label class="text-xs text-slate-400">Nombre</label><div class="font-medium text-white">${escapeHtml(user.nombre)}</div></div>
+          <div><label class="text-xs text-slate-400">Apellido</label><div class="font-medium text-white">${escapeHtml(user.apellido)}</div></div>
+          <div><label class="text-xs text-slate-400">Email</label><div class="text-sm text-slate-300">${escapeHtml(user.email)}</div></div>
+          <div><label class="text-xs text-slate-400">CÃ©dula</label><div class="font-mono text-sm text-slate-300">${escapeHtml(user.cedula || 'â€”')}</div></div>
+          <div><label class="text-xs text-slate-400">Estado</label><div class="font-medium text-white">${escapeHtml(user.estado || 'â€”')}</div></div>
+          <div><label class="text-xs text-slate-400">Municipio</label><div class="text-sm text-slate-300">${escapeHtml(user.municipio || 'â€”')}</div></div>
+          <div class="col-span-2"><label class="text-xs text-slate-400">Ãreas</label><div class="flex flex-wrap gap-1.5">${(user.areas || []).map(a => `<span class="px-2 py-0.5 bg-sky-500/20 text-sky-400 text-xs rounded">${escapeHtml(a)}</span>`).join('') || '<span class="text-slate-500 text-xs">Sin Ã¡reas</span>'}</div></div>
+          <div class="col-span-2"><label class="text-xs text-slate-400">Fecha de afiliaciÃ³n</label><div class="font-mono text-sm text-slate-300">${user.created_at ? new Date(user.created_at).toLocaleString('es-VE') : 'â€”'}</div></div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAdminModal() {
+      const modal = document.getElementById('admin-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      adminSelectedUser = null;
+    }
+
+    // Exportar CSV
+    function adminExportCSV() {
+      if (adminState.filteredUsers.length === 0) {
+        showToast('Sin datos', 'No hay afiliados para exportar');
+        return;
+      }
+
+      const headers = ['Nombre', 'Apellido', 'Email', 'CÃ©dula', 'Estado', 'Municipio', 'Ãreas', 'Fecha'];
+      const rows = adminState.filteredUsers.map(u => [
+        u.nombre, u.apellido, u.email, u.cedula || '', u.estado || '', u.municipio || '',
+        (u.areas || []).join('; '), u.created_at ? new Date(u.created_at).toLocaleString('es-VE') : ''
+      ]);
+
+      const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `afiliados_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Exportado', `${rows.length} afiliados descargados`);
+    }
+
+    // Eliminar usuario (con confirmaciÃ³n)
+    function adminConfirmDelete() {
+      if (!adminSelectedUser) return;
+      if (!confirm(`Â¿Eliminar a ${adminSelectedUser.nombre} ${adminSelectedUser.apellido}? Esta acciÃ³n no se puede deshacer.`)) return;
+      adminDeleteUser(adminSelectedUser.id);
+    }
+
+    async function adminDeleteUser(userId) {
+      if (!CONFIGURADO) {
+        showToast('Demo', 'En modo demo no se borra realmente');
+        adminState.allUsers = adminState.allUsers.filter(u => u.id !== userId);
+        adminApplyFilters();
+        closeAdminModal();
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from('afiliados').delete().eq('id', userId);
+        if (error) throw error;
+
+        showToast('Eliminado', 'Afiliado borrado de la base de datos');
+        adminState.allUsers = adminState.allUsers.filter(u => u.id !== userId);
+        adminApplyFilters();
+        closeAdminModal();
+      } catch (e) {
+        showToast('Error', e.message);
+      }
+    }
+
+    // Event listeners para filtros
+    document.addEventListener('DOMContentLoaded', () => {
+      ['admin-search', 'admin-filter-state', 'admin-filter-area', 'admin-filter-from', 'admin-filter-to'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', adminApplyFilters);
+      });
+    });
     </script>
 </body>
 </html>
