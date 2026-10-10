@@ -1642,10 +1642,10 @@
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === "function") {
-                        window.renderDashboard(perfil, session.user.email);
+                        await window.renderDashboard(perfil, session.user.email);
                     } else if (typeof window.renderDashboard === "function") {
                         // Usuario OAuth nuevo sin perfil en afiliados: usar email de sesión
-                        window.renderDashboard(null, session.user.email);
+                        await window.renderDashboard(null, session.user.email);
                     }
                     // Mostrar nav Admin si corresponde
                     if (typeof window.adminLoad === "function") {
@@ -1662,9 +1662,9 @@
                     // Login vía OAuth: restaurar dashboard y admin nav
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === "function") {
-                        window.renderDashboard(perfil, session.user.email);
+                        await window.renderDashboard(perfil, session.user.email);
                     } else if (typeof window.renderDashboard === "function") {
-                        window.renderDashboard(null, session.user.email);
+                        await window.renderDashboard(null, session.user.email);
                     }
                     if (typeof window.adminLoad === "function") {
                         await window.adminLoad();
