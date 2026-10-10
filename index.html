@@ -2514,6 +2514,7 @@ window.renderDashboard = async function(perfil) {
       avatarUrl: "", // Empty string means default placeholder icon/initials
       accentColor: "sky"
     };
+    window.userState = userState;
 
     // SAMPLE INITIAL POSTS
     let posts = [
@@ -3453,6 +3454,7 @@ window.renderDashboard = async function(perfil) {
       statesCache: [],
       areasCache: []
     };
+    window.adminState = adminState;
 
     // Verifica si el usuario actual es admin
     function isAdmin() {
