@@ -1628,6 +1628,7 @@
 
         if (CONFIGURADO) {
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            window.supabase = supabase;
 
             supabase.auth.getSession().then(async ({ data: { session } }) => {
                 if (session?.user) {
