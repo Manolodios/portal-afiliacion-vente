@@ -1632,32 +1632,32 @@
         let supabase = null;
 
         if (CONFIGURADO) {
-            // La sesi\u00F3n se guarda en este navegador (persistSession est\u00E1 activo por
-            // defecto): no hace falta volver a iniciar sesi\u00F3n en cada visita.
+            // La sesion se guarda en este navegador (persistSession esta activo por
+            // defecto): no hace falta volver a iniciar sesion en cada visita.
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             window.supabase = supabase;
 
-            // Si ya hab\u00EDa sesi\u00F3n, se restaura y se abre el panel directamente
+            // Si ya habia sesion, se restaura y se abre el panel directamente
             supabase.auth.getSession().then(async ({ data: { session } }) => {
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === "function") {
                         await window.renderDashboard(perfil, session.user.email);
                     } else if (typeof window.renderDashboard === "function") {
-                        // Usuario OAuth nuevo sin perfil en afiliados: usar email de sesi\u00F3n
+                        // Usuario OAuth nuevo sin perfil en afiliados: usar email de sesion
                         await window.renderDashboard(null, session.user.email);
                     }
                     // Mostrar nav Admin si corresponde
                     if (typeof window.adminLoad === "function") {
                         await window.adminLoad();
-            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesi\u00F3n:", e));
+            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesion:", e));
 
-            // Escuchar logout / expiraci\u00F3n de sesi\u00F3n
+            // Escuchar logout / expiracion de sesion
             supabase.auth.onAuthStateChange(async (event, session) => {
                 if (event === "SIGNED_OUT") {
                     window.closeDashboard(false);
                 } else if (event === "SIGNED_IN" && session?.user) {
-                    // Login v\u00EDa OAuth: restaurar dashboard y admin nav
+                    // Login via OAuth: restaurar dashboard y admin nav
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === "function") {
                         await window.renderDashboard(perfil, session.user.email);
@@ -1683,7 +1683,7 @@
             return data;
         }
 
-        /* ---------- API p\u00FAblica ---------- */
+        /* ---------- API publica ---------- */
         window.SupabaseAPI = {
             configurado: CONFIGURADO,
 
@@ -1709,7 +1709,7 @@
                 const userId = authData.user?.id;
                 if (!userId) throw new Error("No se pudo crear el usuario.");
 
-                // 2) Si requiere confirmaci\u00F3n de email, no hay sesi\u00F3n \u2192 no podemos insertar
+                // 2) Si requiere confirmacion de email, no hay sesion -> no podemos insertar
                 if (!authData.session) {
                     return { ok: true, uid: userId, needsConfirmation: true };
                 }
@@ -1799,10 +1799,10 @@
             // ------------------------------------------------------------------
             async subirFoto(campo, dataUrl) {
                 if (!CONFIGURADO) throw new Error("Supabase no configurado");
-                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es v\u00E1lida");
-                // getSession lee el navegador (sin petici\u00F3n a la red)
+                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es valida");
+                // getSession lee el navegador (sin peticion a la red)
                 const { data: { session } } = await supabase.auth.getSession();
-                if (!session || !session.user) throw new Error("Sesi\u00F3n expirada");
+                if (!session || !session.user) throw new Error("Sesion expirada");
                 const blob = await (await fetch(dataUrl)).blob();
                 const extension = ((blob.type || "").split("/")[1] || "jpg").replace("jpeg", "jpg");
                 const ruta = session.user.id + "/" + campo + "-" + Date.now() + "." + extension;
