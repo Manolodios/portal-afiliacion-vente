@@ -1617,87 +1617,75 @@
     </script>
 
     <!-- ==================== SUPABASE MODULE ==================== -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    <script type="module">        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // =====================================================================
-        // =====================================================================
-        const SUPABASE_URL      = "https://kgnajywtscxujwdmskbb.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU";
-        // =====================================================================
+        const SUPABASE_URL      = 'https://kgnajywtscxujwdmskbb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU';
 
-        const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith("PEGA_");
-        window.CONFIGURADO = CONFIGURADO;
+        const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith('PEGA_');
 
         let supabase = null;
 
         if (CONFIGURADO) {
-            // La sesion se guarda en este navegador (persistSession esta activo por
-            // defecto): no hace falta volver a iniciar sesion en cada visita.
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            window.supabase = supabase;
 
-            // Si ya habia sesion, se restaura y se abre el panel directamente
             supabase.auth.getSession().then(async ({ data: { session } }) => {
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
-                    if (perfil && typeof window.renderDashboard === "function") {
-                        await window.renderDashboard(perfil, session.user.email);
-                    } else if (typeof window.renderDashboard === "function") {
-                        // Usuario OAuth nuevo sin perfil en afiliados: usar email de sesion
-                        await window.renderDashboard(null, session.user.email);
+                    if (perfil && typeof window.renderDashboard === 'function') {
+                        window.renderDashboard(perfil, session.user.email);
+                    } else if (typeof window.renderDashboard === 'function') {
+                        window.renderDashboard(null, session.user.email);
                     }
-                    // Mostrar nav Admin si corresponde
-                    if (typeof window.adminLoad === "function") {
+                    if (typeof window.adminLoad === 'function') {
                         await window.adminLoad();
-            }).catch(e => console.warn("[Vente] No se pudo restaurar la sesion:", e));
+                    }
+                }
+            }).catch(e => console.warn('[Vente] No se pudo restaurar la sesion:', e));
 
-            // Escuchar logout / expiracion de sesion
             supabase.auth.onAuthStateChange(async (event, session) => {
-                if (event === "SIGNED_OUT") {
+                if (event === 'SIGNED_OUT') {
                     window.closeDashboard(false);
-                } else if (event === "SIGNED_IN" && session?.user) {
-                    // Login via OAuth: restaurar dashboard y admin nav
+                } else if (event === 'SIGNED_IN' && session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
-                    if (perfil && typeof window.renderDashboard === "function") {
-                        await window.renderDashboard(perfil, session.user.email);
-                    } else if (typeof window.renderDashboard === "function") {
-                        await window.renderDashboard(null, session.user.email);
+                    if (perfil && typeof window.renderDashboard === 'function') {
+                        window.renderDashboard(perfil, session.user.email);
+                    } else if (typeof window.renderDashboard === 'function') {
+                        window.renderDashboard(null, session.user.email);
                     }
-                    if (typeof window.adminLoad === "function") {
+                    if (typeof window.adminLoad === 'function') {
                         await window.adminLoad();
+                    }
+                }
             });
         } else {
-            const w = document.getElementById("demo-warning");
-            if (w) w.classList.remove("hidden");
-            console.warn("[Vente] Supabase sin configurar. Modo demo activo.");
+            const w = document.getElementById('demo-warning');
+            if (w) w.classList.remove('hidden');
+            console.warn('[Vente] Supabase sin configurar. Modo demo activo.');
         }
 
         async function cargarPerfil(userId) {
             const { data, error } = await supabase
-                .from("afiliados")
-                .select("*")
-                .eq("id", userId)
+                .from('afiliados')
+                .select('*')
+                .eq('id', userId)
                 .maybeSingle();
-            if (error) { console.error("Error cargando perfil:", error); return null; }
+            if (error) { console.error('Error cargando perfil:', error); return null; }
             return data;
         }
 
-        /* ---------- API publica ---------- */
         window.SupabaseAPI = {
             configurado: CONFIGURADO,
 
-            async register(datos, password, captchaToken) {
+            async register(datos, password) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 500));
-                    return { ok: true, uid: "demo-" + Date.now() };
+                    return { ok: true, uid: 'demo-' + Date.now() };
                 }
 
-                // 1) Crear usuario en Auth
                 const signUpOptions = {
-                    emailRedirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
+                    emailRedirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/verify.html'
                 };
-                if (captchaToken) signUpOptions.captchaToken = captchaToken;
 
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: datos.email,
@@ -1707,15 +1695,13 @@
                 if (authError) throw authError;
 
                 const userId = authData.user?.id;
-                if (!userId) throw new Error("No se pudo crear el usuario.");
+                if (!userId) throw new Error('No se pudo crear el usuario.');
 
-                // 2) Si requiere confirmacion de email, no hay sesion -> no podemos insertar
                 if (!authData.session) {
                     return { ok: true, uid: userId, needsConfirmation: true };
                 }
 
-                // 3) Insertar perfil en la tabla
-                const { error: dbError } = await supabase.from("afiliados").insert({
+                const { error: dbError } = await supabase.from('afiliados').insert({
                     id:                userId,
                     nombre:            datos.nombre,
                     apellido:          datos.apellido,
@@ -1734,14 +1720,12 @@
                 return { ok: true, uid: userId };
             },
 
-            async login(email, password, captchaToken) {
+            async login(email, password) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 400));
-                    return { ok: true, uid: "demo-" + Date.now(), perfil: null };
+                    return { ok: true, uid: 'demo-' + Date.now(), perfil: null };
                 }
-                const credenciales = { email, password };
-                if (captchaToken) credenciales.options = { captchaToken };
-                const { data, error } = await supabase.auth.signInWithPassword(credenciales);
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 const perfil = await cargarPerfil(data.user.id);
                 return { ok: true, uid: data.user.id, perfil };
@@ -1752,39 +1736,35 @@
                 await supabase.auth.signOut();
             },
 
-            async resetPassword(email, captchaToken) {
+            async resetPassword(email) {
                 if (!CONFIGURADO) { await new Promise(r => setTimeout(r, 300)); return; }
-                const opciones = {
-                    redirectTo: "https://manolodios.github.io/portal-afiliacion-vente/verify.html"
-                };
-                if (captchaToken) opciones.captchaToken = captchaToken;
-                const { error } = await supabase.auth.resetPasswordForEmail(email, opciones);
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/verify.html'
+                });
                 if (error) throw error;
             },
 
-            // OAuth (Google, GitHub, etc.)
             async signInWithOAuth(provider) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 300));
-                    return { ok: true, uid: "demo-" + Date.now() };
+                    return { ok: true, uid: 'demo-' + Date.now() };
                 }
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: provider,
                     options: {
-                        redirectTo: "https://manolodios.github.io/portal-afiliacion-vente/"
+                        redirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/'
                     }
                 });
                 if (error) throw error;
                 return { ok: true, data };
             },
 
-            // Guarda campos del perfil (foto, portada, etc.) en la tabla afiliados
             async guardarPerfil(campos) {
                 if (!CONFIGURADO) return { ok: false, demo: true };
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return { ok: false, sinSesion: true };
-                    const { error } = await supabase.from("afiliados").update(campos).eq("id", user.id);
+                    const { error } = await supabase.from('afiliados').update(campos).eq('id', user.id);
                     if (error) return { ok: false, error: error.message };
                     return { ok: true };
                 } catch (e) {
@@ -1792,40 +1772,29 @@
                 }
             },
 
-            // ------------------------------------------------------------------
-            // Fotos en Supabase Storage (bucket privado "perfil")
-            // En la base se guarda la ruta "perfil/{uid}/portada-...jpg" en lugar
-            // del base64 completo; para mostrarla se pide una URL firmada de 24 h.
-            // ------------------------------------------------------------------
             async subirFoto(campo, dataUrl) {
-                if (!CONFIGURADO) throw new Error("Supabase no configurado");
-                if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) throw new Error("La imagen no es valida");
-                // getSession lee el navegador (sin peticion a la red)
+                if (!CONFIGURADO) throw new Error('Supabase no configurado');
+                if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:')) throw new Error('La imagen no es valida');
                 const { data: { session } } = await supabase.auth.getSession();
-                if (!session || !session.user) throw new Error("Sesion expirada");
+                if (!session || !session.user) throw new Error('Sesion expirada');
                 const blob = await (await fetch(dataUrl)).blob();
-                const extension = ((blob.type || "").split("/")[1] || "jpg").replace("jpeg", "jpg");
-                const ruta = session.user.id + "/" + campo + "-" + Date.now() + "." + extension;
-                const { error } = await supabase.storage.from("perfil").upload(ruta, blob, {
-                    contentType: blob.type || "image/jpeg",
+                const extension = ((blob.type || '').split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+                const ruta = session.user.id + '/' + campo + '-' + Date.now() + '.' + extension;
+                const { error } = await supabase.storage.from('perfil').upload(ruta, blob, {
+                    contentType: blob.type || 'image/jpeg',
                     upsert: true
                 });
                 if (error) throw error;
-                return "perfil/" + ruta;
+                return ruta;
             },
 
-            // Convierte la ruta guardada en una URL firmada (si no es ruta, la devuelve tal cual)
-            async urlFirmada(valor) {
-                if (typeof valor !== "string" || !valor.startsWith("perfil/")) return valor || "";
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) return "";
-                const { data, error } = await supabase.storage.from("perfil")
-                    .createSignedUrl(valor.slice("perfil/".length), 60 * 60 * 24);
-                if (error || !data || !data.signedUrl) return "";
+            async urlFirmada(ruta) {
+                if (!CONFIGURADO) throw new Error('Supabase no configurado');
+                const { data, error } = await supabase.storage.from('perfil').createSignedUrl(ruta, 60 * 60 * 24);
+                if (error) throw error;
                 return data.signedUrl;
             }
-        };
-    </script>
+        };</script>
 
     <!-- ==================== UI LOGIC ==================== -->
     <script>
