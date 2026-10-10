@@ -3456,6 +3456,8 @@ window.renderDashboard = async function(perfil) {
 
     // Verifica si el usuario actual es admin
     function isAdmin() {
+      // En modo demo (sin Supabase configurado), permitir acceso para testing
+      if (!window.CONFIGURADO) return true;
       if (userState?.email) {
         return window.ADMIN_EMAILS?.includes(userState.email) || false;
       }
