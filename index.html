@@ -3504,13 +3504,25 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       const navAdmin = document.getElementById('nav-admin');
       if (navAdmin) navAdmin.classList.remove('hidden');
 
-      // Cargar usuarios
-      await adminFetchUsers();
-      // Poblar filtros
-      adminPopulateFilters();
-      // Render primera página
-      adminApplyFilters();
-      adminRenderStats();
+      // Mostrar loading en tabla y stats
+      const tbody = document.getElementById('admin-tbody');
+      const statsContainer = document.getElementById('admin-stats');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-sky-400"><div class="flex items-center justify-center gap-2"><div class="animate-spin rounded-full h-6 w-6 border-2 border-sky-500 border-t-transparent"></div><span>Cargando afiliados...</span></div></td></tr>';
+      if (statsContainer) statsContainer.innerHTML = '<div class="col-span-4 flex items-center justify-center gap-2 text-sky-400"><div class="animate-spin rounded-full h-6 w-6 border-2 border-sky-500 border-t-transparent"></div><span>Cargando estadísticas...</span></div>';
+
+      try {
+        // Cargar usuarios
+        await adminFetchUsers();
+        // Poblar filtros
+        adminPopulateFilters();
+        // Render primera página
+        adminApplyFilters();
+        adminRenderStats();
+      } catch (e) {
+        console.error('Error en adminLoad:', e);
+        showToast('Error', 'No se pudo cargar el panel de admin: ' + e.message);
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-rose-500">Error al cargar datos</td></tr>';
+      }
     }
 
     // Obtener todos los afiliados de la BD.
