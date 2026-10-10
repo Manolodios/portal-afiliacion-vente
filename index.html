@@ -3528,10 +3528,8 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       }
 
       try {
-        const { data, error } = await supabase
-          .from('afiliados')
-          .select('*')
-          .order('created_at', { ascending: false });
+        // Usar RPC con SECURITY DEFINER para leer todos los afiliados (bypass RLS para admins)
+        const { data, error } = await supabase.rpc('get_all_afiliados');
 
         if (error) {
           console.error('Error cargando afiliados:', error);
