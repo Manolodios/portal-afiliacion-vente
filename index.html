@@ -253,14 +253,14 @@
             </nav>
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <button type="button" onclick="switchTab('login')" class="text-slate-300 hover:text-white px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors">Entrar</button>
-                <button type="button" onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">�snete</button>
+                <button type="button" onclick="switchTab('register')" class="bg-vente-cyan hover:bg-vente-hover text-slate-950 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-all shadow-md active:scale-95">Únete</button>
             </div>
         </div>
     </header>
 
     <!-- Banner modo demo -->
     <div id="demo-warning" class="hidden bg-amber-100 border-b border-amber-300 text-amber-900 text-[11px] sm:text-xs font-semibold px-4 py-2 text-center">
-        �s� Modo demo activo: configura <code class="font-mono">SUPABASE_ANON_KEY</code> para guardar afiliaciones reales.
+        ⚠ Modo demo activo: configura <code class="font-mono">SUPABASE_ANON_KEY</code> para guardar afiliaciones reales.
     </div>
 
     <!-- Hero Section -->
@@ -317,7 +317,7 @@
                                     </div>
                                     <div class="relative">
                                         <i data-lucide="lock" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                        <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="�?��?��?��?��?��?��?��?�"
+                                        <input type="password" id="login-password" name="password" required autocomplete="current-password" placeholder="••••••••"
                                             class="w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan transition-all">
                                             <button type="button" onclick="togglePass('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Mostrar contraseña"><i data-lucide="eye" class="w-4 h-4"></i></button>
                                     </div>
@@ -615,7 +615,7 @@
       </div>
     </aside>
 
-    <!-- FONDO DEL CAJ�"N M�"VIL (solo se muestra con el menú abierto) -->
+    <!-- FONDO DEL CAJÓN MÓVIL (solo se muestra con el menú abierto) -->
     <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-sm"></div>
 
     <!-- MAIN CONTENT VIEW AREA -->
@@ -742,7 +742,7 @@
               </div>
               <div class="flex justify-between items-end pt-2 border-t border-slate-800 z-10">
                 <div>
-                  <div class="text-[8px] uppercase tracking-wider text-slate-400">ID �snico</div>
+                  <div class="text-[8px] uppercase tracking-wider text-slate-400">ID Único</div>
                   <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
                 </div>
                 <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
@@ -881,7 +881,7 @@
     </main>
   </div>
 
-  <!-- MODAL DE PERSONALIZACI�"N DE PERFIL -->
+  <!-- MODAL DE PERSONALIZACIÓN DE PERFIL -->
   <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl transform scale-95 transition-all duration-300 animate-pop-in flex flex-col max-h-[90vh]">
       
@@ -904,7 +904,7 @@
       <!-- MODAL BODY FORM -->
       <div class="p-6 space-y-6 overflow-y-auto">
 
-        <!-- SECCI�"N DE FOTO DE PERFIL -->
+        <!-- SECCIÓN DE FOTO DE PERFIL -->
         <div class="space-y-3">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Foto de Perfil</label>
           <div class="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -949,7 +949,7 @@
           </div>
         </div>
 
-        <!-- SECCI�"N DE FOTO DE PORTADA -->
+        <!-- SECCIÓN DE FOTO DE PORTADA -->
         <div class="space-y-3">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Foto de Portada</label>
           <div class="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-800">
@@ -969,12 +969,12 @@
                   Quitar
                 </button>
               </div>
-              <p class="text-[11px] text-slate-500">Recomendado: 1600�-400 px. JPG, PNG o GIF (máx. 5MB)</p>
+              <p class="text-[11px] text-slate-500">Recomendado: 1600×400 px. JPG, PNG o GIF (máx. 5MB)</p>
             </div>
           </div>
         </div>
 
-        <!-- SECCI�"N DE NOMBRE Y USERNAME -->
+        <!-- SECCIÓN DE NOMBRE Y USERNAME -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1.5">
             <label for="inputDisplayName" class="block text-xs font-semibold text-slate-300">Nombre Visible</label>
@@ -990,13 +990,13 @@
           </div>
         </div>
 
-        <!-- SECCI�"N DE BIOGRAFÍA -->
+        <!-- SECCIÓN DE BIOGRAFÍA -->
         <div class="space-y-1.5">
           <label for="inputBio" class="block text-xs font-semibold text-slate-300">Biografía</label>
           <textarea id="inputBio" rows="3" class="w-full bg-slate-800 border border-slate-700 focus:border-sky-500 rounded-xl p-3 text-sm text-white focus:outline-none transition resize-none" placeholder="Cuéntanos un poco sobre ti..."></textarea>
         </div>
 
-        <!-- UBICACI�"N Y PARROQUIA -->
+        <!-- UBICACIÓN Y PARROQUIA -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1.5">
             <label for="inputLocation" class="block text-xs font-semibold text-slate-300">Ubicación</label>
@@ -1087,10 +1087,10 @@
         const FEED_POSTS = [
             // María Corina Machado (Vente Venezuela)
             { id: "1976662546599018964", author: "MariaCorinaYA", text: "En nombre del pueblo de Venezuela, GRACIAS.", date: "10 oct 2025", time: "10:54", replies: 5440, reposts: 29888, likes: 129011, photos: ["assets/publicacion-marcorina.jpg"], link: "https://x.com/MariaCorinaYA/status/1976662546599018964" },
-            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América�?�", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
+            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América…", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
             { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
-            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del�?�", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
-            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,�?�", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
+            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del…", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
+            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,…", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
             { id: "1877822096182530559", author: "MariaCorinaYA", text: "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERÁ LIBRE!", date: "10 ene 2025", time: "16:57", replies: 5040, reposts: 22397, likes: 102962, photos: [], link: "https://x.com/MariaCorinaYA/status/1877822096182530559" }
         ];
 
@@ -1520,18 +1520,18 @@
             <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png"
                  alt="Vente Cabimas"
                  class="brand-logo h-10 sm:h-12 w-auto opacity-90">
-            <p>© 2026 Vente Venezuela �?� Todos los derechos reservados</p>
+            <p>© 2026 Vente Venezuela • Todos los derechos reservados</p>
         </div>
     </footer>
 
     <!-- ==================== CLOUDFLARE TURNSTILE (CAPTCHA) ==================== -->
     <script>
         /* -----------------------------------------------------------------
-           PROTECCI�"N ANTI-BOT (Cloudflare Turnstile)
+           PROTECCIÓN ANTI-BOT (Cloudflare Turnstile)
            -----------------------------------------------------------------
            1) Crea un widget en https://dash.cloudflare.com -> Turnstile
               (hostname: manolodios.github.io)
-           2) Pega aquí abajo el "Site Key" (clave P�sBLICA).
+           2) Pega aquí abajo el "Site Key" (clave PÚBLICA).
            3) En Supabase Dashboard -> Auth -> Bot and Abuse Protection
               activa "CAPTCHA protection", elige Turnstile y pega el
               "Secret Key" (clave PRIVADA).
@@ -1693,7 +1693,7 @@
                 const userId = authData.user?.id;
                 if (!userId) throw new Error("No se pudo crear el usuario.");
 
-                // 2) Si requiere confirmación de email, no hay sesión �?' no podemos insertar
+                // 2) Si requiere confirmación de email, no hay sesión → no podemos insertar
                 if (!authData.session) {
                     return { ok: true, uid: userId, needsConfirmation: true };
                 }
@@ -2534,7 +2534,7 @@ window.renderDashboard = async function(perfil) {
       renderPosts();
     });
 
-    // CAJ�"N DE NAVEGACI�"N EN M�"VIL (en md+ el sidebar es lateral fijo)
+    // CAJÓN DE NAVEGACIÓN EN MÓVIL (en md+ el sidebar es lateral fijo)
     function toggleSidebar(forzar) {
       const aside = document.getElementById('appSidebar');
       const fondo = document.getElementById('sidebarBackdrop');
@@ -2695,7 +2695,7 @@ window.renderDashboard = async function(perfil) {
       else if (typeof showToast === "function") showToast(msg, "");
     }
 
-    // Redimensiona y comprime una imagen �?' dataURL (JPEG)
+    // Redimensiona y comprime una imagen → dataURL (JPEG)
     function comprimirImagen(file, maxW, maxH, calidadInicial, maxBytes) {
       return new Promise(function(resolve) {
         const reader = new FileReader();
@@ -3395,7 +3395,7 @@ window.renderDashboard = async function(perfil) {
                   <div class="flex items-center gap-2 truncate">
                     <span class="font-bold text-slate-100 text-sm truncate">${post.authorName}</span>
                     <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
-                    <span class="text-xs text-slate-600">�?� ${post.time}</span>
+                    <span class="text-xs text-slate-600">• ${post.time}</span>
                   </div>
                   <button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
@@ -3442,7 +3442,8 @@ window.renderDashboard = async function(perfil) {
         toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
       }, 3500);
     }
-// ============================================================
+
+    // ============================================================
     // ADMIN PANEL LOGIC
     // ============================================================
     let adminState = {
@@ -3456,7 +3457,9 @@ window.renderDashboard = async function(perfil) {
     };
     window.adminState = adminState;
 
-    // Verifica si el usuario actual es admin
+    // Verifica si el usuario actual es admin.
+    // La comprobacion REAL la hacen las RLS policies de Supabase (app_metadata.role);
+    // esto solo controla la interfaz (mostrar/ocultar el boton y la vista).
     function isAdmin() {
       // En modo demo (sin Supabase configurado), permitir acceso para testing
       if (!window.CONFIGURADO) return true;
@@ -3483,11 +3486,13 @@ window.renderDashboard = async function(perfil) {
       // Poblar filtros
       adminPopulateFilters();
       // Render primera página
-      adminRenderTable();
+      adminApplyFilters();
       adminRenderStats();
     }
 
-    // Obtener todos los afiliados de la BD
+    // Obtener todos los afiliados de la BD.
+    // Si el usuario no tiene app_metadata.role = 'admin', las RLS policies
+    // devuelven solo su propia fila (o nada): la seguridad es del servidor.
     async function adminFetchUsers() {
       if (!CONFIGURADO) {
         // Demo: datos de prueba
@@ -3582,7 +3587,7 @@ window.renderDashboard = async function(perfil) {
       const pageUsers = adminState.filteredUsers.slice(start, end);
 
       tbody.innerHTML = pageUsers.map(u => {
-        const fecha = u.created_at ? new Date(u.created_at).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) : '�?"';
+        const fecha = u.created_at ? new Date(u.created_at).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
         const areas = (u.areas || []).slice(0, 2).join(', ') + ((u.areas || []).length > 2 ? ' +' + ((u.areas || []).length - 2) : '');
 
         return `
@@ -3591,8 +3596,8 @@ window.renderDashboard = async function(perfil) {
               <div class="font-medium text-white">${escapeHtml(u.nombre)} ${escapeHtml(u.apellido)}</div>
             </td>
             <td class="p-3 text-sm text-slate-300 truncate max-w-xs">${escapeHtml(u.email)}</td>
-            <td class="p-3 text-sm text-slate-400 font-mono">${escapeHtml(u.cedula || '�?"')}</td>
-            <td class="p-3 text-sm text-slate-300">${escapeHtml(u.estado || '�?"')}, ${escapeHtml(u.municipio || '�?"')}</td>
+            <td class="p-3 text-sm text-slate-400 font-mono">${escapeHtml(u.cedula || '—')}</td>
+            <td class="p-3 text-sm text-slate-300">${escapeHtml(u.estado || '—')}, ${escapeHtml(u.municipio || '—')}</td>
             <td class="p-3 text-sm text-slate-400 truncate max-w-xs" title="${escapeHtml((u.areas || []).join(', '))}">${escapeHtml(areas)}</td>
             <td class="p-3 text-sm text-slate-500">${fecha}</td>
             <td class="p-3">
@@ -3616,7 +3621,7 @@ window.renderDashboard = async function(perfil) {
     }
 
     function adminPrevPage() { if (adminState.currentPage > 1) { adminState.currentPage--; adminRenderTable(); } }
-    function adminNextPage() { 
+    function adminNextPage() {
       const totalPages = Math.max(1, Math.ceil(adminState.filteredUsers.length / adminState.pageSize));
       if (adminState.currentPage < totalPages) { adminState.currentPage++; adminRenderTable(); }
     }
@@ -3654,7 +3659,7 @@ window.renderDashboard = async function(perfil) {
       `;
     }
 
-    // Modal ver/editar
+    // Modal ver afiliado
     let adminSelectedUser = null;
 
     function adminOpenModal(userId) {
@@ -3668,18 +3673,18 @@ window.renderDashboard = async function(perfil) {
       const btnSave = document.getElementById('admin-btn-save');
 
       title.textContent = 'Ver Afiliado';
-      btnSave.classList.add('hidden');
+      if (btnSave) btnSave.classList.add('hidden');
 
       body.innerHTML = `
         <div class="grid grid-cols-2 gap-4">
           <div><label class="text-xs text-slate-400">Nombre</label><div class="font-medium text-white">${escapeHtml(user.nombre)}</div></div>
           <div><label class="text-xs text-slate-400">Apellido</label><div class="font-medium text-white">${escapeHtml(user.apellido)}</div></div>
           <div><label class="text-xs text-slate-400">Email</label><div class="text-sm text-slate-300">${escapeHtml(user.email)}</div></div>
-          <div><label class="text-xs text-slate-400">Cédula</label><div class="font-mono text-sm text-slate-300">${escapeHtml(user.cedula || '�?"')}</div></div>
-          <div><label class="text-xs text-slate-400">Estado</label><div class="font-medium text-white">${escapeHtml(user.estado || '�?"')}</div></div>
-          <div><label class="text-xs text-slate-400">Municipio</label><div class="text-sm text-slate-300">${escapeHtml(user.municipio || '�?"')}</div></div>
+          <div><label class="text-xs text-slate-400">Cédula</label><div class="font-mono text-sm text-slate-300">${escapeHtml(user.cedula || '—')}</div></div>
+          <div><label class="text-xs text-slate-400">Estado</label><div class="font-medium text-white">${escapeHtml(user.estado || '—')}</div></div>
+          <div><label class="text-xs text-slate-400">Municipio</label><div class="text-sm text-slate-300">${escapeHtml(user.municipio || '—')}</div></div>
           <div class="col-span-2"><label class="text-xs text-slate-400">Áreas</label><div class="flex flex-wrap gap-1.5">${(user.areas || []).map(a => `<span class="px-2 py-0.5 bg-sky-500/20 text-sky-400 text-xs rounded">${escapeHtml(a)}</span>`).join('') || '<span class="text-slate-500 text-xs">Sin áreas</span>'}</div></div>
-          <div class="col-span-2"><label class="text-xs text-slate-400">Fecha de afiliación</label><div class="font-mono text-sm text-slate-300">${user.created_at ? new Date(user.created_at).toLocaleString('es-VE') : '�?"'}</div></div>
+          <div class="col-span-2"><label class="text-xs text-slate-400">Fecha de afiliación</label><div class="font-mono text-sm text-slate-300">${user.created_at ? new Date(user.created_at).toLocaleString('es-VE') : '—'}</div></div>
         </div>
       `;
 
@@ -3694,7 +3699,7 @@ window.renderDashboard = async function(perfil) {
       adminSelectedUser = null;
     }
 
-    // Exportar CSV
+    // Exportar CSV (respeta los filtros activos)
     function adminExportCSV() {
       if (adminState.filteredUsers.length === 0) {
         showToast('Sin datos', 'No hay afiliados para exportar');
@@ -3754,6 +3759,7 @@ window.renderDashboard = async function(perfil) {
         if (el) el.addEventListener('input', adminApplyFilters);
       });
     });
+  
     </script>
 </body>
 </html>
