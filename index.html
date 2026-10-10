@@ -1063,7 +1063,6 @@
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
 
-        console.log('[DEBUG] Script 3 starting');
         window.toggleCredential = function() {
             const card = document.getElementById("credential-card");
             const overlay = document.getElementById("blur-overlay");
@@ -1127,6 +1126,12 @@
         const CACHE_KEY = 'vnte_rsshub_posts';
         const CACHE_TTL = 30 * 60 * 1000;
 
+        // RSSHub puede estar caído o bloquear CORS. Como en ese caso no hay nada
+        // que cachear, sin este bloqueo negativo cada cambio de vista volvía a
+        // disparar las 5 peticiones y llenaba la consola de errores.
+        const FALLO_KEY = 'vnte_rsshub_fallo';
+        const FALLO_TTL = 30 * 60 * 1000;
+
         function getCachedPosts() {
             try {
                 var cached = localStorage.getItem(CACHE_KEY);
@@ -1138,7 +1143,21 @@
         }
 
         function setCachedPosts(posts) {
-            try { localStorage.setItem(CACHE_KEY, JSON.stringify({ posts: posts, timestamp: Date.now() })); } catch { }
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ posts: posts, timestamp: Date.now() }));
+                localStorage.removeItem(FALLO_KEY);
+            } catch { }
+        }
+
+        function rsshubBloqueado() {
+            try {
+                var t = Number(localStorage.getItem(FALLO_KEY) || 0);
+                return t > 0 && (Date.now() - t) < FALLO_TTL;
+            } catch { return false; }
+        }
+
+        function marcarRSSHubFallido() {
+            try { localStorage.setItem(FALLO_KEY, String(Date.now())); } catch { }
         }
 
         function rssItemToPost(item, sourceFeed) {
@@ -1158,23 +1177,40 @@
         async function fetchRSSHubFeeds() {
             var cached = getCachedPosts();
             if (cached && cached.length > 0) { console.log('[RSSHub] Usando posts cacheados:', cached.length); return cached; }
+            if (rsshubBloqueado()) return [];
             var controller = new AbortController();
             var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
             try {
+                var fallos = 0;
                 var promises = RSS_FEEDS.map(function(feed) {
                     return fetch(feed.url, { signal: controller.signal, headers: { Accept: 'application/json' } })
                         .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error(feed.url + ': ' + r.status)); })
                         .then(function(data) { var items = data.items || data.data || []; return items.slice(0, 5).map(function(item) { return rssItemToPost(item, feed); }); })
-                        .catch(function(e) { console.warn('[RSSHub] Fallo:', feed.url, e); return []; });
+                        .catch(function() { fallos++; return []; });
                 });
                 var results = await Promise.allSettled(promises);
                 clearTimeout(timeoutId);
                 var allPosts = [];
                 results.forEach(function(r) { if (r.status === 'fulfilled') allPosts = allPosts.concat(r.value); });
                 var unique = allPosts.filter(function(p, i, arr) { return arr.findIndex(function(x) { return x.link === p.link; }) === i; });
-                if (unique.length > 0) { setCachedPosts(unique); console.log('[RSSHub] Posts frescos obtenidos:', unique.length); }
-                return unique;
-            } catch (e) { clearTimeout(timeoutId); console.error('[RSSHub] Error general:', e); return []; }
+                if (unique.length > 0) { setCachedPosts(unique); console.log('[RSSHub] Posts frescos obtenidos:', unique.length); return unique; }
+
+                // Fallo total. Si fue por el temporizador (red lenta) no se
+                // bloquea nada: en datos moviles una connexion lenta dejaria el
+                // feed sin RSSHub durante media hora solo por ir despacio.
+                if (controller.signal.aborted) {
+                    console.warn('[RSSHub] Tiempo de espera agotado. Se usan las publicaciones fijas; se reintentara en la proxima visita.');
+                    return [];
+                }
+                marcarRSSHubFallido();
+                console.warn('[RSSHub] Sin respuesta de ninguna fuente (' + fallos + '/' + RSS_FEEDS.length + '). Se usan las publicaciones fijas; se reintentara en 30 min.');
+                return [];
+            } catch (e) {
+                clearTimeout(timeoutId);
+                marcarRSSHubFallido();
+                console.warn('[RSSHub] Error general:', e.message);
+                return [];
+            }
         }
 
         function mergePosts(staticPosts, freshPosts) {
@@ -1355,7 +1391,9 @@
                 container.innerHTML = cards;
                 lucide.createIcons();
             }
-        };window.toggleCredential = function() {
+        };
+
+        window.toggleCredential = function() {
             const card = document.getElementById("credential-card");
             const overlay = document.getElementById("blur-overlay");
             const btn = document.getElementById("reveal-btn");
@@ -1804,6 +1842,33 @@
                 const { data, error } = await supabase.storage.from('perfil').createSignedUrl(ruta, 60 * 60 * 24);
                 if (error) throw new Error('No se pudo firmar la imagen: ' + error.message);
                 return data.signedUrl;
+            },
+
+            // Borra un objeto del bucket. Acepta la ruta con o sin el prefijo
+            // "perfil/" y no falla si el objeto ya no existe. Sin esto, cada
+            // cambio de foto dejaba el archivo anterior almacenado para siempre
+            // y las fotos de un afiliado borrado seguian existiendo en el bucket.
+            async borrarFoto(ruta) {
+                if (!CONFIGURADO || !ruta) return false;
+                if (ruta.startsWith('http') || ruta.startsWith('data:')) return false;
+                const limpia = ruta.startsWith('perfil/') ? ruta.slice(7) : ruta;
+                if (!limpia) return false;
+                const { error } = await supabase.storage.from('perfil').remove([limpia]);
+                if (error) console.warn('[Vente] No se pudo borrar ' + limpia + ':', error.message);
+                return !error;
+            },
+
+            // Borra las fotos de otro afiliado. Las RLS de Storage impiden que
+            // un usuario normal toque archivos ajenos, asi que delega en un RPC
+            // SECURITY DEFINER que exige app_metadata.role = 'admin'.
+            async borrarFotosAdmin(uid) {
+                if (!CONFIGURADO || !uid) return false;
+                if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uid)) {
+                    throw new Error('Identificador de afiliado no valido');
+                }
+                const { error } = await supabase.rpc('borrar_fotos_afiliado', { p_uid: uid });
+                if (error) throw new Error(error.message);
+                return true;
             }
         };</script>
 
@@ -2073,7 +2138,7 @@
             try {
                 const res = await conReintento(() => window.SupabaseAPI.login(email, password, captchaToken));
                 if (res.perfil) {
-                    window.renderDashboard(res.perfil);
+                    await window.renderDashboard(res.perfil);
                     showNotification("Sesión iniciada.", "success");
                 } else {
                     // Cuenta creada pero sin perfil (probablemente falta confirmar correo)
@@ -2209,7 +2274,7 @@
                     resetWizard();
                 } else {
                     // Sesión activa: mostrar dashboard con lo que ya insertamos
-                    window.renderDashboard({
+                    await window.renderDashboard({
                         id: res.uid,
                         nombre: payload.nombre,
                         apellido: payload.apellido,
@@ -2250,13 +2315,19 @@
         /* ---------- Dashboard ---------- */
 window.renderDashboard = async function(perfil, sessionEmail) {
             perfilActual = perfil;
+            // Un usuario que entra con Google puede no tener todavia fila en
+            // `afiliados`. `perfilActual` se deja en null a proposito (la
+            // credencial necesita saber que no hay ficha), pero para pintar se
+            // usa `datos`, que nunca es null: asi el render no revienta con
+            // TypeError y todos los "|| valor por defecto" siguen sirviendo.
+            const datos = perfil || {};
             // Las fotos pueden estar en Storage: se resuelven a URL firmada antes de pintar
-            const fotoUrl = perfil ? await resolverFotoPerfil(perfil, "foto") : "";
-            const portadaUrl = perfil ? await resolverFotoPerfil(perfil, "portada") : "";
-            const nombre = perfil ? ((perfil.nombre || "Usuario") + " " + (perfil.apellido || "")) : "Usuario";
-            const email = perfil?.email || sessionEmail || "usuario";
+            const fotoUrl = await resolverFotoPerfil(datos, "foto");
+            const portadaUrl = await resolverFotoPerfil(datos, "portada");
+            const nombre = ((datos.nombre || "Usuario") + " " + (datos.apellido || "")).trim();
+            const email = datos.email || sessionEmail || "usuario";
             const handle = "@" + email.split("@")[0];
-            const inicial = perfil ? getInitial(perfil.nombre || "V") : "U";
+            const inicial = getInitial(datos.nombre || "Usuario");
 
             // Actualizar userState con email para isAdmin()
             userState.email = email;
@@ -2295,11 +2366,11 @@ window.renderDashboard = async function(perfil, sessionEmail) {
             if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
             if (profileViewUsername) profileViewUsername.textContent = handle;
             if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
-            if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (perfil.estado || "Cabimas") + ", " + (perfil.municipio || "Zulia");
+            if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (datos.estado || "Cabimas") + ", " + (datos.municipio || "Zulia");
             if (profileViewJoined) {
                 let fechaTxt = "Miembro de Vente";
-                if (perfil.created_at) {
-                    const d = new Date(perfil.created_at);
+                if (datos.created_at) {
+                    const d = new Date(datos.created_at);
                     if (!isNaN(d.getTime())) {
                         const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
                         fechaTxt = "Se unió en " + meses[d.getMonth()] + " " + d.getFullYear();
@@ -2334,21 +2405,21 @@ window.renderDashboard = async function(perfil, sessionEmail) {
 
             // Actualizar credencial
             const dashName = document.getElementById("dash-user-name");
-            if (dashName) dashName.textContent = (perfil.nombre || "").toUpperCase() + " " + (perfil.apellido || "").toUpperCase();
+            if (dashName) dashName.textContent = (datos.nombre || "").toUpperCase() + " " + (datos.apellido || "").toUpperCase();
             const dashId = document.getElementById("dash-user-id");
-            if (dashId) dashId.textContent = perfil.cedula || "V-00000000";
+            if (dashId) dashId.textContent = datos.cedula || "V-00000000";
             const dashEmail = document.getElementById("dash-user-email");
             if (dashEmail) dashEmail.textContent = email;
             const dashState = document.getElementById("dash-user-state");
             if (dashState) {
-                dashState.textContent = perfil.residencia === "Venezuela"
-                    ? (perfil.estado || "") + (perfil.municipio ? ", " + perfil.municipio : "") + ", Venezuela"
-                    : (perfil.pais || "") + ", Exterior";
+                dashState.textContent = datos.residencia === "Venezuela"
+                    ? (datos.estado || "") + (datos.municipio ? ", " + datos.municipio : "") + ", Venezuela"
+                    : (datos.pais || "") + ", Exterior";
             }
             const dashAreas = document.getElementById("dash-user-areas");
-            if (dashAreas) dashAreas.textContent = (perfil.areas || []).join(", ") || "Sin áreas";
+            if (dashAreas) dashAreas.textContent = (datos.areas || []).join(", ") || "Sin áreas";
             const dashCode = document.getElementById("dash-user-code");
-            if (dashCode) dashCode.textContent = codigoDesdeUUID(perfil.id);
+            if (dashCode) dashCode.textContent = codigoDesdeUUID(datos.id);
             const dashAvatar = document.getElementById("dash-user-avatar");
             if (dashAvatar) {
                 if (fotoUrl) dashAvatar.innerHTML = '<img src="' + fotoUrl + '" class="w-full h-full rounded-xl object-cover">';
@@ -2371,22 +2442,7 @@ window.renderDashboard = async function(perfil, sessionEmail) {
             setTimeout(function() { loadFeed(); }, 50);
         };
 
-        window.showFeedTab = function(tab) {
-            const feedView = document.getElementById("feed-view");
-            const profileView = document.getElementById("profile-view");
-            if (tab === "perfil") {
-                feedView.classList.add("hidden");
-                profileView.classList.remove("hidden");
-            } else {
-                feedView.classList.remove("hidden");
-                profileView.classList.add("hidden");
-            }
-            lucide.createIcons();
-        };
-
         // (legacy: fxtwitter ya no sirve para timelines de usuario - 404)
-        window.
-
         window.openDashboard = function() {
             const m = document.getElementById("member-dashboard-modal");
             m.classList.remove("hidden");
@@ -2645,11 +2701,6 @@ window.renderDashboard = async function(perfil, sessionEmail) {
     function closeProfileModal() {
       const modal = document.getElementById('profileModal');
       if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-    }
-
-    function closeProfileModal() {
-      const modal = document.getElementById('profileModal');
-      modal.classList.add('opacity-0', 'pointer-events-none');
     }
 
     // AVATAR FILE UPLOAD / PRESET HANDLERS
@@ -3043,19 +3094,28 @@ window.renderDashboard = async function(perfil, sessionEmail) {
     async function guardarCampoPerfil(campos, msgOk) {
       try {
         const api = window.SupabaseAPI;
-        if (!api || !api.guardarPerfil) return;
+        if (!api || !api.guardarPerfil) return null;
         const res = await api.guardarPerfil(campos);
         if (res.ok) notificar(msgOk, "success");
         else if (res.sinSesion || res.demo) notificar(msgOk + " (guardada solo en esta sesión)", "warning");
         else notificar("No se pudo guardar en tu perfil: " + (res.error || "error"), "error");
+        return res;
       } catch (e) {
         notificar("No se pudo guardar en tu perfil.", "error");
+        return null;
       }
     }
 
-    // Sube la foto al Storage y devuelve el valor a guardar en la base. Si Storage
-    // no responde, se devuelve el base64 de siempre: nunca se pierde la foto.
-    async function guardarFotoEnStorage(campo, dataUrl) {
+    // Ruta que hay ahora mismo en la base de datos para un campo.
+    function rutaActualDe(campo) {
+      return (perfilActual && typeof perfilActual[campo] === "string") ? perfilActual[campo] : null;
+    }
+
+    // Sube una imagen a Storage y devuelve el valor a guardar en la base. Si no
+    // se pudo subir devuelve el valor original (base64 o asset) para no perderlo.
+    // NO borra nada: el archivo anterior se borra despues de guardar, en
+    // `actualizarFoto`.
+    async function subirFotoAStorage(campo, dataUrl) {
       if (!dataUrl) return null;
       const api = window.SupabaseAPI;
       if (!api || !api.subirFoto) return dataUrl;
@@ -3065,6 +3125,32 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         console.warn("[Vente] Storage no disponible, se guarda la foto embebida:", e.message);
         return dataUrl;
       }
+    }
+
+    // Borra del bucket el archivo que acaba de quedar obsoleto. Solo toca rutas
+    // de Storage: ni assets de la app ("assets/avatar-preset-1.jpg") ni base64.
+    async function borrarFotoObsoleta(ruta) {
+      const api = window.SupabaseAPI;
+      if (!api || !api.borrarFoto || !ruta) return;
+      const esDeStorage = ruta.startsWith("perfil/")
+        || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\//i.test(ruta);
+      if (!esDeStorage) return;
+      try { await api.borrarFoto(ruta); } catch (e) { /* no es critico */ }
+    }
+
+    // Flujo completo de un cambio de foto, en el orden correcto:
+    //   subir -> guardar en la base de datos -> borrar el archivo anterior.
+    // Si el UPDATE falla NO se borra nada, para que el perfil no se quede
+    // apuntando a un objeto que ya no existe (la foto desapareceria en silencio).
+    async function actualizarFoto(campo, dataUrl, mensaje) {
+      const anterior = rutaActualDe(campo);
+      const nueva = await subirFotoAStorage(campo, dataUrl);
+      const res = await guardarCampoPerfil({ [campo]: nueva }, mensaje);
+      if (res && res.ok) {
+        if (perfilActual) perfilActual[campo] = nueva;
+        if (anterior && anterior !== nueva) await borrarFotoObsoleta(anterior);
+      }
+      return res;
     }
 
     // Si la foto sigue en base64, la mueve a Storage (sin bloquear la interfaz)
@@ -3083,18 +3169,49 @@ window.renderDashboard = async function(perfil, sessionEmail) {
 
     // Devuelve la foto que se puede mostrar: URL firmada si está en Storage,
     // base64/URL directa si es antigua (y entonces se migra en segundo plano).
+    //
+    // Las rutas guardadas en `afiliados` pueden venir en dos formatos:
+    //   - relativo al bucket:    "<uid>/foto-123.jpg"        (lo devuelve subirFoto)
+    //   - con prefijo de bucket: "perfil/<uid>/foto-123.jpg" (formato antiguo)
+    //
+    // createSignedUrl() espera la ruta RELATIVA al bucket, porque el bucket ya
+    // está fijado con .from('perfil'). Si se le pasa "perfil/<uid>/..." busca
+    // "perfil/perfil/<uid>/..." y Supabase responde "Object not found".
+    // Por eso aquí se normaliza siempre quitando el prefijo "perfil/".
     async function resolverFotoPerfil(perfil, campo) {
       const valor = perfil ? perfil[campo] : "";
       if (typeof valor !== "string" || !valor) return "";
+
+      // URL absoluta: se muestra tal cual.
+      if (/^https?:\/\//i.test(valor)) return valor;
+
+      // Base64 antigua: se muestra ya y en segundo plano se sube a Storage.
+      if (valor.startsWith("data:")) {
+        migrarFotoASiStorage(perfil, campo);
+        return valor;
+      }
+
+      // Una ruta de Storage SIEMPRE empieza por el UUID del usuario (el
+      // nombre del objeto es "<uid>/<campo>-<ts>.<ext>"), con o sin el prefijo
+      // de bucket. Cualquier otra ruta relativa no es de Storage sino un
+      // archivo de la propia app (p. ej. "assets/avatar-preset-1.jpg", que
+      // genera setPresetAvatar) y debe devolverse tal cual para que la resuelva
+      // el <img>. Si se mandara a createSignedUrl respondería "Object not found".
+      const esRutaStorage = /^(?:perfil\/)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\//i.test(valor);
+      if (!esRutaStorage) return valor;
+
+      // Está en Storage: hay que firmarla para poder verla (el bucket es privado).
       const api = window.SupabaseAPI;
-      if (valor.startsWith("perfil/")) {
-        if (api && api.urlFirmada) {
-          try { return await api.urlFirmada(valor); } catch (e) { console.warn("[Vente] URL firmada falló:", e.message); }
-        }
+      if (!api || !api.urlFirmada) return "";
+      const ruta = valor.startsWith("perfil/") ? valor.slice(7) : valor;
+      if (!ruta) return "";
+      try {
+        const url = await api.urlFirmada(ruta);
+        return typeof url === "string" ? url : "";
+      } catch (e) {
+        console.warn("[Vente] No se pudo firmar la imagen de " + campo + ":", e.message);
         return "";
       }
-      if (valor.startsWith("data:")) migrarFotoASiStorage(perfil, campo);
-      return valor;
     }
 
     // --- Portada en HD al mostrar ---
@@ -3204,9 +3321,9 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         maxBytes: 600 * 1024,
         onListo: async function(dataUrl) {
           aplicarPortada(dataUrl);
-          if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = dataUrl;
-          const guardado = await guardarFotoEnStorage("portada", dataUrl);
-          await guardarCampoPerfil({ portada: guardado }, "Portada actualizada.");
+          // No se toca perfilActual antes de guardar: `actualizarFoto` necesita
+          // leer la ruta anterior para poder borrar el archivo viejo despues.
+          await actualizarFoto("portada", dataUrl, "Portada actualizada.");
         }
       });
     };
@@ -3214,8 +3331,7 @@ window.renderDashboard = async function(perfil, sessionEmail) {
     // Quita la portada y vuelve al degradado por defecto
     window.quitarPortada = async function() {
       aplicarPortada("");
-      if (typeof perfilActual !== "undefined" && perfilActual) perfilActual.portada = null;
-      await guardarCampoPerfil({ portada: null }, "Portada eliminada.");
+      await actualizarFoto("portada", null, "Portada eliminada.");
     };
 
     // Aplica la foto de perfil en todos los lugares donde aparece
@@ -3287,8 +3403,7 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       syncUIState();
       if (fotoCambiada) {
         aplicarFotoPerfil(userState.avatarUrl);
-        const guardado = await guardarFotoEnStorage("foto", userState.avatarUrl || null);
-        guardarCampoPerfil({ foto: guardado }, "Foto de perfil actualizada.");
+        await actualizarFoto("foto", userState.avatarUrl || null, "Foto de perfil actualizada.");
       }
       closeProfileModal();
       showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
@@ -3750,6 +3865,14 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       try {
         const { error } = await supabase.from('afiliados').delete().eq('id', userId);
         if (error) throw error;
+
+        // Las RLS de Storage solo dejan borrar archivos del propio usuario, asi
+        // que para el resto se usa un RPC que exige rol de administrador.
+        const api = window.SupabaseAPI;
+        if (api && api.borrarFotosAdmin) {
+          try { await api.borrarFotosAdmin(userId); }
+          catch (e) { console.warn('[Vente] No se pudieron borrar las fotos de ' + userId + ':', e.message); }
+        }
 
         showToast('Eliminado', 'Afiliado borrado de la base de datos');
         adminState.allUsers = adminState.allUsers.filter(u => u.id !== userId);
