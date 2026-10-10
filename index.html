@@ -1635,9 +1635,9 @@
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === 'function') {
-                        window.renderDashboard(perfil, session.user.email);
+                        await window.renderDashboard(perfil, session.user.email);
                     } else if (typeof window.renderDashboard === 'function') {
-                        window.renderDashboard(null, session.user.email);
+                        await window.renderDashboard(null, session.user.email);
                     }
                     if (typeof window.adminLoad === 'function') {
                         await window.adminLoad();
@@ -1651,9 +1651,9 @@
                 } else if (event === 'SIGNED_IN' && session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === 'function') {
-                        window.renderDashboard(perfil, session.user.email);
+                        await window.renderDashboard(perfil, session.user.email);
                     } else if (typeof window.renderDashboard === 'function') {
-                        window.renderDashboard(null, session.user.email);
+                        await window.renderDashboard(null, session.user.email);
                     }
                     if (typeof window.adminLoad === 'function') {
                         await window.adminLoad();
@@ -1792,8 +1792,17 @@
 
             async urlFirmada(ruta) {
                 if (!CONFIGURADO) throw new Error('Supabase no configurado');
+
+                // El token puede estar vencido: refrescamos antes de firmar.
+                try {
+                    const { data: ses } = await supabase.auth.getSession();
+                    if (ses?.session) await supabase.auth.refreshSession();
+                } catch (e) {
+                    console.warn('[Vente] No se pudo refrescar la sesion:', e.message);
+                }
+
                 const { data, error } = await supabase.storage.from('perfil').createSignedUrl(ruta, 60 * 60 * 24);
-                if (error) throw error;
+                if (error) throw new Error('No se pudo firmar la imagen: ' + error.message);
                 return data.signedUrl;
             }
         };</script>
