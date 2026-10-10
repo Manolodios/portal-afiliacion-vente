@@ -592,7 +592,7 @@
           </button>
 
           <!-- Admin nav (solo visible para admins) -->
-          <button onclick="switchView('admin')" id="nav-admin" class="hidden w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
+          <button onclick="abrirPanelAdmin()" id="nav-admin" class="hidden w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-800/70 font-medium text-sm transition-colors text-slate-400 hover:text-slate-200">
             <i class="fa-solid fa-shield-halved text-lg w-6 text-center"></i>
             <span>Admin</span>
           </button>
@@ -1670,34 +1670,44 @@
             window.supabase = supabase;
 
             supabase.auth.getSession().then(async ({ data: { session } }) => {
-                if (session?.user) {
+                if (!session?.user) return;
+                // adminLoad() va en el finally: si renderDashboard revienta por
+                // cualquier motivo, el panel de admin sigue teniendo que cargar.
+                try {
                     const perfil = await cargarPerfil(session.user.id);
-                    if (perfil && typeof window.renderDashboard === 'function') {
-                        await window.renderDashboard(perfil, session.user.email);
-                    } else if (typeof window.renderDashboard === 'function') {
-                        await window.renderDashboard(null, session.user.email);
+                    if (typeof window.renderDashboard === 'function') {
+                        await window.renderDashboard(perfil || null, session.user.email);
                     }
-                    if (typeof window.adminLoad === 'function') {
-                        await window.adminLoad();
-                    }
+                } catch (e) {
+                    console.warn('[Vente] Error al pintar el panel:', e);
+                } finally {
+                    if (typeof window.adminLoad === 'function') await window.adminLoad();
                 }
             }).catch(e => console.warn('[Vente] No se pudo restaurar la sesion:', e));
 
+            // El cuerpo ya captura sus errores; este catch evita que un rechazo
+            // del callback async acabe como unhandled rejection en la consola.
             supabase.auth.onAuthStateChange(async (event, session) => {
-                if (event === 'SIGNED_OUT') {
-                    window.closeDashboard(false);
-                } else if (event === 'SIGNED_IN' && session?.user) {
-                    const perfil = await cargarPerfil(session.user.id);
-                    if (perfil && typeof window.renderDashboard === 'function') {
-                        await window.renderDashboard(perfil, session.user.email);
-                    } else if (typeof window.renderDashboard === 'function') {
-                        await window.renderDashboard(null, session.user.email);
+                try {
+                    if (event === 'SIGNED_OUT') {
+                        window.closeDashboard(false);
+                        return;
                     }
-                    if (typeof window.adminLoad === 'function') {
-                        await window.adminLoad();
+                    if (event !== 'SIGNED_IN' || !session?.user) return;
+                    try {
+                        const perfil = await cargarPerfil(session.user.id);
+                        if (typeof window.renderDashboard === 'function') {
+                            await window.renderDashboard(perfil || null, session.user.email);
+                        }
+                    } catch (e) {
+                        console.warn('[Vente] Error al pintar el panel:', e);
+                    } finally {
+                        if (typeof window.adminLoad === 'function') await window.adminLoad();
                     }
+                } catch (e) {
+                    console.warn('[Vente] Error en onAuthStateChange:', e);
                 }
-            });
+            }).catch?.(e => console.warn('[Vente] onAuthStateChange:', e));
         } else {
             const w = document.getElementById('demo-warning');
             if (w) w.classList.remove('hidden');
@@ -2454,11 +2464,24 @@ window.renderDashboard = async function(perfil, sessionEmail) {
 
         window.closeDashboard = async function(cerrarSesion = false) {
             const m = document.getElementById("member-dashboard-modal");
-            m.classList.add("hidden");
-            m.classList.remove("flex");
+            if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
             if (cerrarSesion) {
                 try { await window.SupabaseAPI.logout(); } catch (e) { /* noop */ }
                 perfilActual = null;
+                // Limpiar el estado del panel de admin: si no, la tabla con los
+                // datos de todos los afiliados sigue en memoria y en el DOM,
+                // y userState.email hace que isAdmin() siga dando true.
+                if (typeof window.adminState !== 'undefined') {
+                    window.adminState.allUsers = [];
+                    window.adminState.filteredUsers = [];
+                    window.adminState.selectedUserId = null;
+                    window.adminState.error = null;
+                }
+                const navAdmin = document.getElementById('nav-admin');
+                if (navAdmin) navAdmin.classList.add('hidden');
+                const tbodyAdmin = document.getElementById('admin-tbody');
+                if (tbodyAdmin) tbodyAdmin.innerHTML = '';
+                if (typeof userState !== 'undefined') userState.email = '';
                 // Volver a mostrar la landing/login
                 const landingHeader = document.querySelector("header");
                 const landingInicio = document.getElementById("inicio");
@@ -3566,7 +3589,8 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       pageSize: 50,
       selectedUserId: null,
       statesCache: [],
-      areasCache: []
+      areasCache: [],
+      error: null
     };
     window.adminState = adminState;
 
@@ -3576,23 +3600,51 @@ window.renderDashboard = async function(perfil, sessionEmail) {
     function isAdmin() {
       // En modo demo (sin Supabase configurado), permitir acceso para testing
       if (!window.CONFIGURADO) return true;
-      if (userState?.email) {
-        return window.ADMIN_EMAILS?.includes(userState.email) || false;
-      }
-      return false;
+      const correo = (userState?.email || "").trim().toLowerCase();
+      if (!correo) return false;
+      return (window.ADMIN_EMAILS || []).some(function(e) {
+        return String(e).trim().toLowerCase() === correo;
+      });
     }
 
-    // Carga la vista admin
-    async function adminLoad() {
-      if (!isAdmin()) {
+    // Punto de entrada del boton Admin..switchView('admin') solo enseña el
+    // contenedor: si adminLoad() no se hubiera ejecutado (o fallo al restaurar
+    // la sesion) la tabla salia vacia. Aqui se carga siempre.
+    // adminLoad() devuelve false si el usuario no es admin; en ese caso el
+    // aviso de "Acceso denegado" lo pone ESTE, no la carga de fondo (que
+    // tambien corre al iniciar sesion y no debe molestarle a los usuarios
+    // normales con un toast en cada recarga).
+    async function abrirPanelAdmin() {
+      let ok = true;
+      try {
+        if (typeof window.adminLoad === 'function') ok = await window.adminLoad();
+      } catch (e) {
+        console.error('[Vente] Error al abrir el panel de admin:', e);
+        ok = false;
+      }
+      if (ok === false) {
         showToast("Acceso denegado", "No tienes permisos de administrador");
         switchView('feed');
         return;
       }
+      switchView('admin');
+    }
+
+    // Carga la vista admin. Devuelve true si se cargo, false si el usuario no
+    // es administrador. Nunca muestra toast por si mismo: asi la carga de fondo
+    // al iniciar sesion es silenciosa para los usuarios normales.
+    async function adminLoad() {
+      if (!isAdmin()) return false;
 
       // Mostrar nav admin
       const navAdmin = document.getElementById('nav-admin');
       if (navAdmin) navAdmin.classList.remove('hidden');
+
+      // Empezar de cero: si el usuario dejo un filtro de busqueda o de fechas la
+      // vez pasada, la tabla salia vacia al reabrir el panel.
+      adminState.error = null;
+      adminState.currentPage = 1;
+      adminClearFilters(true);
 
       // Mostrar loading en tabla y stats
       const tbody = document.getElementById('admin-tbody');
@@ -3608,10 +3660,12 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         // Render primera página
         adminApplyFilters();
         adminRenderStats();
+        return true;
       } catch (e) {
-        console.error('Error en adminLoad:', e);
+        console.error('[Vente] Error en adminLoad:', e);
         showToast('Error', 'No se pudo cargar el panel de admin: ' + e.message);
         if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-rose-500">Error al cargar datos</td></tr>';
+        return false;
       }
     }
 
@@ -3634,16 +3688,25 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         const { data, error } = await supabase.rpc('get_all_afiliados');
 
         if (error) {
-          console.error('Error cargando afiliados:', error);
-          showToast('Error', 'No se pudieron cargar los afiliados');
+          console.error('[Vente] Error cargando afiliados:', error);
+          // 42501 = la base de datos rechazo la peticion por falta de rol admin.
+          const sinRol = error.code === '42501' || /administrador/i.test(error.message || '');
           adminState.allUsers = [];
+          adminState.error = sinRol
+            ? 'Tu cuenta no tiene rol de administrador en la base de datos.'
+            : (error.message || 'No se pudieron cargar los afiliados');
+          showToast('Error', sinRol
+            ? 'Tu cuenta aun no tiene permisos de administrador.'
+            : 'No se pudieron cargar los afiliados');
           return;
         }
 
         adminState.allUsers = data || [];
+        adminState.error = null;
       } catch (e) {
-        console.error('Error adminFetchUsers:', e);
+        console.error('[Vente] Error adminFetchUsers:', e);
         adminState.allUsers = [];
+        adminState.error = e.message || 'Error desconocido';
       }
     }
 
@@ -3691,12 +3754,23 @@ window.renderDashboard = async function(perfil, sessionEmail) {
     }
 
     // Limpiar filtros
-    function adminClearFilters() {
-      document.getElementById('admin-search').value = '';
-      document.getElementById('admin-filter-state').value = '';
-      document.getElementById('admin-filter-area').value = '';
-      document.getElementById('admin-filter-from').value = '';
-      document.getElementById('admin-filter-to').value = '';
+    // Vacia los filtros. Con `soloInputs = true` no vuelve a renderizar la
+    // tabla: lo usa adminLoad() al cargar, que todavia tiene los datos viejos
+    // y va a repintar todo despues.
+    function adminClearFilters(soloInputs) {
+      const campos = {
+        'admin-search': '',
+        'admin-filter-state': '',
+        'admin-filter-area': '',
+        'admin-filter-from': '',
+        'admin-filter-to': ''
+      };
+      Object.keys(campos).forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) el.value = campos[id];
+      });
+      if (soloInputs) return;
+      adminState.currentPage = 1;
       adminApplyFilters();
     }
 
@@ -3730,7 +3804,14 @@ window.renderDashboard = async function(perfil, sessionEmail) {
             </td>
           </tr>
         `;
-      }).join('') || '<tr><td colspan="7" class="p-6 text-center text-slate-500">No hay afiliados que coincidan</td></tr>';
+      }).join('') || (adminState.error
+        ? '<tr><td colspan="7" class="p-6 text-center text-rose-400">' + escapeHtml(adminState.error) + '</td></tr>'
+        : (adminState.allUsers.length === 0
+            ? '<tr><td colspan="7" class="p-6 text-center text-slate-500">No hay afiliados registrados todavia</td></tr>'
+            : '<tr><td colspan="7" class="p-6 text-center text-slate-500">'
+              + 'De ' + adminState.allUsers.length + ' afiliados, ninguno coincide con los filtros activos. '
+              + '<button onclick="adminClearFilters()" class="underline hover:text-sky-400">Limpiar filtros</button>'
+              + '</td></tr>'));
 
       // Paginación
       const total = adminState.filteredUsers.length;
