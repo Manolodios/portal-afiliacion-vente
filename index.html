@@ -1650,8 +1650,6 @@
                     // Mostrar nav Admin si corresponde
                     if (typeof window.adminLoad === "function") {
                         await window.adminLoad();
-                    }
-                }
             }).catch(e => console.warn("[Vente] No se pudo restaurar la sesión:", e));
 
             // Escuchar logout / expiración de sesión
@@ -1668,8 +1666,6 @@
                     }
                     if (typeof window.adminLoad === "function") {
                         await window.adminLoad();
-                    }
-                }
             });
         } else {
             const w = document.getElementById("demo-warning");
@@ -2639,7 +2635,7 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         headerSub.textContent = "Panel de gestión de afiliados";
         adminLoad();
       }
-        adminLoad();
+        
       }
 
       // "Mi Perfil": en PC se oculta la barra de título para que la portada ocupe todo el alto
