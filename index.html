@@ -1627,6 +1627,7 @@
         // =====================================================================
 
         const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith("PEGA_");
+        window.CONFIGURADO = CONFIGURADO;
 
         let supabase = null;
 
@@ -1634,6 +1635,7 @@
             // La sesiÃ³n se guarda en este navegador (persistSession estÃ¡ activo por
             // defecto): no hace falta volver a iniciar sesiÃ³n en cada visita.
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            window.supabase = supabase;
 
             // Si ya habÃ­a sesiÃ³n, se restaura y se abre el panel directamente
             supabase.auth.getSession().then(async ({ data: { session } }) => {
