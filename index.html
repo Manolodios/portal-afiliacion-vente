@@ -1642,7 +1642,8 @@
                 if (session?.user) {
                     const perfil = await cargarPerfil(session.user.id);
                     if (perfil && typeof window.renderDashboard === "function") {
-                        window.renderDashboard(perfil);
+                        // Pass session email as fallback
+                        window.renderDashboard(perfil, session.user.email);
                     }
                 }
             }).catch(e => console.warn("[Vente] No se pudo restaurar la sesión:", e));
@@ -2252,18 +2253,18 @@
         }
 
         /* ---------- Dashboard ---------- */
-window.renderDashboard = async function(perfil) {
+window.renderDashboard = async function(perfil, sessionEmail) {
             perfilActual = perfil;
             // Las fotos pueden estar en Storage: se resuelven a URL firmada antes de pintar
             const fotoUrl = await resolverFotoPerfil(perfil, "foto");
             const portadaUrl = await resolverFotoPerfil(perfil, "portada");
-            const nombre = (perfil.nombre || "Usuario") + " " + (perfil.apellido || "");
-            const email = perfil.email || "usuario";
+            const nombre = (perfil?.nombre || "Usuario") + " " + (perfil?.apellido || "");
+            const email = perfil?.email || sessionEmail || "usuario";
             const handle = "@" + email.split("@")[0];
-            const inicial = getInitial(perfil.nombre || "V");
+            const inicial = getInitial(perfil?.nombre || "V");
 
             // Actualizar userState con email para isAdmin()
-            userState.email = perfil.email;
+            userState.email = email;
 
             // Actualizar sidebar
             const sidebarName = document.getElementById("sidebarDisplayName");
