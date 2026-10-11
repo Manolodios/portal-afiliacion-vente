@@ -1709,10 +1709,15 @@
             supabase.auth.onAuthStateChange(async (event, session) => {
                 try {
                     if (event === 'SIGNED_OUT') {
+                    window.SESION_USUARIO = null;
                         window.closeDashboard(false);
                         return;
                     }
                     if (event !== 'SIGNED_IN' || !session?.user) return;
+                    // Sin esto, entrar por sincronizacion entre pestanas deja
+                    // SESION_USUARIO vacio y el formulario de ficha no se rellena
+                    // con el nombre de Google pese a estar disponible.
+                    window.SESION_USUARIO = session.user;
                     try {
                         const perfil = await cargarPerfil(session.user.id);
                         if (typeof window.renderDashboard === 'function') {
@@ -2089,6 +2094,16 @@
                 const f = document.getElementById("ob-fnac"); if (f) f.focus();
                 return;
             }
+            // <input type="date"> admite años como 3000 o 0001. Esta comprobacion
+            // va FUERA del if de arriba a proposito: anidada dentro de el, solo se
+            // ejecutaria cuando la fecha ya esta vacia.
+            const anio = Number(String(fnac).slice(0, 4));
+            const anioActual = new Date().getFullYear();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(String(fnac)) || !Number.isFinite(anio) || anio < 1900 || anio > anioActual - 16) {
+                showNotification("Revisa tu fecha de nacimiento.", "warning");
+                const ff = document.getElementById("ob-fnac"); if (ff) ff.focus();
+                return;
+            }
             if (!estado) { showNotification("Selecciona tu estado.", "warning"); return; }
             if (areas.length === 0) { showNotification("Elige al menos un área de colaboración.", "warning"); return; }
 
@@ -2112,7 +2127,10 @@
                     areas: areas
                 });
                 if (!res || !res.ok) {
-                    showNotification(res && res.error ? res.error : "No se pudo guardar tu ficha.", "error");
+                    // Se traduce: sin esto se leeria al usuario el texto crudo
+                    // de Postgres ("null value in column ..."), que es justo lo
+                    // que traduzirError() evita en el resto de la app.
+                    showNotification(res && res.error ? traducirError(res.error) : "No se pudo guardar tu ficha.", "error");
                     return;
                 }
                 await renderDashboard(await cargarPerfilActual(), userState.email);
@@ -2207,6 +2225,15 @@
             const password = passEl ? passEl.value : "";
             if (!email || !password) {
                 showNotification("Completa correo y contraseña.", "warning");
+                return;
+            }
+            // handleLogin no validaba el formato del correo: uno mal escrito pasaba
+            // directo a Supabase y volvia un error en ingles sin traducir. Esta
+            // comprobacion va FUERA del if de arriba a proposito: anidada dentro,
+            // solo se ejecutaria cuando faltara el correo o la contraseña.
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification("Correo inválido.", "warning");
+                if (emailEl) emailEl.focus();
                 return;
             }
             if (sinInternet()) {
@@ -2304,6 +2331,11 @@
 
             try {
                 const res = await conReintento(function() {
+                // conReintento solo para el signUp. Si la cuenta SI se creo pero se
+                // perdio la respuesta de red, el reintento recibe "already
+                // registered" y el usuario creeria que hay otra cuenta con su correo.
+                // Cuando eso pasa, se asume que la cuenta es nuestra y se le pide
+                // que entre con ella.
                     return window.SupabaseAPI.register({ email: email }, pass1, captchaToken);
                 });
                 if (res && res.needsConfirmation) {
@@ -2318,7 +2350,17 @@
                 switchTab("login");
             } catch (err) {
                 console.error(err);
-                showNotification(traducirError(err), "error");
+                // "Ya registrado" aqui casi siempre significa que NUESTRO reintento
+                // choco con la cuenta que acababamos de crear, no que haya otra.
+                // Antes se mostraban dos toasts a la vez (el rojo de "ya
+                // registrado" y este), asi que la notificacion va solo dentro
+                // de la rama que corresponde.
+                const yaExiste = String((err && err.message) || err || "").toLowerCase().indexOf("already") >= 0;
+                if (yaExiste) {
+                    showNotification("Esa cuenta ya estaba creada. Entra con tu correo y contraseña.", "info");
+                } else {
+                    showNotification(traducirError(err), "error");
+                }
             } finally {
                 if (btn) btn.disabled = false;
                 if (txt) txt.textContent = "Crear cuenta";
@@ -2346,15 +2388,23 @@
             if (msg.includes("already been registered")) return "Ese correo ya está registrado.";
             if (msg.includes("password"))             return "La contraseña no cumple los requisitos mínimos (6+ caracteres).";
             if (msg.includes("rate limit"))           return "Demasiados intentos. Espera un momento.";
-            // Errros de Postgres: antes se leia el texto crudo al usuario.
+            // Errores de Postgres. El orden importa: la cedula duplicada es un
+            // caso de "duplicate key", asi que debe comprobarse ANTES de la
+            // regla generica o nunca llegaria a ejecutarse.
+            if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
+            if (msg.includes("duplicate key") && msg.includes("email"))  return "Ese correo ya está registrado.";
             if (msg.includes("23505") || msg.includes("duplicate key")) return "Ya existe un registro con esos datos.";
             if (msg.includes("23502") || msg.includes("null value in column")) return "Faltan datos por completar en tu ficha.";
-            if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
-            if (msg.includes("database error saving new user") || msg.includes("database error"))
-                                    return "No se pudo completar el registro ahora mismo. Espera unos minutos e inténtalo de nuevo.";
-            if (msg.includes("network") || msg.includes("failed to fetch"))
-                                    return "Sin conexión con el servidor. Revisa tu internet e inténtalo de nuevo.";
-            return err?.message || "Ocurrió un error. Intenta nuevamente.";
+            if (msg.includes("database error saving new user") || msg.includes("database error")) {
+                return "No se pudo completar el registro ahora mismo. Espera unos minutos e inténtalo de nuevo.";
+            }
+            if (msg.includes("network") || msg.includes("failed to fetch")) {
+                return "Sin conexión con el servidor. Revisa tu internet e inténtalo de nuevo.";
+            }
+            // Si le llega una cadena ya traducida desde el modulo (por ejemplo
+            // "Falta el nombre."), hay que devolverla tal cual: con err?.message
+            // una cadena daria undefined y se perderia en el generico.
+            return (typeof err === "string" ? err : (err && err.message)) || "Ocurrió un error. Intenta nuevamente.";
         }
 
         /* ---------- Red: detección de fallas y reintento automático ---------- */
@@ -2438,7 +2488,25 @@
         };
 
         /* ---------- Dashboard ---------- */
-window.renderDashboard = async function(perfil, sessionEmail) {
+        // Guardas de reentrada.
+        // signInWithPassword y signUp con sesion disparan onAuthStateChange, que a su vez
+        // llama a renderDashboard. Sumado a que handleLogin/handleRegister la llaman
+        // tambien, sin sesion de correo se ejecutaba DOS VECES a la vez. La segunda
+        // podia.resetear los campos del formulario de ficha mientras el usuario
+        // escribia en ellos (mostrarOnboarding los sobreescribe todos).
+        let renderEnCurso = false;
+
+        window.renderDashboard = async function(perfil, sessionEmail) {
+            if (renderEnCurso) return;
+            renderEnCurso = true;
+            try {
+                await pintarDashboard(perfil, sessionEmail);
+            } finally {
+                renderEnCurso = false;
+            }
+        };
+
+        async function pintarDashboard(perfil, sessionEmail) {
             perfilActual = perfil;
             // Un usuario que entra con Google puede no tener todavia fila en
             // `afiliados`. `perfilActual` se deja en null a proposito (la
@@ -2600,6 +2668,9 @@ window.renderDashboard = async function(perfil, sessionEmail) {
             if (cerrarSesion) {
                 try { await window.SupabaseAPI.logout(); } catch (e) { /* noop */ }
                 perfilActual = null;
+                // Sin limpiarlo, el formulario de ficha del siguiente usuario que
+                // entre se rellenaria con los datos del anterior.
+                window.SESION_USUARIO = null;
                 // Limpiar el estado del panel de admin: si no, la tabla con los
                 // datos de todos los afiliados sigue en memoria y en el DOM,
                 // y userState.email hace que isAdmin() siga dando true.
