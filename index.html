@@ -541,6 +541,44 @@ html.hay-sesion body { overflow: hidden; }
       </div>
 
       <div>
+        <label for="ob-parroquia" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Parroquia</label>
+        <select id="ob-parroquia" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
+          <option value="">Selecciona una parroquia</option>
+          <optgroup label="Zulia (Cabimas)">
+            <option value="Ambrosio">Ambrosio</option>
+            <option value="Carmen Herrera">Carmen Herrera</option>
+            <option value="La Rosa">La Rosa</option>
+            <option value="San Benito">San Benito</option>
+            <option value="Jorge Hernández">Jorge Hernández</option>
+            <option value="Rómulo Betancourt">Rómulo Betancourt</option>
+            <option value="Germán Ríos Linares">Germán Ríos Linares</option>
+            <option value="Arístides Calvani">Arístides Calvani</option>
+            <option value="Punta Gorda">Punta Gorda</option>
+          </optgroup>
+          <optgroup label="Distrito Capital">
+            <option value="Altagracia">Altagracia</option>
+            <option value="Antímano">Antímano</option>
+            <option value="Catedral">Catedral</option>
+            <option value="El Paraíso">El Paraíso</option>
+            <option value="El Recreo">El Recreo</option>
+            <option value="El Valle">El Valle</option>
+            <option value="La Candelaria">La Candelaria</option>
+            <option value="La Pastora">La Pastora</option>
+            <option value="La Vega">La Vega</option>
+            <option value="Macarao">Macarao</option>
+            <option value="San Agustín">San Agustín</option>
+            <option value="San Bernardino">San Bernardino</option>
+            <option value="San José">San José</option>
+            <option value="San Juan">San Juan</option>
+            <option value="Santa Rosalía">Santa Rosalía</option>
+            <option value="Santa Teresa">Santa Teresa</option>
+            <option value="Sucre (Catia)">Sucre (Catia)</option>
+            <option value="23 de Enero">23 de Enero</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div>
         <p id="ob-areas-aviso" class="text-[11px] text-slate-400"></p>
       <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">¿En qué te Apoyas? <span class="text-slate-500">(elige al menos una)</span></label>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -752,7 +790,6 @@ html.hay-sesion body { overflow: hidden; }
 
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
               <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i><span id="profileViewLocationText">Cabimas, Zulia</span></span>
-              <span id="profileViewLink" class="flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-sky-400"></i><span id="profileViewLinkText">Parroquia Carmen Herrera</span></span>
               <span id="profileViewJoined" class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Miembro de Vente</span>
             </div>
           </div>
@@ -2183,6 +2220,8 @@ html.hay-sesion body { overflow: hidden; }
                 return;
             }
             if (!estado) { showNotification("Selecciona tu estado.", "warning"); return; }
+        const parroquia = get("ob-parroquia");
+        if (!parroquia) { showNotification("Selecciona tu parroquia.", "warning"); return; }
             if (areas.length === 0) { showNotification("Elige al menos un área de colaboración.", "warning"); return; }
 
             // Las areas que ya tenia y no estan en la lista del formulario se
@@ -2206,6 +2245,7 @@ html.hay-sesion body { overflow: hidden; }
                     residencia: "Venezuela",
                     estado: estado,
                     municipio: get("ob-municipio") || null,
+        parroquia: parroquia,
                 areas: areasPerdidas
                 });
                 if (!res || !res.ok) {
@@ -2655,8 +2695,9 @@ html.hay-sesion body { overflow: hidden; }
             if (profileViewUsername) profileViewUsername.textContent = handle;
             if (profileViewBio) profileViewBio.textContent = userState.bio || "Sin biografía.";
             if (profileViewLocation) { const t = document.getElementById("profileViewLocationText"); if (t) t.textContent = userState.location || "Sin ubicación registrada."; }
+            // profileViewLink (parroquia) no se muestra en la vista principal:
+            // no se recoge en el onboarding, solo en el modal si el usuario la edita.
             if (profileViewJoined) {
-                let fechaTxt = "Miembro de Vente";
                 if (datos.created_at) {
                     const d = new Date(datos.created_at);
                     if (!isNaN(d.getTime())) {
@@ -3778,7 +3819,8 @@ html.hay-sesion body { overflow: hidden; }
       document.getElementById('profileViewUsername').textContent = handle;
       document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
     const tLoc = document.getElementById('profileViewLocationText'); if (tLoc) tLoc.textContent = userState.location || 'Sin ubicación registrada.';
-    const tPar = document.getElementById('profileViewLinkText'); if (tPar) tPar.textContent = userState.parroquia || 'Sin parroquia';
+    // profileViewLink (parroquia) no se muestra en la vista principal (no se recoge en onboarding).
+            // const tPar = document.getElementById('profileViewLinkText'); if (tPar) tPar.textContent = userState.parroquia || 'Sin parroquia';
       setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
     }
 
