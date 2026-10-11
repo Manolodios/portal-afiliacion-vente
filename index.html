@@ -751,8 +751,8 @@ html.hay-sesion body { overflow: hidden; }
             </p>
 
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
-              <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i> Cabimas, Zulia</span>
-              <span id="profileViewLink" class="flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia Carmen Herrera</span>
+              <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i><span id="profileViewLocationText">Cabimas, Zulia</span></span>
+              <span id="profileViewLink" class="flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-sky-400"></i><span id="profileViewLinkText">Parroquia Carmen Herrera</span></span>
               <span id="profileViewJoined" class="flex items-center gap-1.5"><i class="fa-regular fa-calendar text-slate-500"></i> Miembro de Vente</span>
             </div>
           </div>
@@ -2654,7 +2654,7 @@ html.hay-sesion body { overflow: hidden; }
             if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
             if (profileViewUsername) profileViewUsername.textContent = handle;
             if (profileViewBio) profileViewBio.textContent = userState.bio || "Sin biografía.";
-            if (profileViewLocation) { profileViewLocation.textContent = userState.location || "Sin ubicación registrada."; }
+            if (profileViewLocation) { const t = document.getElementById("profileViewLocationText"); if (t) t.textContent = userState.location || "Sin ubicación registrada."; }
             if (profileViewJoined) {
                 let fechaTxt = "Miembro de Vente";
                 if (datos.created_at) {
@@ -3777,8 +3777,8 @@ html.hay-sesion body { overflow: hidden; }
       document.getElementById('profileViewDisplayName').textContent = name;
       document.getElementById('profileViewUsername').textContent = handle;
       document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
-    document.getElementById('profileViewLocation').textContent = userState.location || 'Sin ubicación registrada.';
-    document.getElementById('profileViewLink').textContent = userState.parroquia || 'Sin parroquia';
+    const tLoc = document.getElementById('profileViewLocationText'); if (tLoc) tLoc.textContent = userState.location || 'Sin ubicación registrada.';
+    const tPar = document.getElementById('profileViewLinkText'); if (tPar) tPar.textContent = userState.parroquia || 'Sin parroquia';
       setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
     }
 
