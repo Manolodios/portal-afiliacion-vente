@@ -287,6 +287,13 @@ html.hay-sesion body { overflow: hidden; }
   }
 })();
 </script>
+
+<script>
+// Service Worker para notificaciones push y cache offline
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function() { /* silencioso */ });
+}
+</script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 <!-- SPLASH: se muestra solo si hay una sesion guardada en este navegador, para
