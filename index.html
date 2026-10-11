@@ -235,17 +235,71 @@
     <!-- Tailwind compilado (reemplaza al Play CDN). Regenerar con:
          npx tailwindcss -c tailwind.config.js -i tailwind.src.css -o assets/tailwind.css -->
     <link rel="stylesheet" href="assets/tailwind.css">
+
+<!-- SPLASH DE CARGA. Se decide aqui, en el <head>, y no en
+     DOMContentLoaded: el navegador pinta el formulario de afiliacion antes
+     de que ese evento dispare, y eso es justo el salto que se veia.
+     Con esto, si hay sesion, el splash tapa la pagina desde el primer
+     pixel y se retira cuando el panel ya esta pintado. -->
+<style>
+#session-splash { display: none; }
+html.hay-sesion #session-splash { display: flex; }
+.splash-anillo {
+  width: 2.75rem; height: 2.75rem; margin: 0 auto;
+  border: 3px solid rgba(56,189,248,.22);
+  border-top-color: #38bdf8;
+  border-radius: 9999px;
+  animation: splash-gira .8s linear infinite;
+}
+@keyframes splash-gira { to { transform: rotate(360deg); } }
+html.hay-sesion body { overflow: hidden; }
+</style>
+<script>
+(function () {
+  var hay = false;
+  // 1) Sesion ya guardada en este navegador.
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf("sb-") === 0 && /-auth-token$/.test(k)) {
+        var v = localStorage.getItem(k);
+        if (v && v !== "null" && v !== "{}") { hay = true; break; }
+      }
+    }
+  } catch (e) { /* modo privado */ }
+  // 2) Vuelta de Google. El token llega en la URL (flujo implicito, el
+  // que usa supabase-js v2 por defecto: #access_token=..., o ?code=... en
+  // PKCE) y todavia NO esta en localStorage aqui, porque el cliente se
+  // crea despues. Sin esta comprobacion, el splash no saldia justo en
+  // el caso para el que existe.
+  if (!hay && /(^#|&)(access_token|error_description|error_code)=/.test(location.hash)) hay = true;
+  if (!hay && /[?&]code=/.test(location.search)) hay = true;
+  if (hay) document.documentElement.className += " hay-sesion";
+  // Red de seguridad: si el panel no llega a pintarse, el splash no puede
+  // quedarse tapando la pagina para siempre. 15s es holgado para un
+  // getSession() normal.
+  if (hay) {
+    window.setTimeout(function () {
+      document.documentElement.classList.remove("hay-sesion");
+      var e = document.getElementById("session-splash");
+      if (e) { e.classList.add("hidden"); e.classList.remove("flex"); }
+    }, 15000);
+  }
+})();
+</script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 <!-- SPLASH: se muestra solo si hay una sesion guardada en este navegador, para
      que al volver de Google no aparezca el formulario de afiliacion mientras
      getSession() responde. Lo oculta renderDashboard(). -->
-<div id="session-splash" class="hidden items-center justify-center" style="position:fixed;inset:0;z-index:100;background:#111827">
+<div id="session-splash" class="hidden items-center justify-center" style="position:fixed;inset:0;z-index:100;background:radial-gradient(120% 90% at 50% 0%,#16304a 0%,#0b1220 60%,#060a13 100%)">
   <div class="text-center px-6">
     <img src="assets/202605201779298032-logo-vente-cabimas-actualizado-04-2026-at-3x.png"
          alt="Vente Cabimas" class="w-auto mx-auto mb-5 opacity-90" style="height:4.5rem">
-    <p class="text-white text-sm font-semibold">Volviendo a tu perfil...</p>
-    <div class="mt-4 mx-auto rounded-full overflow-hidden" style="width:10rem;height:4px;background:#334155">
+    <div class="splash-anillo" role="status" aria-label="Cargando"></div>
+    <p class="text-white text-sm font-semibold" style="margin-top:1.5rem">Volviendo a tu perfil...</p>
+    <p class="text-slate-400 text-xs" style="margin-top:.375rem">Un momento, estamos preparando tu espacio</p>
+    <div class="mx-auto rounded-full overflow-hidden" style="margin-top:1.25rem;width:10rem;height:3px;background:#1e293b">
       <div style="width:35%;height:100%;border-radius:9999px;background:#00A8E8;animation:vente-pulse 1.2s ease-in-out infinite"></div>
     </div>
   </div>
@@ -1988,14 +2042,22 @@
             return false;
         }
 
+        // La clase "hay-sesion" del <html> es la que manda. El splash puede
+        // haberse puesto desde el script del <head>, antes de que existiera
+        // esta funcion, y solo con quitar "hidden" del <div> no se taparia.
         function mostrarSplash() {
+            document.documentElement.classList.add("hay-sesion");
             const s = document.getElementById("session-splash");
             if (!s) return;
             s.classList.remove("hidden");
             s.classList.add("flex");
         }
 
+        // La clase del <html> tambien se quita: la regla "html.hay-sesion
+        // #session-splash" gana en especificidad a la clase ".hidden" de
+        // Tailwind, asi que solo con anadir hidden el splash se quedaria.
         function ocultarSplash() {
+            document.documentElement.classList.remove("hay-sesion");
             const s = document.getElementById("session-splash");
             if (!s) return;
             s.classList.add("hidden");
@@ -2175,7 +2237,6 @@
 
         window.addEventListener("DOMContentLoaded", () => {
             lucide.createIcons();
-            if (haySesionGuardada()) mostrarSplash();
             switchTab("login");
         });
 
