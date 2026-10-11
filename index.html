@@ -1205,9 +1205,31 @@
 
         const escapeHtml = function(s) {
             return String(s).replace(/[&<>"']/g, function(ch) {
-                return { '&': '&', '<': '<', '>': '>', '"': '"', "'": "'" }[ch];
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
             });
         };
+        // Filtro de URLs. Acepta solo lo que el portal genera de verdad:
+        //  - http(s) absoluto (RSSHub, Supabase Storage) sin comillas ni espacios,
+        //    que es lo que impide que un enlace de terceros se cuele en el href
+        //    y ejecute JavaScript.
+        //  - data:image en base64, solo formatos de mapa de bits (el avatar subido).
+        //  - rutas relativas de la propia app ("assets/avatar-preset-1.jpg").
+        // Cualquier otra cosa, incluido javascript:, data:text/html y los SVG en
+        // base64 (que pueden llevar <script> dentro), se descartan con "#".
+        function urlSegura(url) {
+            var u = String(url == null ? "" : url).trim();
+            if (!u) return "";
+            // Avatar en base64. Solo formatos de mapa de bits: un SVG en base64
+            // puede llevar <script> dentro y ejecutarse al cargar.
+            if (/^data:image\/(?:jpeg|jpg|png|gif|webp|bmp|avif);base64,[a-z0-9+/=]+$/i.test(u)) return u;
+            // URL absoluta http(s).
+            if (/^https?:\/\//i.test(u)) return /["'<>\s]/.test(u) ? "#" : u;
+            // Ruta relativa de la propia app ("assets/avatar-preset-1.jpg").
+            // Sin "://", sin backslash y sin barra inicial doble, para que no
+            // se convierta en un protocolo-relative a otro sitio.
+            if (/^[\w.-]+(?:\/[\w.-]+)*$/.test(u)) return u;
+            return "#";
+        }
         const fmtNumber = function(n) {
             return Number(n || 0).toLocaleString('es-VE');
         };
@@ -1309,7 +1331,7 @@
                 var cards = posts.map(function(p) {
                     var leader = LEADERS.find(function(l) { return l.handle === p.author; }) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
                     var photos = (p.photos || []).map(function(u) {
-                        return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
+                        return '<img src="' + escapeHtml(urlSegura(u)) + '" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
                     }).join('');
 
                     return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">' +
@@ -1321,7 +1343,7 @@
                                         '<span class="font-bold text-slate-100 text-sm block truncate">' + leader.name + '</span>' +
                                         '<span class="text-xs text-slate-500">@' + leader.handle + ' · ' + p.date + ' · ' + p.time + '</span>' +
                                     '</div>' +
-                                    '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
+                                    '<a href="' + escapeHtml(urlSegura(p.link)) + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
                                 '</div>' +
                                 '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>' +
                                 photos +
@@ -1347,7 +1369,7 @@
                 var cards = posts.map(function(p) {
                     var leader = LEADERS.find(function(l) { return l.handle === p.author; }) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
                     var photos = (p.photos || []).map(function(u) {
-                        return '<img src="' + u + '" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
+                        return '<img src="' + escapeHtml(urlSegura(u)) + '" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
                     }).join('');
                     return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">' +
                         '<div class="flex gap-3">' +
@@ -1358,7 +1380,7 @@
                                         '<span class="font-bold text-slate-100 text-sm block truncate">' + leader.name + '</span>' +
                                         '<span class="text-xs text-slate-500">@' + leader.handle + ' · ' + p.date + ' · ' + p.time + '</span>' +
                                     '</div>' +
-                                    '<a href="' + p.link + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
+                                    '<a href="' + escapeHtml(urlSegura(p.link)) + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
                                 '</div>' +
                                 '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>' +
                                 photos +
@@ -2528,6 +2550,14 @@
 
             // Actualizar userState con email para isAdmin()
             userState.email = email;
+            // El modal de "Personalizar tu perfil" se rellena desde userState.
+            // Sin esto seguia mostrando los valores por defecto en memoria
+            // ("Cabimas, Zulia") aunque en la base de datos hubiera otros.
+            userState.displayName = nombre;
+            userState.username = datos.usuario || email.split("@")[0];
+            userState.bio = perfil ? (datos.bio || "") : userState.bio;
+            userState.location = [datos.municipio, datos.estado].filter(Boolean).join(", ");
+            userState.parroquia = perfil ? (datos.parroquia || "") : userState.parroquia;
 
             // Actualizar sidebar
             const sidebarName = document.getElementById("sidebarDisplayName");
@@ -2562,8 +2592,8 @@
             const bigAvatarImg = document.getElementById("bigAvatarImg");
             if (profileViewDisplayName) profileViewDisplayName.textContent = nombre;
             if (profileViewUsername) profileViewUsername.textContent = handle;
-            if (profileViewBio) profileViewBio.textContent = "Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.";
-            if (profileViewLocation) profileViewLocation.innerHTML = '<i class="fa-solid fa-location-dot text-sky-400"></i> ' + (datos.estado || "Cabimas") + ", " + (datos.municipio || "Zulia");
+            if (profileViewBio) profileViewBio.textContent = userState.bio || "Sin biografía.";
+            if (profileViewLocation) { profileViewLocation.textContent = userState.location || "Sin ubicación registrada."; }
             if (profileViewJoined) {
                 let fechaTxt = "Miembro de Vente";
                 if (datos.created_at) {
@@ -2596,7 +2626,7 @@
             // Sincronizar el estado local del modal con los datos reales del afiliado
             if (typeof userState !== "undefined") {
                 userState.displayName = nombre.trim();
-                userState.username = handle.replace("@", "");
+                userState.username = datos.usuario || handle.replace("@", "");
                 userState.avatarUrl = fotoUrl || "";
             }
 
@@ -2619,7 +2649,7 @@
             if (dashCode) dashCode.textContent = codigoDesdeUUID(datos.id);
             const dashAvatar = document.getElementById("dash-user-avatar");
             if (dashAvatar) {
-                if (fotoUrl) dashAvatar.innerHTML = '<img src="' + fotoUrl + '" class="w-full h-full rounded-xl object-cover">';
+                if (fotoUrl) dashAvatar.innerHTML = '<img src="' + escapeHtml(urlSegura(fotoUrl)) + '" class="w-full h-full rounded-xl object-cover">';
                 else dashAvatar.textContent = inicial;
             }
 
@@ -3625,14 +3655,48 @@
         fotoCambiada = true;
       }
 
-      syncUIState();
-      if (fotoCambiada) {
-        aplicarFotoPerfil(userState.avatarUrl);
-        await actualizarFoto("foto", userState.avatarUrl || null, "Foto de perfil actualizada.");
-      }
-      closeProfileModal();
-      showToast("¡Perfil Actualizado!", "Tus cambios han sido guardados con éxito.");
-    }
+            syncUIState();
+
+            // La ubicacion es un unico campo de texto ("Cabimas, Zulia") pero en la
+            // base de datos estado y municipio van separados. Se parte por la coma.
+            const partesLoc = newLoc.split(",").map(function(p) { return p.trim(); }).filter(Boolean);
+            const nuevoMunicipio = partesLoc[0] || null;
+            const nuevoEstado = partesLoc.length > 1 ? partesLoc.slice(1).join(", ") : (perfilActual && perfilActual.estado) || null;
+
+            // "Nombre Visible" tambien son dos columnas. El apellido es todo lo
+            // que haya tras el primer espacio: "Yhojan Luis Suarez" ->
+            // nombre "Yhojan", apellido "Luis Suarez".
+            const partesNombre = (newName || "Usuario").split(/\s+/).filter(Boolean);
+            const nuevoNombre = partesNombre[0] || "Usuario";
+            const nuevoApellido = partesNombre.slice(1).join(" ") || (perfilActual && perfilActual.apellido) || "";
+
+            // ANTES: solo se actualizaba userState en memoria. Nada llegaba a la
+            // base de datos, así que al recargar todo volvía a su valor anterior.
+            const cambios = {
+                nombre: nuevoNombre,
+                apellido: nuevoApellido,
+                usuario: userState.username || null,
+                bio: userState.bio || null,
+                estado: nuevoEstado,
+                municipio: nuevoMunicipio,
+                parroquia: userState.parroquia || null
+            };
+            const guardado = await guardarCampoPerfil(cambios, "Perfil actualizado.");
+            const exito = !!(guardado && guardado.ok === true);
+            // Solo se refleja en memoria si llego a la base de datos: si no,
+            // la interfaz mostraria datos que al recargar desaparecerian.
+            if (perfilActual && exito) Object.assign(perfilActual, cambios);
+
+            if (fotoCambiada) {
+                aplicarFotoPerfil(userState.avatarUrl);
+                await actualizarFoto("foto", userState.avatarUrl || null, "Foto de perfil actualizada.");
+            }
+            // Si no se guardo, el modal sigue abierto para que se vea el fallo y
+            // no se pierda lo que el usuario escribio. Sin aviso propio:
+            // guardarCampoPerfil() ya notifica el motivo exacto.
+            if (exito) closeProfileModal();
+        }
+
 
     // SYNC DOM WITH STATE
     function syncUIState() {
@@ -3652,8 +3716,8 @@
       document.getElementById('profileViewDisplayName').textContent = name;
       document.getElementById('profileViewUsername').textContent = handle;
       document.getElementById('profileViewBio').textContent = userState.bio || "Sin biografía.";
-      document.getElementById('profileViewLocation').innerHTML = `<i class="fa-solid fa-location-dot text-sky-400"></i> ${userState.location || 'Cabimas'}`;
-      document.getElementById('profileViewLink').innerHTML = `<i class="fa-solid fa-map-location-dot text-sky-400"></i> Parroquia ${userState.parroquia || 'Carmen Herrera'}`;
+    document.getElementById('profileViewLocation').textContent = userState.location || 'Sin ubicación registrada.';
+    document.getElementById('profileViewLink').textContent = userState.parroquia || 'Sin parroquia';
       setAvatarElement('bigAvatarImg', 'bigAvatarText', userState.avatarUrl, initials);
     }
 
@@ -3719,7 +3783,7 @@
       list.innerHTML = posts.map(post => {
         const initials = getInitials(post.authorName);
         const avatarHtml = post.authorAvatar
-          ? `<img src="${post.authorAvatar}" class="w-full h-full object-cover" alt="${post.authorName}">`
+          ? `<img src="${escapeHtml(urlSegura(post.authorAvatar))}" class="w-full h-full object-cover" alt="${escapeHtml(post.authorName)}">`
           : `<span>${initials}</span>`;
 
         return `
@@ -3731,18 +3795,18 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2 truncate">
-                    <span class="font-bold text-slate-100 text-sm truncate">${post.authorName}</span>
-                    <span class="text-xs text-slate-500 truncate">@${post.authorHandle}</span>
-                    <span class="text-xs text-slate-600">-   ${post.time}</span>
+                    <span class="font-bold text-slate-100 text-sm truncate">${escapeHtml(post.authorName)}</span>
+                    <span class="text-xs text-slate-500 truncate">@${escapeHtml(post.authorHandle)}</span>
+                    <span class="text-xs text-slate-600">-   ${escapeHtml(post.time)}</span>
                   </div>
                   <button aria-label="Más opciones de la publicación" class="text-slate-500 hover:text-slate-300 text-xs"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
-                <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${post.content}</p>
+                <p class="text-sm text-slate-200 mt-2 leading-relaxed break-words">${escapeHtml(post.content)}</p>
                 
                 <div class="flex items-center gap-6 mt-4 text-slate-500 text-xs pt-2 border-t border-slate-800/50">
                   <button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> 0</button>
                   <button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> 0</button>
-                  <button onclick="likePost(${post.id}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
+                  <button onclick="likePost(${Number(post.id) || 0}, this)" class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> <span class="like-count">${post.likes}</span></button>
                   <button aria-label="Guardar publicación" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>
                 </div>
               </div>
