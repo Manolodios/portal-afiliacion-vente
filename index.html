@@ -1062,21 +1062,6 @@
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
 
-        window.toggleCredential = function() {
-            const card = document.getElementById("credential-card");
-            const overlay = document.getElementById("blur-overlay");
-            const btn = document.getElementById("reveal-btn");
-            if (card) {
-                card.style.filter = "none";
-            }
-            if (overlay) {
-                overlay.classList.add("hidden");
-            }
-            if (btn) {
-                btn.classList.add("hidden");
-            }
-        };
-
         // Feed functions (legacy: la API de fxtwitter ya no devuelve timelines; ver loadFeed definitivo más abajo)
         // === FEED DEFINITIVO: publicaciones reales de líderes y medios de la oposición ===
         // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
@@ -2109,6 +2094,10 @@
 
             // Las areas que ya tenia y no estan en la lista del formulario se
             // vuelven a sumar: el upsert reemplaza la columna entera.
+            // El upsert de Supabase reemplaza la columna areas COMPLETA, asi que hay
+            // que mandar la union: las marcadas ahora mas las que el usuario tenia y
+            // no aparecen en la lista. Sin esto, esas ultimas se borran en silencio
+            // pese a que el aviso de arriba promete que se conservan.
             areas.forEach(function(a) { if (areasPerdidas.indexOf(a) < 0) areasPerdidas.push(a); });
 
             const btn = document.getElementById("ob-submit");
@@ -2124,7 +2113,7 @@
                     residencia: "Venezuela",
                     estado: estado,
                     municipio: get("ob-municipio") || null,
-                    areas: areas
+                areas: areasPerdidas
                 });
                 if (!res || !res.ok) {
                     // Se traduce: sin esto se leeria al usuario el texto crudo
