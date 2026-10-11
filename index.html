@@ -1746,7 +1746,7 @@
             // correo. El insert fallaba con 23502, la cuenta ya quedaba creada
             // en Supabase Auth y el usuario se quedaba atrapado sin poder
             // avanzar (al reintentar decia "ese correo ya esta registrado").
-            async register(datos, password) {
+            async register(datos, password, captchaToken) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 500));
                     return { ok: true, uid: 'demo-' + Date.now() };
@@ -1755,6 +1755,11 @@
                 const signUpOptions = {
                     emailRedirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/verify.html'
                 };
+                // El token de Turnstile TENIA que enviarse aqui. El widget se
+                // resolvia en el navegador pero el token se descartaba, asi que
+                // Supabase (que tiene CAPTCHA activado) rechazaba el alta con
+                // "fCaptchaResponse" / error de token ausente.
+                if (captchaToken) signUpOptions.captchaToken = captchaToken;
 
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: datos.email,
@@ -1775,12 +1780,14 @@
                 return { ok: true, uid: userId };
             },
 
-            async login(email, password) {
+            async login(email, password, captchaToken) {
                 if (!CONFIGURADO) {
                     await new Promise(r => setTimeout(r, 400));
                     return { ok: true, uid: 'demo-' + Date.now(), perfil: null };
                 }
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                const opciones = {};
+                if (captchaToken) opciones.captchaToken = captchaToken;
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password, options: opciones });
                 if (error) throw error;
                 const perfil = await cargarPerfil(data.user.id);
                 return { ok: true, uid: data.user.id, perfil };
@@ -1833,11 +1840,13 @@
                 }
             },
 
-            async resetPassword(email) {
+            async resetPassword(email, captchaToken) {
                 if (!CONFIGURADO) { await new Promise(r => setTimeout(r, 300)); return; }
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const opciones = {
                     redirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/verify.html'
-                });
+                };
+                if (captchaToken) opciones.captchaToken = captchaToken;
+                const { error } = await supabase.auth.resetPasswordForEmail(email, opciones);
                 if (error) throw error;
             },
 
