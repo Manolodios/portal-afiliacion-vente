@@ -560,7 +560,7 @@
 
           <!-- USER DETAILS -->
           <div class="flex-1 min-w-0">
-            <h2 id="sidebarDisplayName" class="font-bold text-slate-100 text-sm truncate group-hover:text-sky-400 transition-colors">
+            <h2 id="sidebarDisplayName" class="font-bold text-vente-cyan text-sm truncate transition-colors">
               Yhojan Suarez
             </h2>
             <p id="sidebarUsername" class="text-xs text-slate-400 truncate">
@@ -695,7 +695,7 @@
           <!-- USER TEXT INFO -->
           <div class="space-y-2">
             <div>
-              <h2 id="profileViewDisplayName" class="text-2xl font-extrabold text-white tracking-tight">Yhojan Suarez</h2>
+              <h2 id="profileViewDisplayName" class="text-2xl font-extrabold text-vente-cyan tracking-tight">Yhojan Suarez</h2>
               <p id="profileViewUsername" class="text-sm text-slate-400">@yhojansuarez</p>
             </div>
 
@@ -731,7 +731,7 @@
                 <div id="dash-user-avatar" class="w-16 h-16 rounded-xl border-2 border-vente-cyan/60 flex items-center justify-center flex-shrink-0 shadow-lg text-3xl font-black bg-gradient-to-br from-vente-cyan to-vente-accent text-slate-950">V</div>
                 <div class="flex-1 min-w-0">
                   <div class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Afiliado Activo</div>
-                  <div class="text-base font-black tracking-tight text-white truncate" id="dash-user-name">NOMBRE APELLIDO</div>
+                  <div class="text-base font-black tracking-tight text-vente-cyan truncate" id="dash-user-name">NOMBRE APELLIDO</div>
                   <div class="text-xs text-vente-accent font-mono font-semibold" id="dash-user-id">V-00000000</div>
                   <div class="text-[11px] text-slate-300 truncate mt-0.5" id="dash-user-state">Estado, Venezuela</div>
                   <div class="text-[10px] text-slate-400 font-mono truncate" id="dash-user-email">afiliado@ejemplo.com</div>
@@ -1025,12 +1025,13 @@
         <!-- ACCENT COLOR THEME SELECTOR -->
         <div class="space-y-2 pt-2 border-t border-slate-800">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Color de Acento del Perfil</label>
+          <p class="text-[11px] text-slate-500 -mt-1">Cambia el color de tu nombre, tu credencial y los botones del portal.</p>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="setAccentTheme('sky')" aria-label="Color de acento celeste" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white/20 hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></button>
-            <button type="button" onclick="setAccentTheme('emerald')" aria-label="Color de acento verde" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('purple')" aria-label="Color de acento morado" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('amber')" aria-label="Color de acento ámbar" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition"></button>
-            <button type="button" onclick="setAccentTheme('rose')" aria-label="Color de acento rosa" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition"></button>
+            <button type="button" data-accent="sky" onclick="setAccentTheme('sky')" aria-label="Color de acento celeste" aria-pressed="false" class="w-8 h-8 rounded-full bg-sky-500 ring-2 ring-transparent hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check" style="display:none"></i></button>
+            <button type="button" data-accent="emerald" onclick="setAccentTheme('emerald')" aria-label="Color de acento verde" aria-pressed="false" class="w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check" style="display:none"></i></button>
+            <button type="button" data-accent="purple" onclick="setAccentTheme('purple')" aria-label="Color de acento morado" aria-pressed="false" class="w-8 h-8 rounded-full bg-purple-500 ring-2 ring-transparent hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check" style="display:none"></i></button>
+            <button type="button" data-accent="amber" onclick="setAccentTheme('amber')" aria-label="Color de acento ambar" aria-pressed="false" class="w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check" style="display:none"></i></button>
+            <button type="button" data-accent="rose" onclick="setAccentTheme('rose')" aria-label="Color de acento rosa" aria-pressed="false" class="w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent hover:scale-110 transition flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check" style="display:none"></i></button>
           </div>
         </div>
 
@@ -1817,8 +1818,15 @@
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return { ok: false, sinSesion: true };
-                    const { error } = await supabase.from('afiliados').update(campos).eq('id', user.id);
+                    // .select() hace que la API devuelva las filas afectadas:
+                    // sin esto, un UPDATE que no toca ninguna fila (usuario sin
+                    // ficha en `afiliados`) se reportaria como guardado.
+                    const { data, error } = await supabase
+                        .from('afiliados').update(campos).eq('id', user.id).select('id');
                     if (error) return { ok: false, error: error.message };
+                    if (!data || data.length === 0) {
+                        return { ok: false, sinFicha: true };
+                    }
                     return { ok: true };
                 } catch (e) {
                     return { ok: false, error: e.message };
@@ -2334,6 +2342,12 @@ window.renderDashboard = async function(perfil, sessionEmail) {
             // usa `datos`, que nunca es null: asi el render no revienta con
             // TypeError y todos los "|| valor por defecto" siguen sirviendo.
             const datos = perfil || {};
+            // El color de acento es del usuario, no global: se aplica el suyo al
+            // restaurar la sesión. Sin fila en `afiliados` se conserva el que
+            // haya quedado en localStorage.
+            if (typeof window.restaurarAccentTheme === 'function') {
+                restaurarAccentTheme(datos.color_acentu || userState.accentColor);
+            }
             // Las fotos pueden estar en Storage: se resuelven a URL firmada antes de pintar
             const fotoUrl = await resolverFotoPerfil(datos, "foto");
             const portadaUrl = await resolverFotoPerfil(datos, "portada");
@@ -3124,6 +3138,7 @@ window.renderDashboard = async function(perfil, sessionEmail) {
         const res = await api.guardarPerfil(campos);
         if (res.ok) notificar(msgOk, "success");
         else if (res.sinSesion || res.demo) notificar(msgOk + " (guardada solo en esta sesión)", "warning");
+        else if (res.sinFicha) notificar("Tu cuenta todavía no tiene ficha de afiliación, así que " + (msgOk || "el cambio") + " no se pudo guardar.", "warning");
         else notificar("No se pudo guardar en tu perfil: " + (res.error || "error"), "error");
         return res;
       } catch (e) {
@@ -3566,9 +3581,134 @@ window.renderDashboard = async function(perfil, sessionEmail) {
       }
     }
 
-    function setAccentTheme(color) {
-      showToast("Tema de color", `Color de acento cambiado a ${color}`);
+    // ============================================================
+    // COLOR DE ACENTO DEL PERFIL
+    // ============================================================
+    // Tailwind esta COMPILADO en assets/tailwind.css, asi que los colores
+    // "vente" estan escritos como hex fijos (#00A8E8, #00E5FF...) y no se
+    // pueden cambiar_class por class en tiempo de ejecucion. La solucion es
+    // inyectar una hoja de estilos que sobrescriba esas reglas.
+    //
+    // IMPORTANTE: no volver a asignar tailwind.config aqui. Ya lo hizo antes y
+    // obligo a Tailwind a regenerar el CSS sin los colores "vente", dejando
+    // botones transparentes, la barra de progreso sin color y el titulo
+    // "Libertad" invisible (texto transparente con background-clip:text y sin
+    // degradado). La config valida es la del <head>.
+
+    // Paletas: [color principal, color de acento del degradado, color hover,
+    //           color para texto sobre fondos claros]
+    // El 4o tono existe porque hay zonas con `bg-cyan-100` (fondo claro) donde
+    // el color principal no llega a 3:1 de contraste (p.ej. ambar sobre cian).
+    const ACENT_THEMES = {
+      sky:     { cyan: [0, 168, 232],   accent: [0, 229, 255],  hover: [0, 144, 200],   light: [0, 114, 168],   label: 'Celeste' },
+      emerald: { cyan: [16, 185, 129],  accent: [52, 211, 153], hover: [5, 150, 105],   light: [4, 120, 87],    label: 'Verde' },
+      purple:  { cyan: [139, 92, 246],  accent: [192, 132, 252], hover: [124, 58, 237],  light: [91, 33, 182],   label: 'Morado' },
+      amber:   { cyan: [245, 158, 11], accent: [253, 224, 71], hover: [217, 119, 6],   light: [146, 64, 14],   label: 'Ambar' },
+      rose:    { cyan: [225, 29, 72],   accent: [244, 63, 94],  hover: [190, 18, 60],   light: [159, 18, 57],   label: 'Rosa' }
+    };
+    const ACCENT_DEFAULT = 'sky';
+    const ACCENT_KEY = 'vnte_accent_color';
+
+    function accentThemeActual() {
+      return Object.prototype.hasOwnProperty.call(ACENT_THEMES, userState.accentColor)
+        ? userState.accentColor
+        : ACCENT_DEFAULT;
     }
+
+    // Sobrescribe las reglas de Tailwind que usan los colores "vente".
+    function aplicarAccentTheme(color, persistir) {
+      const tema = Object.prototype.hasOwnProperty.call(ACENT_THEMES, color) ? color : ACCENT_DEFAULT;
+      userState.accentColor = tema;
+
+      const c = ACENT_THEMES[tema].cyan;
+      const a = ACENT_THEMES[tema].accent;
+      const h = ACENT_THEMES[tema].hover;
+      const l = ACENT_THEMES[tema].light;
+      const rgb = v => v.join(' ');
+
+      // Se inyecta al final del body para ganar en el orden de cascada (misma
+      // especificidad, va despues del <link> a tailwind.css).
+      let style = document.getElementById('vente-accent-style');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'vente-accent-style';
+        document.body.appendChild(style);
+      }
+      style.textContent = [
+        '.bg-vente-cyan{background-color:rgb(' + rgb(c) + ' / var(--tw-bg-opacity,1));}',
+        '.bg-vente-cyan\\/20{background-color:rgb(' + rgb(c) + ' / 0.2);}',
+        '.text-vente-cyan{color:rgb(' + rgb(c) + ' / var(--tw-text-opacity,1));}',
+        '.text-vente-accent{color:rgb(' + rgb(a) + ' / var(--tw-text-opacity,1));}',
+        '.hover\\:bg-vente-hover:hover{background-color:rgb(' + rgb(h) + ' / var(--tw-bg-opacity,1));}',
+        '.hover\\:text-vente-cyan:hover{color:rgb(' + rgb(c) + ' / var(--tw-text-opacity,1));}',
+        '.border-vente-cyan\\/60{border-color:rgb(' + rgb(c) + ' / 0.6);}',
+        '.focus\\:ring-vente-cyan:focus{--tw-ring-color:rgb(' + rgb(c) + ');}',
+        '.from-vente-cyan{--tw-gradient-from:rgb(' + rgb(c) + ') var(--tw-gradient-from-position);' +
+          '--tw-gradient-to:rgb(' + rgb(c) + ' / 0) var(--tw-gradient-to-position);' +
+          '--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to);}',
+        '.to-vente-accent{--tw-gradient-to:rgb(' + rgb(a) + ') var(--tw-gradient-to-position);}',
+        // Sobre fondos claros (bg-cyan-100) se usa un tono mas oscuro para que
+        // el texto siga siendo legible. Mayor especificidad: 0,2,0.
+        '.bg-cyan-100 .text-vente-cyan{color:rgb(' + rgb(l) + ');}',
+        // Los degradados del <style> del <head> no son clases de Tailwind, asi
+        // que hay que sobrescribirlas aparte o el hero se quedaria siempre celeste.
+        '.gradient-vente{background:linear-gradient(135deg,#0A192F 0%,rgb(' + rgb(c) + ' / 0.55) 50%,rgb(' + rgb(c) + ') 100%);}',
+        '.gradient-cyan{background:linear-gradient(135deg,rgb(' + rgb(c) + ') 0%,rgb(' + rgb(a) + ') 100%);}'
+      ].join('\n');
+
+      marcarBotonAccent(tema);
+      try { localStorage.setItem(ACCENT_KEY, tema); } catch (e) { /* modo privado */ }
+
+      if (persistir) {
+        // El color ya se aplico en pantalla al instante. Ahora se persiste.
+        // guardarCampoPerfil ya muestra su propio aviso de exito o de error.
+        guardarCampoPerfil({ color_acentu: tema }, 'Color de acento: ' + ACENT_THEMES[tema].label + '.');
+      }
+    }
+
+    // Mueve el check visual al boton del color elegido.
+    // OJO: assets/tailwind.css esta COMPILADO, asi que solo existen las clases
+    // que ya estaban en el HTML original. `ring-white/90` y `scale-110` no
+    // existen ahi (lo generado es `ring-white/20` y `hover:scale-110`), asi que
+    // usarlas aqui no habria hecho nada.
+    function marcarBotonAccent(tema) {
+      document.querySelectorAll('[data-accent]').forEach(function(btn) {
+        const activo = btn.getAttribute('data-accent') === tema;
+        btn.classList.toggle('ring-white/20', activo);
+        btn.classList.toggle('ring-transparent', !activo);
+        btn.classList.toggle('hover:scale-110', !activo);
+        btn.setAttribute('aria-pressed', activo ? 'true' : 'false');
+        const icono = btn.querySelector('i');
+        if (icono) icono.style.display = activo ? '' : 'none';
+      });
+    }
+
+    // Aplica el color sin guardarlo (al restaurar la sesion o al cargar).
+    function restaurarAccentTheme(color) {
+      aplicarAccentTheme(color, false);
+    }
+
+    function setAccentTheme(color) {
+      aplicarAccentTheme(color, true);
+    }
+
+    // Se aplica lo antes posible para que no haya un parpadeo con el celeste
+    // por defecto antes de que se sepa el color del usuario.
+    (function initAccentTheme() {
+      let guardado = null;
+      try { guardado = localStorage.getItem(ACCENT_KEY); } catch (e) { /* noop */ }
+      if (guardado && Object.prototype.hasOwnProperty.call(ACENT_THEMES, guardado)) {
+        userState.accentColor = guardado;
+      }
+      const aplica = function() {
+        try { aplicarAccentTheme(accentThemeActual(), false); } catch (e) { /* noop */ }
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', aplica);
+      } else {
+        aplica();
+      }
+    })();
 
     // TOAST NOTIFICATION HELPERS
     function showToast(title, body) {
