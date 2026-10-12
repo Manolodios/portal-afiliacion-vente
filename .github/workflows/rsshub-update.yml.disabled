@@ -16,6 +16,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Obtener todo el historial para rebase
+
+      - name: Pull latest changes before modifying
+        run: |
+          git pull --rebase origin main
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -122,6 +127,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Pull latest again before committing to avoid conflicts
+          git pull --rebase origin main
           if git diff --quiet index.html; then
             echo "No changes to commit"
           else
