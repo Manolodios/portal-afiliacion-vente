@@ -3179,11 +3179,13 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       } else if (viewName === 'leaders') {
         leadersView.classList.remove('hidden');
         headerTitle.textContent = "Líderes";
-        headerSub.textContent = "Fuentes verificadas y medios";
+        headerSub.textContent = "Fuentes verificadas y medi
+        renderLeadersGrid();os";
       } else if (viewName === 'topics') {
         topicsView.classList.remove('hidden');
         headerTitle.textContent = "Temas";
-        headerSub.textContent = "Hashtags más usados";
+        headerSub.textContent = "Hashtags más usad
+        renderTopicsList();os";
       } else if (viewName === 'admin') {
         adminView.classList.remove('hidden');
         headerTitle.textContent = "Administración";
