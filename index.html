@@ -792,6 +792,24 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             </div>
 
             <p id="profileViewBio" class="text-slate-300 text-sm max-w-xl leading-relaxed">
+            <!-- SECCION CREDENCIAL QR -->
+            <div id="credencial-card" class="hidden w-full mt-4 bg-gradient-to-br from-emerald-900/40 to-sky-900/40 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-900/10">
+              <div class="flex flex-col sm:flex-row items-center gap-4">
+                <div class="bg-white/10 rounded-xl p-3 shadow-inner backdrop-blur-sm">
+                  <img id="credencial-qr" src="" alt="QR de la credencial" class="w-32 h-32 rounded-lg bg-white p-1">
+                </div>
+                <div class="flex-1 min-w-0 text-center sm:text-left">
+                  <h3 class="text-lg font-extrabold text-emerald-300 mb-1">Tu Credencial de Afiliación</h3>
+                  <p class="text-xs text-slate-400 mb-3">Presenta este código para confirmar tu afiliación</p>
+                  <div class="flex items-center gap-2 justify-center sm:justify-start">
+                    <code id="credencial-codigo" class="px-3 py-1.5 bg-slate-950/60 border border-emerald-500/30 rounded-lg text-emerald-300 font-mono text-sm tracking-widest select-all"></code>
+                    <button onclick="copiarCodigoCredencial()" class="text-xs text-slate-300 hover:text-white font-semibold px-2 py-1.5 rounded hover:bg-emerald-600/20 transition" aria-label="Copiar código">
+                      <i class="fa-regular fa-copy mr-1"></i> Copiar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
               Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
             </p>
 
@@ -888,12 +906,47 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
               <p class="text-sm text-slate-400">Gestión de afiliados de Vente Cabimas</p>
             </div>
             <div class="flex items-center gap-3">
+            <button onclick="abrirComposerNotificacion()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg shadow-md shadow-amber-500/15 transition text-xs sm:text-sm flex items-center gap-2">
+              <i class="fa-solid fa-bell"></i> Notificar afiliados
+            </button>
               <button onclick="adminExportCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition flex items-center gap-2">
                 <i class="fa-solid fa-download"></i> Exportar CSV
               </button>
             </div>
           </div>
 
+      <!-- COMPOSER NOTIFICACIONES -->
+      <div id="notificacion-modal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full shadow-2xl shadow-sky-900/20 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-white">Notificar afiliados</h3>
+            <button onclick="cerrarComposerNotificacion()" class="text-slate-400 hover:text-white text-sm">Cerrar</button>
+          </div>
+          <div>
+            <label for="notif-titulo" class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Título</label>
+            <input type="text" id="notif-titulo" placeholder="Ej: Reunión de organización - Cabimas" class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm">
+          </div>
+          <div>
+            <label for="notif-cuerpo" class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Mensaje</label>
+            <textarea id="notif-cuerpo" rows="3" placeholder="Ej: Nos reunimos este sábado 10am en el centro. Trae tu cédula." class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm resize-none"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="notif-estado" class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Estado (opcional)</label>
+              <select id="notif-estado" class="w-full px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-xs"><option value="">Todos</option><option>Zulia</option><option>Distrito Capital</option><option>Miranda</option></select>
+            </div>
+            <div>
+              <label for="notif-parroquia" class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Parroquia (opcional)</label>
+              <select id="notif-parroquia" class="w-full px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-xs"><option value="">Todas</option><option>Carmen Herrera</option><option>Ambrosio</option></select>
+            </div>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button onclick="enviarNotificacion()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-bell"></i> Enviar notificación
+            </button>
+          </div>
+        </div>
+      </div>
           <!-- Stats Cards -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="admin-stats">
             <!-- Se llena dinámicamente -->
@@ -2799,6 +2852,103 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             renderTopicsList();
         };
 
+        // ===== CREDENCIAL QR =====
+        async function mostrarMiCredencial() {
+            const card = document.getElementById("credencial-card");
+            const img = document.getElementById("credencial-qr");
+            const code = document.getElementById("credencial-codigo");
+            if (!card || !img || !code) return;
+            card.classList.remove("hidden");
+            try {
+                const res = await (window.SupabaseAPI || supabase).rpc("obtener_mi_credencial");
+                if (!res || !res.ok || !res.credencial) {
+                    code.textContent = "Sin credencial";
+                    img.src = "";
+                    return;
+                }
+                code.textContent = res.credencial.codigo;
+                const urlVer = res.credencial.url_verificacion || ("https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=" + res.credencial.codigo);
+                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" + encodeURIComponent(urlVer);
+            } catch (e) {
+                code.textContent = "Error";
+                console.warn("[Vente] Error al cargar credencial:", e);
+            }
+        }
+
+        async function copiarCodigoCredencial() {
+            const code = document.getElementById("credencial-codigo");
+            if (!code) return;
+            const texto = code.textContent || "";
+            if (!texto || texto === "Sin credencial" || texto === "Error") return;
+            try {
+                await navigator.clipboard.writeText(texto);
+                showNotification("Codigo copiado", "success");
+            } catch (e) {
+                showNotification("No se pudo copiar el codigo", "warning");
+            }
+        }
+
+        function abrirComposerNotificacion() {
+            const m = document.getElementById("notificacion-modal");
+            if (!m) return;
+            m.classList.remove("hidden");
+            m.classList.add("flex");
+            const titulo = document.getElementById("notif-titulo");
+            if (titulo) titulo.focus();
+        }
+
+        function cerrarComposerNotificacion() {
+            const m = document.getElementById("notificacion-modal");
+            if (!m) return;
+            m.classList.add("hidden");
+            m.classList.remove("flex");
+        }
+
+        async function enviarNotificacion() {
+            const titulo = document.getElementById("notif-titulo");
+            const cuerpo = document.getElementById("notif-cuerpo");
+            const estado = document.getElementById("notif-estado");
+            const parroquia = document.getElementById("notif-parroquia");
+            if (!titulo || !cuerpo) return;
+            const t = (titulo.value || "").trim();
+            const c = (cuerpo.value || "").trim();
+            if (!t) { showNotification("Falta el titulo", "warning"); return; }
+            if (!c) { showNotification("Falta el mensaje", "warning"); return; }
+            try {
+                const res = await fetch("https://kgnajywtscxujwdmskbb.supabase.co/functions/v1/send-notification", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + window.SUPABASE_ANON_KEY,
+                        "apikey": window.SUPABASE_ANON_KEY,
+                    },
+                    body: JSON.stringify({
+                        notificacion_id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString()),
+                        titulo: t,
+            cuerpo: c,
+                        estado: (estado ? estado.value : "") || null,
+                        municipio: null,
+                        parroquia: (parroquia ? parroquia.value : "") || null,
+                        area: null,
+                        rol: null,
+                    }),
+                });
+                const data = await res.json();
+                if (data && data.ok) {
+                    showNotification("Notificacion enviada a " + (data.enviados || 0) + " afiliados", "success");
+                    cerrarComposerNotificacion();
+                    titulo.value = "";
+            cuerpo.value = "";
+                } else {
+                    showNotification("Error al enviar: " + (data ? data.error : res.statusText), "error");
+                }
+            } catch (e) {
+                showNotification("Error de red al enviar notificacion", "error");
+                console.warn("[Vente] Error enviando notificacion:", e);
+            }
+        }
+
+        window.closeDashboard = async function(cerrarSesion = false) {
         window.closeDashboard = async function(cerrarSesion = false) {
             const m = document.getElementById("member-dashboard-modal");
             if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
