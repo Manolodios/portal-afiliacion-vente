@@ -959,7 +959,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
           <!-- Filtros y búsqueda -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4">
             <div class="flex flex-col sm:flex-row gap-3">
-              <div class="flex-1 relative">
+              <div class="flex-1 min-w-0 relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
                 <input type="text" id="admin-search" placeholder="Buscar por nombre, email, cédula..." class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
               </div>
@@ -3179,10 +3179,12 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         leadersView.classList.remove('hidden');
         headerTitle.textContent = "Líderes";
         headerSub.textContent = "Fuentes verificadas y medios";
+        renderLeadersGrid();
       } else if (viewName === 'topics') {
         topicsView.classList.remove('hidden');
         headerTitle.textContent = "Temas";
         headerSub.textContent = "Hashtags más usados";
+        renderTopicsList();
       } else if (viewName === 'admin') {
         adminView.classList.remove('hidden');
         headerTitle.textContent = "Administración";
