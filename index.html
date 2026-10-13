@@ -1831,6 +1831,16 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             window.supabase = supabase;
 
+            // Vuelta de Google con flujo PKCE (?code=...): hay que canjear el
+            // codigo por la sesion antes de llamar a getSession(). Si
+            // detectSessionInUrl ya lo canjeo, falla y se ignora.
+            if (/[?&]code=/.test(location.search) && supabase.auth.exchangeCodeForSession) {
+                try { await supabase.auth.exchangeCodeForSession(window.location.href); }
+                catch (e) { console.warn('[Vente] Intercambio de codigo OAuth:', e?.message || e); }
+                // Limpiar el ?code= de la URL para no reintentar al recargar.
+                try { window.history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* noop */ }
+            }
+
             supabase.auth.getSession().then(async ({ data: { session } }) => {
                 // Sin sesion no hay nada que restaurar: el splash (si se llego a
                 // mostrar por una sesion caducada) se retira y se ve la landing.
@@ -1849,10 +1859,10 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                     if (typeof window.renderDashboard === 'function') {
                         await window.renderDashboard(perfil || null, session.user.email);
                     }
-                
-                    if (typeof ocultarSplash === 'function') ocultarSplash();} catch (e) {
+                } catch (e) {
                     console.warn('[Vente] Error al pintar el panel:', e);
                 } finally {
+                    if (typeof ocultarSplash === 'function') ocultarSplash();
                     // El adminLoad va protegido: si lanza, el catch de abajo lo
                     // recoge, pero el splash no debe quedarse puesto nunca.
                     try {
@@ -1877,7 +1887,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                         window.closeDashboard(false);
                         return;
                     }
-                    if (event !== 'SIGNED_IN' || !session?.user) return;
+                    if ((event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') || !session?.user) return;
                     // Sin esto, entrar por sincronizacion entre pestanas deja
                     // SESION_USUARIO vacio y el formulario de ficha no se rellena
                     // con el nombre de Google pese a estar disponible.
@@ -1890,6 +1900,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                     } catch (e) {
                         console.warn('[Vente] Error al pintar el panel:', e);
                     } finally {
+                        if (typeof ocultarSplash === 'function') ocultarSplash();
                         if (typeof window.adminLoad === 'function') await window.adminLoad();
                     }
                 } catch (e) {
@@ -2647,14 +2658,16 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                 showNotification("Sin conexión a internet. Revisa tu wifi o datos móviles.", "error");
                 return;
             }
+            const btn = document.querySelector('button[onclick="handleGoogleSignIn()"]');
+            const btnOrig = btn ? btn.innerHTML : '';
             try {
-                const btn = document.querySelector('button[onclick="handleGoogleSignIn()"]');
                 if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Redirigiendo...'; }
-                
+
                 await window.SupabaseAPI.signInWithOAuth('google');
             } catch (err) {
                 console.error(err);
                 showNotification(traducirError(err), "error");
+                if (btn) { btn.disabled = false; btn.innerHTML = btnOrig; }
             }
         };
 
@@ -3180,13 +3193,13 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       } else if (viewName === 'leaders') {
         leadersView.classList.remove('hidden');
         headerTitle.textContent = "Líderes";
-        headerSub.textContent = "Fuentes verificadas y medi
-        renderLeadersGrid();os";
+        headerSub.textContent = "Fuentes verificadas y medios";
+        renderLeadersGrid();
       } else if (viewName === 'topics') {
         topicsView.classList.remove('hidden');
         headerTitle.textContent = "Temas";
-        headerSub.textContent = "Hashtags más usad
-        renderTopicsList();os";
+        headerSub.textContent = "Hashtags más usados";
+        renderTopicsList();
       } else if (viewName === 'admin') {
         adminView.classList.remove('hidden');
         headerTitle.textContent = "Administración";
