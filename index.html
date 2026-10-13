@@ -783,11 +783,6 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
               <span>Editar perfil</span>
             </button>
           </div>
-            <button onclick="mostrarMiCredencial() " class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-2 text-sm">
-              <i class="fa-solid fa-id-card-clip"></i>
-              <span>Mi Credencial</span>
-            </button>
-
 
           <!-- USER TEXT INFO -->
           <div class="space-y-2">
@@ -828,7 +823,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         <div class="px-6 max-w-4xl w-full mx-auto pb-8">
           <div class="relative">
             <!-- Reveal Button -->
-            <button onclick="toggleCredential()" id="reveal-btn" aria-label="Ver credencial completa" class="absolute top-4 right-4 z-30 w-12 h-12 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-3 border-white/20">
+            <button onclick="toggleCredential()" id="reveal-btn" aria-label="Ver credencial completa" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/30 flex items-center justify-center transition-all hover:scale-110 border-4 border-white/20">
               <i class="fa-solid fa-eye text-xl"></i>
             </button>
             <!-- Card with blur -->
