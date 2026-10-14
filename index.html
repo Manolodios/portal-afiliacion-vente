@@ -857,12 +857,19 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                   <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
                 </div>
                 <!-- QR real de la credencial. Antes aqui habia un icono decorativo
-                     (data-lucide="qr-code"), que no leadia a nada. El tamano
-                     sube a 80px porque por debajo de eso ningun movil lo lee. -->
+                     (data-lucide="qr-code"), que no llevaba a nada.
+
+                     El tamano va en estilo en linea a proposito: assets/tailwind.css
+                     esta compilado y no contiene las utilidades w-16/w-20/h-24, asi
+                     que una clase de Tailwind aqui no aplicaria nada y la imagen se
+                     veria a su tamano natural (192px), que se come la tarjeta. -->
                 <img id="credencial-qr-mini" src="" alt="Código QR de la credencial"
-                     class="w-20 h-20 sm:w-24 sm:h-24 bg-white p-1.5 rounded-lg shrink-0 object-contain"
+                     class="bg-white rounded-lg"
+                     style="width:72px;height:72px;padding:4px;flex-shrink:0;object-fit:contain"
                      onerror="this.style.visibility='hidden'">
-                <div id="credencial-qr-mini-hint" class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white/10 border border-dashed border-slate-600 flex flex-col items-center justify-center text-center px-1 shrink-0">
+                <div id="credencial-qr-mini-hint"
+                     class="rounded-lg bg-white/10 border border-dashed border-slate-600 flex flex-col items-center justify-center text-center px-1"
+                     style="width:72px;height:72px;flex-shrink:0">
                   <i data-lucide="qr-code" class="w-6 h-6 text-slate-500"></i>
                   <span class="text-[7px] text-slate-500 mt-0.5 leading-tight">Sin credencial</span>
                 </div>
