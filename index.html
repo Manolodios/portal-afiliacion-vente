@@ -3055,7 +3055,15 @@ function topicsEfectivos() {
             const img = document.getElementById("credencial-qr");
             const code = document.getElementById("credencial-codigo");
             if (!card || !img || !code) return;
-            const rpc = (window.SupabaseAPI || supabase).rpc.bind(window.SupabaseAPI || supabase);
+            // DebeAccessed via window: dentro de un script clasico 'supabase'
+            // puede no ser resoluble, y .bind sobre undefined rompe.
+            const cliente = window.SupabaseAPI || window.supabase;
+            if (!cliente || typeof cliente.rpc !== 'function') {
+                code.textContent = "No disponible";
+                card.classList.remove("hidden");
+                return;
+            }
+            const rpc = function(nombre) { return cliente.rpc(nombre); };
 
             async function pintar(res) {
                 if (!res || !res.data || !res.data.ok) return null;
