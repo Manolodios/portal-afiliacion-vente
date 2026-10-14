@@ -3,18 +3,19 @@
 //
 // No se toca el resto del archivo: se busca el bloque delimitado por
 // "const FEED_POSTS = [" y su cierre "        ];" y se sustituye. Si el bloque
-// no aparece, no se escribe nada y el portal sigue con el feed anterior.
+// no aparece o el archivo no queda con la misma estructura, no se escribe nada
+// (el workflow termina sin cambios y el portal sigue con el feed anterior).
 import fs from 'node:fs';
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
     + '(KHTML, like Gecko) Chrome/125.0 Safari/537.36';
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-const DIAS_MAX = 45;           // publicaciones mas antiguas que se conservan
+const DIAS_MAX = 45;           // publications mas antiguas que se conservan
 const POR_CUENTA = 6;
 const MAX_POSTS = 40;
 
-// Cuentas de Vente Venezuela. Se agregan o quitan aqui.
+// Cuentas de Vente Venezuela. Se agregar o quitan aqui.
 const CUENTAS = [
     ['MariaCorinaYA', 'María Corina Machado', 'Presidente de Vente Venezuela'],
     ['VenteVenezuela', 'Vente Venezuela', 'Vente Venezuela'],
@@ -86,7 +87,8 @@ async function rssDe(handle) {
 
 async function api(path) {
     try {
-        return JSON.parse(await get(`https://api.fxtwitter.com/${path}`, 2));
+        const txt = await get(`https://api.fxtwitter.com/${path}`, 2);
+        return JSON.parse(txt);
     } catch { return null; }
 }
 
@@ -204,17 +206,27 @@ lineas.push('        ];');
 
 html = html.slice(0, desde) + lineas.join('\n') + html.slice(cierre + '        ];'.length);
 
-// LEADERS: se refrescan los avatares conservando el orden y los nombres.
-// Se limpian los comentarios previos: si no, cada corrida anade otro y el
-// archivo crece sin limite. Los indices se recalculan tras cada recorte.
+// LEADERS: se refrescan los avatares, se conserva el orden y los nombres.
+const li = html.indexOf('        const LEADERS = [');
+const lc = html.indexOf('        ];', li);
+if (li >= 0 && lc >= 0) {
+    const leaders = CUENTAS.map(([h, nombre, rol], i) => {
+        const av = avatares[h] || 'assets/avatar-marcorina.jpg';
+        return `            { handle: "${h}", name: "${nombre}", avatar: "${av}", verified: true, party: "${rol}" }`
+            + (i < CUENTAS.length - 1 ? ',' : '');
+    });
+    // Se limpian TODOS los comentarios seguidos que haya justo antes de
+// `const LEADERS = [`: si no, cada corrida anade otro y el archivo crece
+// sin limite (4 lineas por dia). Los indices se vuelven a buscar tras cada
+// recorte: `lc` queda obsoleto en cuanto se acorta el prefijo.
 const CAB = '        const LEADERS = [';
 const CIERRE = '\n        ];';
 for (let guarda = 0; guarda < 50; guarda++) {
     const pos = html.indexOf(CAB);
     if (pos < 0) break;
-    const inicioLinea = html.lastIndexOf('\n', pos - 1) + 1;
+    const inicioLinea = html.lastIndexOf('\n', pos - 1) + 1;   // de la linea CAB
     if (inicioLinea <= 0) break;
-    const finPrevia = inicioLinea - 1;
+    const finPrevia = inicioLinea - 1;                          // fin de la linea anterior
     const inicioPrevia = html.lastIndexOf('\n', finPrevia - 1) + 1;
     if (!html.slice(inicioPrevia, finPrevia + 1).trim().startsWith('//')) break;
     html = html.slice(0, inicioPrevia) + html.slice(inicioLinea);
@@ -222,13 +234,9 @@ for (let guarda = 0; guarda < 50; guarda++) {
 const li2 = html.indexOf(CAB);
 const lc2 = html.indexOf(CIERRE, li2);
 if (li2 >= 0 && lc2 >= 0) {
-    const leaders = CUENTAS.map(([h, nombre, rol], i) => {
-        const av = avatares[h] || 'assets/avatar-marcorina.jpg';
-        return `            { handle: "${h}", name: "${nombre}", avatar: "${av}", verified: true, party: "${rol}" }`
-            + (i < CUENTAS.length - 1 ? ',' : '');
-    });
     html = html.slice(0, li2) + '        // Líderes y cuentas de Vente Venezuela\n' + CAB + '\n'
         + leaders.join('\n') + CIERRE + html.slice(lc2 + CIERRE.length);
+}
 }
 
 fs.writeFileSync(ruta, html, 'utf8');
