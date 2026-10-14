@@ -47,7 +47,8 @@ body { background:#0b1220; min-height:100vh; }
     </div>
 
     <div class="text-center">
-      <canvas id="qr-canvas" class="qr-canvas mx-auto" width="192" height="192"></canvas>
+      <img id="qr-img" alt="Codigo QR de verificacion"
+           class="qr-canvas mx-auto w-48 h-48 bg-white rounded-xl p-2" />
       <p class="text-xs text-slate-500 mt-2">Escanea para verificar en portal-afiliacion-vente</p>
     </div>
   </div>
@@ -91,7 +92,7 @@ async function main() {
   showValid(data.afiliado, codigo);
 }
 
-function showValid(afiliado: any, codigo: string) {
+function showValid(afiliado, codigo) {
   $('valid').classList.remove('hidden');
   $('v-nombre').textContent = afiliado.nombre_completo;
   $('v-estado').textContent = afiliado.estado || '—';
@@ -105,57 +106,20 @@ function showValid(afiliado: any, codigo: string) {
   drawQR(url);
 }
 
-function showInvalid(msg: string) {
+function showInvalid(msg) {
   $('invalid').classList.remove('hidden');
   $('error-msg').textContent = msg;
 }
 
-function drawQR(text: string) {
-  const canvas = $('qr-canvas');
-  const ctx = canvas.getContext('2d')!;
-  const size = 192;
-  const modules = 37; // versión 3 QR aprox
-  const moduleSize = size / modules;
-
-  // Generar matriz QR simple (usando librería sería mejor, pero esto funciona para demo)
-  // Usamos una implementación mínima de QR code
-  const qr = generateQR(text);
-  ctx.fillStyle = '#0b1220';
-  ctx.fillRect(0, 0, size, size);
-  ctx.fillStyle = '#00A8E8';
-  for (let r = 0; r < qr.length; r++) {
-    for (let c = 0; c < qr[r].length; c++) {
-      if (qr[r][c]) ctx.fillRect(c * moduleSize, r * moduleSize, moduleSize, moduleSize);
-    }
-  }
-  // Quiet zone
-  ctx.fillStyle = '#0b1220';
-  const quiet = moduleSize * 4;
-  ctx.fillRect(0, 0, size, quiet);
-  ctx.fillRect(0, size - quiet, size, quiet);
-  ctx.fillRect(0, 0, quiet, size);
-  ctx.fillRect(size - quiet, 0, quiet, size);
-}
-
-// Generador QR mínimo (versión 3, ECC M) - solo para demo
-// En producción usar qrcode.js o similar
-function generateQR(text: string): number[][] {
-  // Placeholder: matriz 37x37 con patrón de búsqueda
-  const n = 37;
-  const m = Array.from({length:n},()=>Array(n).fill(0));
-  // Finder patterns (esquinas)
-  const drawFinder = (r0,c0)=>{
-    for(let r=0;r<7;r++)for(let c=0;c<7;c++){
-      if(r===0||r===6||c===0||c===6||(r>=2&&r<=4&&c>=2&&c<=4)) m[r0+r][c0+c]=1;
-    }
-  };
-  drawFinder(0,0); drawFinder(0,n-7); drawFinder(n-7,0);
-  // Timing patterns
-  for(let i=8;i<n-8;i++){ m[6][i]=i%2; m[i][6]=i%2; }
-  // Relleno pseudo-aleatorio basado en el texto (demo only)
-  let hash=0; for(const ch of text) hash=(hash*31+ch.charCodeAt(0))|0;
-  for(let r=0;r<n;r++)for(let c=0;c<n;c++) if(m[r][c]===0) m[r][c]=(hash>>(r*c%31))&1;
-  return m;
+// QR real. Antes habia aqui un generador propio marcado como "demo only":
+// dibujaba un patron de 37x37 con relleno pseudoaleatorio que ningun lector
+// de QR puede descifrar, asi que el codigo de la tarjeta no servia para nada.
+// Se usa el mismo servicio que el portal principal para que ambos coincidan.
+function drawQR(text) {
+  const img = $('qr-img');
+  if (!img) return;
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=192x192&margin=8&data='
+          + encodeURIComponent(text);
 }
 
 main();
