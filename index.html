@@ -3089,13 +3089,19 @@ function topicsEfectivos() {
 
             l.classList.remove('hidden');
             max.forEach(function (item) {
+                // Se aceptan cadenas sueltas y tambien objetos {valor, etiqueta}:
+                // los llamantes pasan cadenas, pero antes se pasaba un objeto y
+                // salian botones en blanco.
+                const valor = (typeof item === 'string') ? item : item.valor;
+                const etiqueta = (typeof item === 'string') ? item : item.etiqueta;
                 const b = document.createElement('button');
                 b.type = 'button';
                 b.className = 'block w-full text-left px-3 py-2 text-sm text-white hover:bg-sky-600/30 transition';
-                b.textContent = item.etiqueta;
+                b.textContent = etiqueta;
+                b.setAttribute('role', 'option');
                 b.addEventListener('mousedown', function (ev) {
                     ev.preventDefault();
-                    alElegir(item.valor, item.etiqueta);
+                    alElegir(valor, etiqueta);
                 });
                 l.appendChild(b);
             });
