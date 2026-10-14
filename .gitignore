@@ -4,3 +4,10 @@ __pycache__/
 *.pyc
 
 node_modules/
+
+# Credenciales: nunca se suben a GitHub. Si un dia se publican, cualquier
+# persona con el enlace del repositorio podria escribir en el proyecto.
+GITHUB_PAT.txt
+.env
+*.token
+secrets*.txt
