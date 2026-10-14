@@ -1,0 +1,2 @@
+// Prueba minima: confirma si la API puede escribir fuera de .github/workflows
+console.log("hola " + new Date().toISOString());
