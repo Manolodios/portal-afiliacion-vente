@@ -528,7 +528,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">¿Dónde vives?</label>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <select id="ob-estado" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
+            <select id="ob-estado" onchange="reiniciarUbicacion()" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
               <option value="">Selecciona un estado</option>
               <option value="Zulia">Zulia</option>
               <option value="Distrito Capital">Distrito Capital</option>
@@ -541,48 +541,27 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             </select>
           </div>
           <div>
-            <input type="text" id="ob-municipio" placeholder="Municipio (ej. Cabimas)"
-                   class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
+            <label for="ob-municipio" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Municipio</label>
+            <input type="text" id="ob-municipio" placeholder="Escribe para buscar"
+                   autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list"
+                   class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan"
+                   oninput="buscarMunicipio(this.value)" onfocus="buscarMunicipio(this.value)">
+            <div id="ob-municipio-lista" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
+            <p id="ob-municipio-nota" class="hidden mt-1 text-[11px] text-amber-400"></p>
           </div>
         </div>
       </div>
 
       <div>
-        <label for="ob-parroquia" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Parroquia</label>
-        <select id="ob-parroquia" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
-          <option value="">Selecciona una parroquia</option>
-          <optgroup label="Zulia (Cabimas)">
-            <option value="Ambrosio">Ambrosio</option>
-            <option value="Carmen Herrera">Carmen Herrera</option>
-            <option value="La Rosa">La Rosa</option>
-            <option value="San Benito">San Benito</option>
-            <option value="Jorge Hernández">Jorge Hernández</option>
-            <option value="Rómulo Betancourt">Rómulo Betancourt</option>
-            <option value="Germán Ríos Linares">Germán Ríos Linares</option>
-            <option value="Arístides Calvani">Arístides Calvani</option>
-            <option value="Punta Gorda">Punta Gorda</option>
-          </optgroup>
-          <optgroup label="Distrito Capital">
-            <option value="Altagracia">Altagracia</option>
-            <option value="Antímano">Antímano</option>
-            <option value="Catedral">Catedral</option>
-            <option value="El Paraíso">El Paraíso</option>
-            <option value="El Recreo">El Recreo</option>
-            <option value="El Valle">El Valle</option>
-            <option value="La Candelaria">La Candelaria</option>
-            <option value="La Pastora">La Pastora</option>
-            <option value="La Vega">La Vega</option>
-            <option value="Macarao">Macarao</option>
-            <option value="San Agustín">San Agustín</option>
-            <option value="San Bernardino">San Bernardino</option>
-            <option value="San José">San José</option>
-            <option value="San Juan">San Juan</option>
-            <option value="Santa Rosalía">Santa Rosalía</option>
-            <option value="Santa Teresa">Santa Teresa</option>
-            <option value="Sucre (Catia)">Sucre (Catia)</option>
-            <option value="23 de Enero">23 de Enero</option>
-          </optgroup>
-        </select>
+        <div class="relative">
+          <label for="ob-parroquia" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Parroquia</label>
+          <input type="text" id="ob-parroquia" placeholder="Primero elige el municipio"
+                 autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list"
+                 class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan"
+                 oninput="buscarParroquia(this.value)" onfocus="buscarParroquia(this.value)" disabled>
+          <div id="ob-parroquia-lista" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
+          <p id="ob-parroquia-nota" class="hidden mt-1 text-[11px] text-amber-400"></p>
+        </div>
       </div>
 
       <div>
@@ -2371,6 +2350,11 @@ function topicsEfectivos() {
             // Sin esto, al volver a la ficha la parroquia aparecia vacia y
             // habia que elegirla otra vez aunque ya estuviera guardada.
             set("ob-parroquia", perfil && perfil.parroquia);
+            // El municipio decide si el campo de parroquia queda activo: sin
+            // municipio el buscador no puede filtrar y muestra su aviso.
+            if (typeof window.sincronizarUbicacion === 'function') {
+                try { window.sincronizarUbicacion(); } catch (e) { /* no bloquea la ficha */ }
+            }
             set("ob-tipo", (perfil && perfil.tipo_documento) || "V");
             // Se marcan las areas conocidas y se avisa de las que no esten en la
             // lista, para no perderlas en silencio al guardar.
@@ -3046,6 +3030,215 @@ function topicsEfectivos() {
             renderLeadersGrid();
             renderTopicsList();
         };
+
+// ===== CASCADA ESTADO / MUNICIPIO / PARROQUIA =====
+        // Los tres campos se encadenan: al elegir el estado solo se ofrecen sus
+        // municipios, y al elegir el municipio solo sus parroquias. Los nombres
+        // vienen de la tabla public.parroquias, asi que corregir o anadir una
+        // parroquia en la base la hace aparecer aqui sin desplegar nada.
+        //
+        // Si el estado elegido no tiene datos cargados, el campo de municipio
+        // avisa y deja escribir a mano. Nunca se bloquea el alta por esto.
+
+        const cascada = {
+            cliente: null,
+            municipiosEstado: new Set(),
+            municipio: '',
+            // Evita disparar consultas si el usuario escribe muy rapido.
+            relojMun: null,
+            relojPar: null
+        };
+
+        function clienteSupabase() {
+            if (cascada.cliente) return cascada.cliente;
+            for (const c of [window.SupabaseAPI, window.supabase]) {
+                if (c && typeof c.from === 'function') { cascada.cliente = c; return c; }
+            }
+            return null;
+        }
+
+        function lista(id) {
+            const el = document.getElementById(id);
+            return el ? el : null;
+        }
+
+        function cerrarLista(id) {
+            const l = lista(id);
+            if (l) { l.classList.add('hidden'); l.innerHTML = ''; }
+        }
+
+        function pintarSugerencias(id, texto, alElegir, max) {
+            const l = lista(id);
+            if (!l) return;
+            l.innerHTML = '';
+            if (!texto.length) { l.classList.add('hidden'); return; }
+
+            if (max === 0) {
+                l.classList.remove('hidden');
+                l.innerHTML = '<div class="px-3 py-2 text-[11px] text-slate-400">'
+                            + '¿No está la tuya? Escríbela tal cual.</div>';
+                return;
+            }
+
+            l.classList.remove('hidden');
+            max.forEach(function (item) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'block w-full text-left px-3 py-2 text-sm text-white hover:bg-sky-600/30 transition';
+                b.textContent = item.etiqueta;
+                b.addEventListener('mousedown', function (ev) {
+                    ev.preventDefault();
+                    alElegir(item.valor, item.etiqueta);
+                });
+                l.appendChild(b);
+            });
+        }
+
+        function nota(id, texto) {
+            const n = lista(id);
+            if (!n) return;
+            if (!texto) { n.classList.add('hidden'); n.textContent = ''; return; }
+            n.classList.remove('hidden');
+            n.textContent = texto;
+        }
+
+        // --- MUNICIPIO -------------------------------------------------------
+        window.buscarMunicipio = function (texto) {
+            clearTimeout(cascada.relojMun);
+            const estado = (document.getElementById('ob-estado') || {}).value || '';
+            const campo = document.getElementById('ob-municipio');
+            const parq = document.getElementById('ob-parroquia');
+
+            cascada.relojMun = setTimeout(async function () {
+                cerrarLista('ob-municipio-lista');
+                nota('ob-municipio-nota', '');
+
+                // Sin estado no se puede filtrar. Se espera.
+                if (!estado) {
+                    if (parq) parq.disabled = true;
+                    return;
+                }
+
+                const c = clienteSupabase();
+                if (!c) {
+                    if (parq) parq.disabled = true;
+                    nota('ob-municipio-nota', 'No se pudo consultar la lista; escribe el municipio.');
+                    return;
+                }
+
+                // Cuando el estado no tiene datos cargados se avisa, pero se
+                // deja escribir: es preferible un dato aproximado a perder el
+                // alta de una persona.
+                if (cascada.municipiosEstado.has(estado)) {
+                    if (parq) parq.disabled = true;
+                } else {
+                    const res = await c.from('parroquias')
+                        .select('municipio').eq('estado', estado).limit(400);
+                    const listaMun = Array.from(new Set((res.data || []).map(m => m.municipio)))
+                        .sort();
+                    if (listaMun.length) {
+                        cascada.municipiosEstado.add(estado);
+                    } else if (!cascada.municipiosEstado.has('__visto__' + estado)) {
+                        cascada.municipiosEstado.add('__visto__' + estado);
+                        nota('ob-municipio-nota',
+                             'Todavía no tenemos el listado de ' + estado + '. Escribe el municipio.');
+                        if (parq) parq.disabled = false;
+                        return;
+                    }
+                }
+
+                if (parq) parq.disabled = false;
+
+                const q = (texto || '').trim().toLowerCase();
+                let muns = await c.from('parroquias')
+                    .select('municipio').eq('estado', estado).limit(400);
+                let nombres = Array.from(new Set((muns.data || []).map(m => m.municipio))).sort();
+                if (q) nombres = nombres.filter(m => m.toLowerCase().indexOf(q) >= 0);
+
+                pintarSugerencias('ob-municipio-lista', texto || '', function (valor, etiqueta) {
+                    campo.value = valor;
+                    cascada.municipio = valor;
+                    cerrarLista('ob-municipio-lista');
+                    nota('ob-municipio-nota', '');
+                    const p = document.getElementById('ob-parroquia');
+                    if (p) { p.disabled = false; p.value = ''; }
+                    buscarParroquia('');
+                }, nombres.slice(0, 40));
+            }, 180);
+        };
+
+        // --- PARROQUIA -------------------------------------------------------
+        window.buscarParroquia = function (texto) {
+            clearTimeout(cascada.relojPar);
+            cascada.relojPar = setTimeout(async function () {
+                cerrarLista('ob-parroquia-lista');
+                nota('ob-parroquia-nota', '');
+                const municipio = (cascada.municipio || '').trim();
+                if (!municipio) {
+                    nota('ob-parroquia-nota', 'Elige primero el municipio.');
+                    return;
+                }
+                const c = clienteSupabase();
+                if (!c) return;
+                const q = (texto || '').trim();
+                const res = await c.from('parroquias')
+                    .select('parroquia').eq('municipio', municipio).limit(400);
+                let nombres = Array.from(new Set((res.data || []).map(p => p.parroquia)))
+                    .sort();
+                if (q) nombres = nombres.filter(p => p.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+                if (!nombres.length && q) {
+                    nota('ob-parroquia-nota',
+                         '¿No está la tuya? Escríbela tal cual y la catalogamos después.');
+                }
+                pintarSugerencias('ob-parroquia-lista', texto || '', function (valor) {
+                    const campo = document.getElementById('ob-parroquia');
+                    if (campo) campo.value = valor;
+                    cerrarLista('ob-parroquia-lista');
+                    nota('ob-parroquia-nota', '');
+                }, nombres.slice(0, 40));
+            }, 180);
+        };
+
+        // Cambiar de estado reinicia el municipio y su parroquia.
+        window.reiniciarUbicacion = function () {
+            cascada.municipio = '';
+            cascada.municipiosEstado.clear();
+            const m = document.getElementById('ob-municipio');
+            const p = document.getElementById('ob-parroquia');
+            if (m) { m.value = ''; m.setAttribute('placeholder', 'Escribe para buscar'); }
+            if (p) { p.value = ''; p.disabled = true; p.setAttribute('placeholder', 'Primero elige el municipio'); }
+            cerrarLista('ob-municipio-lista');
+            cerrarLista('ob-parroquia-lista');
+            nota('ob-municipio-nota', '');
+            nota('ob-parroquia-nota', '');
+        };
+
+        document.addEventListener('click', function (ev) {
+            const t = ev.target;
+            if (!t.closest || t.closest('#ob-municipio-lista') || t.closest('#ob-parroquia-lista')) return;
+            if (t.id !== 'ob-municipio' && t.id !== 'ob-parroquia') {
+                cerrarLista('ob-municipio-lista');
+                cerrarLista('ob-parroquia-lista');
+            }
+        });
+
+        window.sincronizarUbicacion = function () {
+            // Al reabrir la ficha con datos ya guardados, el municipio se pone
+            // directo y la parroquia solo sugiere, no obliga a teclear.
+            const m = document.getElementById('ob-municipio');
+            const p = document.getElementById('ob-parroquia');
+            if (!m || !p) return;
+            const municipio = m.value ? m.value.trim() : '';
+            const parroquia = p.value ? p.value.trim() : '';
+            if (municipio) {
+                cascada.municipio = municipio;
+                p.disabled = false;
+                if (parroquia) p.value = parroquia;
+            } else {
+                p.disabled = true;
+            }
+        };
+        // ===== FIN CASCADA =====
 
         // ===== CREDENCIAL QR =====
         // Llena el cuadrito de la tarjeta con el QR de la credencial.

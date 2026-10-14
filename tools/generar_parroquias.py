@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-"""Descarga la lista real de parroquias por estado desde los anexos de
-Wikipedia en espanol y genera el archivo JS que usa el portal.
+"""Descarga la lista real de parroquias por estado y genera la tabla para Supabase.
 
-Los anexos reproducen la division territorial oficial (Ley Organica del Poder
-Publico Municipal). Los recuentos se contrastan con la tabla resumen de
-"Parroquias de Venezuela"; si un estado queda muy por debajo de lo esperado se
-marca como REVISAR en vez de darse por bueno.
+Fuente: anexos de "Parroquias de Venezuela" (Wikipedia en espanol), que
+reproducen la division territorial oficial.
+
+El formato de los anexos es una lista donde el nombre de la parroquia aparece
+como alias de un enlace wiki:
+
+    # [[Parroquia Isla de Toas (...) | Parroquia Isla de Toas,]] El Toro (Parroquia Capital)
+
+Es decir, en el enlace va la PARROQUIA y despues, fuera del enlace, la capital.
+Un parser ingenuo se queda con las dos cosas pegadas y produce basura como
+"Isla de Toas, El Toro (Parroquia Capital)". Este lo separa.
 
     python tools/generar_parroquias.py
 
-Escribe tools/_salida/parroquias.js con esta forma:
-
-    const PARROQUIAS_POR_ESTADO = {
-      "Zulia": [{ m: "Cabimas", p: "Ambrosio" }, ...],
-      ...
-    };
+Escribe tools/_salida/parroquias.json
 """
 import io
 import json
@@ -32,193 +33,211 @@ API = 'https://es.wikipedia.org/w/api.php'
 UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/125.0 Safari/537.36')
 
-# Solo los estados que ofrece el formulario de afiliacion. "Otro" se queda
-# fuera a proposito: no hay parroquias que ofrecer para el.
-ESTADOS = [
-    'Distrito Capital', 'Anzoategui', 'Carabobo',
-    'Lara', 'Miranda', 'Tachira', 'Zulia',
-]
+# Estados que ofrece el formulario de afiliacion.
+ESTADOS = ['Distrito Capital', 'Anzoategui', 'Carabobo',
+           'Lara', 'Miranda', 'Tachira', 'Zulia']
 
-# Recuento oficial esperado (tabla resumen de "Parroquias de Venezuela").
 ESPERADO = {
     'Distrito Capital': 22, 'Anzoategui': 57, 'Carabobo': 38,
     'Lara': 57, 'Miranda': 155, 'Tachira': 66, 'Zulia': 110,
 }
 
 
-def pedir(params):
+def pedir(params, intentos=4):
     url = API + '?' + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={'User-Agent': UA})
-    return json.loads(urllib.request.urlopen(req, timeout=40).read())
+    for n in range(intentos):
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': UA})
+            return json.loads(urllib.request.urlopen(req, timeout=45).read())
+        except Exception:
+            if n == intentos - 1:
+                raise
+            time.sleep(8 * (n + 1))
 
 
 def wikitext(titulo):
-    datos = pedir({'action': 'parse', 'page': titulo,
-                   'prop': 'wikitext', 'format': 'json', 'formatversion': '2'})
-    if 'error' in datos:
-        return None
-    return datos['parse']['wikitext']
+    d = pedir({'action': 'parse', 'page': titulo, 'prop': 'wikitext',
+               'format': 'json', 'formatversion': '2'})
+    return None if 'error' in d else d['parse']['wikitext']
+
+
+def buscar_anexo(estado):
+    """Devuelve el titulo del anexo de parroquias de ese estado."""
+    candidatos = ['Anexo:Parroquias del estado %s' % estado,
+                  'Anexo:Parroquias del %s' % estado]
+    if estado == 'Distrito Capital':
+        candidatos.insert(0, 'Anexo:Parroquias del Distrito Capital')
+    for c in candidatos:
+        try:
+            d = pedir({'action': 'query', 'titles': c, 'format': 'json'})
+            paginas = d.get('query', {}).get('pages', {})
+            for v in paginas.values():
+                if 'missing' not in v:
+                    return c
+        except Exception:
+            pass
+        time.sleep(2)
+    # Ultimo recurso: buscar por prefijo
+    try:
+        d = pedir({'action': 'query', 'list': 'search',
+                   'srsearch': 'intitle:Parroquias %s' % estado,
+                   'srlimit': '8', 'format': 'json'})
+        for x in d['query']['search']:
+            if x['title'].startswith('Anexo:Parroquias'):
+                return x['title']
+    except Exception:
+        pass
+    return None
+
+
+def quitar_enlaces(t):
+    """[[destino|alias]] -> alias. [[destino]] -> destino."""
+    def sub(m):
+        partes = m.group(1).split('|')
+        return partes[-1].strip()
+    return re.sub(r'\[\[([^\]]+)\]\]', sub, t)
 
 
 def limpiar(t):
-    """Quita referencias, plantillas y marcado wiki."""
     t = re.sub(r'<ref[^>]*?/>', '', t, flags=re.S | re.I)
     t = re.sub(r'<ref[^>]*?>.*?</ref>', '', t, flags=re.S | re.I)
     for _ in range(5):
-        nuevo = re.sub(r'\{\{[^{}]*\}\}', '', t, flags=re.S)
-        if nuevo == t:
+        n = re.sub(r'\{\{[^{}]*\}\}', '', t, flags=re.S)
+        if n == t:
             break
-        t = nuevo
+        t = n
+    t = quitar_enlaces(t)
     t = re.sub(r"'''?", '', t)
-    t = re.sub(r'\[\[([^]|]*\|)?([^]]*)\]\]', r'\2', t)
     t = re.sub(r'<[^>]+>', '', t)
-    return t.strip()
+    return re.sub(r'\s+', ' ', t).strip()
 
 
-def nombre_de_parroquia(s):
-    s = s.strip()
-    s = re.sub(r'^(Parroquia|parroquia)\s+', '', s)
-    return s.strip()
-
-
-RUIDO = ('ancho', 'añadido', 'anadido', 'imagen', 'mapa', 'notas',
-         'municipality', 'municipios', 'ver ', '-plantilla')
+RUIDO_TITULO = ('ancho', 'añadido', 'imagen', 'mapa', 'notas', 'referencias')
 
 
 def es_ruido(s):
     b = s.strip().lower()
-    return any(b.startswith(r) or b == r for r in RUIDO)
+    return any(b.startswith(r) for r in RUIDO_TITULO) or len(b) < 3
+
+
+def nombre_municipio(crudo):
+    """'=== [[Municipio Baralt (Zulia, Venezuela)|Municipio Baralt]] (Capital: X) ==='
+       -> 'Baralt'
+       '=== Municipio Almirante Padilla (Capital: El Toro) ===' -> 'Almirante Padilla'"""
+    t = limpiar(crudo)
+    t = re.sub(r'\(Capital:.*?\)', '', t, flags=re.I)
+    t = re.sub(r'\(.*?\)', '', t)
+    t = t.strip().rstrip('=')
+    t = re.sub(r'^Municipio\s+', '', t, flags=re.I).strip()
+    return t
+
+
+def nombre_parroquia(crudo):
+    """'# [[Parroquia Isla de Toas (...)|Parroquia Isla de Toas,]] El Toro (Parroquia Capital)'
+       -> 'Isla de Toas'
+    Si el nombre no esta en el alias, se descarta lo que quede tras el cierre."""
+    # El nombre de la parroquia es el alias del primer enlace.
+    m = re.search(r'\[\[[^\]]*\|([^\]]*)\]\]', crudo)
+    if m:
+        cand = m.group(1)
+    else:
+        # Sin enlace: se quita la viñeta y el '(Parroquia Capital)'.
+        cand = re.sub(r'^\s*[*:;#]+\s*', '', crudo)
+        cand = re.sub(r'\(Parroquia Capital\)', '', cand, flags=re.I)
+        cand = re.sub(r'\s+', ' ', cand).strip()
+    cand = cand.strip().strip(',').strip()
+    cand = re.sub(r'^Parroquia\s+', '', cand, flags=re.I)
+    return cand.strip().strip(',').strip()
+
+
+def cuenta_del_anexo(wt):
+    """El propio anexo dice cuantas parroquias tiene el estado. Es mas fiable
+    que una tabla resumen externa: el de Miranda, por ejemplo, aclara que tiene
+    54 y no las 155 de la tabla, que estaba desactualizada."""
+    m = re.search(r'por\s+(\d+)\s+\[\[?[^\]]*parroquias', wt, flags=re.I)
+    if m:
+        return int(m.group(1))
+    m = re.search(r'(\d+)\s+parroquias', wt, flags=re.I)
+    return int(m.group(1)) if m else None
 
 
 def parsear(wt):
-    """Devuelve {municipio: [parroquias]} a partir del wikitext del anexo."""
-    municipios = {}
-    actual = 'General'
-
-    def agregar(mun, valores):
-        if not mun or es_ruido(mun):
-            return
-        lst = municipios.setdefault(mun, [])
-        for v in valores:
-            if v and not es_ruido(v):
-                lst.append(v)
-
+    out = {}
+    actual = None
     for linea in wt.split('\n'):
         cruda = linea.strip()
         if not cruda:
             continue
 
-        # Titulo de seccion: = Municipio Cabimas =  o  == Cabimas ==
+        # Encabezado de municipio: === ... ===
         m = re.match(r'^=+\s*(.+?)\s*=+$', cruda)
         if m:
-            nombre = nombre_de_parroquia(limpiar(m.group(1)))
-            actual = re.sub(r'^Municipio\s+', '', nombre, flags=re.I).strip() or 'General'
-            municipios.setdefault(actual, [])
+            nombre = nombre_municipio(m.group(1))
+            actual = nombre if nombre and not es_ruido(nombre) else None
             continue
 
-        # Fila de tabla: | municipio || parroquia || parroquia ...
-        if cruda.startswith('|') and not cruda.startswith('|-') and not cruda.startswith('|}'):
-            crudas = cruda.strip('|').split('||')
-            celdas = [nombre_de_parroquia(limpiar(c)) for c in crudas]
-            celdas = [c for c in celdas if c and c not in ('-', '—', 'municipalities')]
-            if not celdas:
+        # Linea de parroquia
+        if re.match(r'^[*:;#]+\s', cruda) or cruda.startswith('|'):
+            if actual is None:
                 continue
-            agregar(celdas[0], celdas[1:])
-            continue
-
-        # Lista con vinetas o numeracion: * Ambrosio
-        m = re.match(r'^[*:;#]+\s*(.+)$', cruda)
-        if m:
-            agregar(actual, [nombre_de_parroquia(limpiar(m.group(1)))])
-            continue
-
-    # Deduplicar y descartar valores que no son nombres de parroquia.
-    limpio = {}
-    for mun, vals in municipios.items():
-        visto = set()
-        out = []
-        for v in vals:
-            if len(v) > 55 or es_ruido(v):
-                continue
-            clave = v.lower()
-            if clave in visto:
-                continue
-            visto.add(clave)
-            out.append(v)
-        if out:
-            limpio[mun] = out
-    return limpio
-
-
-def titulo_anexo(estado):
-    if estado == 'Distrito Capital':
-        return 'Anexo:Parroquias del Distrito Capital'
-    return 'Anexo:Parroquias del estado %s' % estado
+            # Solo la parte anterior al primer "]]" puede contener el nombre.
+            corte = cruda
+            fin = corte.find(']]')
+            if fin > 0:
+                corte = corte[:fin + 2]
+            nombre = nombre_parroquia(corte)
+            if nombre and not es_ruido(nombre) and len(nombre) <= 55:
+                out.setdefault(actual, [])
+                if nombre.lower() not in [x.lower() for x in out[actual]]:
+                    out[actual].append(nombre)
+    return out
 
 
 resultado = {}
 informe = []
 
 for estado in ESTADOS:
-    wt = wikitext(titulo_anexo(estado))
+    titulo = buscar_anexo(estado)
+    if not titulo:
+        informe.append((estado, 0, ESPERADO[estado], 'SIN ANEXO'))
+        print('%-18s NO SE ENCONTRO EL ANEXO' % estado)
+        continue
+    wt = wikitext(titulo)
     if not wt:
         informe.append((estado, 0, ESPERADO[estado], 'SIN PAGINA'))
-        print('%-18s SIN PAGINA' % estado)
         continue
-
     datos = parsear(wt)
     total = sum(len(v) for v in datos.values())
-    esperado = ESPERADO[estado]
-    marca = 'OK' if total >= esperado * 0.9 else ('REVISAR' if total >= esperado * 0.7 else 'FALLO')
+    # La cifra buena es la que declara el propio anexo.
+    esp = cuenta_del_anexo(wt) or ESPERADO[estado]
+    if total == esp:
+        marca = 'OK'
+    elif abs(total - esp) <= 2:
+        marca = 'REVISAR'
+    else:
+        marca = 'FALLO'
+    informe.append((estado, total, esp, marca))
+    resultado[estado] = [{'m': m, 'p': p} for m in sorted(datos) for p in datos[m]]
+    print('%-18s %4d / %4d  %2d municipios  %s   [%s]'
+          % (estado, total, esp, len(datos), marca, titulo))
+    time.sleep(2)
 
-    informe.append((estado, total, esperado, marca))
-    resultado[estado] = [{'m': m, 'p': p}
-                         for m in sorted(datos)
-                         for p in datos[m]]
-    print('%-18s %4d parroquias / %3d municipios   esperado %3d   %s'
-          % (estado, total, len(datos), esperado, marca))
-    time.sleep(1)
-
-
-def nombre_visible(estado):
-    """Zulia, Táchira... la clave interna es sin acentos."""
-    return {'Anzoategui': 'Anzoátegui', 'Tachira': 'Táchira'}.get(estado, estado)
-
-
-lineas = [
-    '// Parroquias civiles de Venezuela, por estado y municipio.',
-    '// Fuente: anexos de "Parroquias de Venezuela" (Wikipedia en espanol),',
-    '// que reproducen la division territorial oficial.',
-    '// Generado por tools/generar_parroquias.py el ' + time.strftime('%Y-%m-%d') + '.',
-    '// El formulario de afiliacion filtra por este mapa, asi que nunca se',
-    '// ofrecen parroquias de un estado que no sea el elegido.',
-    'const PARROQUIAS_POR_ESTADO = {',
-]
-for estado, items in resultado.items():
-    lineas.append('    "%s": [' % nombre_visible(estado))
-    for it in items:
-        mun = it['m'].replace('"', "'").replace('\n', ' ')
-        par = it['p'].replace('"', "'").replace('\n', ' ')
-        lineas.append('        { m: "%s", p: "%s" },' % (mun, par))
-    lineas.append('    ],')
-lineas.append('};')
-
-ruta_js = os.path.join(SALIDA, 'parroquias.js')
-io.open(ruta_js, 'w', encoding='utf-8', newline='\n').write('\n'.join(lineas))
 json.dump(resultado, io.open(os.path.join(SALIDA, 'parroquias.json'), 'w',
                              encoding='utf-8'), ensure_ascii=False, indent=1)
 
 print()
 print('=== resumen ===')
-total = 0
-fallos = 0
-for estado, t, e, ok in informe:
-    print('  %-18s %4d / %4d   %s' % (estado, t, e, ok))
-    total += t
-    if ok == 'FALLO':
-        fallos += 1
-print('  %-18s %4d parroquias' % ('TOTAL', total))
+tot = 0
+for e, t, x, ok in informe:
+    print('  %-18s %4d / %4d  %s' % (e, t, x, ok))
+    tot += t
+print('  %-18s %4d parroquias' % ('TOTAL', tot))
+
+# Muestra de control: si hay basura como "X, Y (Parroquia Capital)" se ve.
 print()
-print('escrito %s' % ruta_js)
-if fallos:
-    print('ATENCION: %d estados con datos incompletos.' % fallos)
+print('=== control de calidad (5 primeras de cada estado) ===')
+for e, items in resultado.items():
+    print('  %s:' % e)
+    for it in items[:5]:
+        marca = '  <-- REVISAR' if re.search(r'\(Parroquia Capital\)|,\s*\w.*,', it['p']) else ''
+        print('     %-22s | %s%s' % (it['m'], it['p'], marca))
