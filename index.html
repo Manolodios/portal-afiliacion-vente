@@ -795,24 +795,10 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
               Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
             </p>
 
-            <!-- SECCION CREDENCIAL: aqui solo el codigo y el boton de copiar. El QR va
-                 en el cuadrito de la tarjeta de credencial (#credencial-qr-mini),
-                 que es lo que el afiliado enseña; un QR grande en medio de la
-                 ficha rompia la estetica de la pagina. -->
-            <div id="credencial-card" class="hidden w-full mt-4 bg-gradient-to-br from-emerald-900/40 to-sky-900/40 border border-emerald-500/20 rounded-2xl p-5 shadow-xl shadow-emerald-900/10">
-              <div class="flex items-center justify-between gap-4">
-                <div class="min-w-0">
-                  <h3 class="text-base font-extrabold text-emerald-300 mb-0.5">Tu Credencial de Afiliación</h3>
-                  <p class="text-[11px] text-slate-400">Escanea el QR de tu tarjeta o comunica este código</p>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  <code id="credencial-codigo" class="px-3 py-1.5 bg-slate-950/60 border border-emerald-500/30 rounded-lg text-emerald-300 font-mono text-sm tracking-widest select-all"></code>
-                  <button onclick="copiarCodigoCredencial()" class="text-xs text-slate-300 hover:text-white font-semibold px-2 py-1.5 rounded hover:bg-emerald-600/20 transition" aria-label="Copiar código">
-                    <i class="fa-regular fa-copy mr-1"></i> Copiar
-                  </button>
-                </div>
-              </div>
-            </div>
+            <!-- El QR de la credencial vive en el cuadrito de la tarjeta
+                 (#credencial-qr-mini). Antes habia aqui un bloque verde con
+                 el titulo "Tu Credencial de Afiliacion" y el codigo grande:
+                 sobraba, porque el ID unico ya esta impreso en la tarjeta. -->
 
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
               <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i><span id="profileViewLocationText">Cabimas, Zulia</span></span>
@@ -3062,79 +3048,60 @@ function topicsEfectivos() {
         };
 
         // ===== CREDENCIAL QR =====
-        // Muestra la credencial del afiliado. Si no tiene ninguna, se le emite
-        // una en el momento: el afiliado no tiene que pedirla a mano.
+        // Llena el cuadrito de la tarjeta con el QR de la credencial.
+        // El QR lleva el ID unico que ya esta impreso en la tarjeta
+        // (VV-XXXX-XXXX), no el codigo interno: al escanearlo se lee el mismo
+        // ID que ve el afiliado. Si no tiene credencial, se le emite una.
         async function mostrarMiCredencial() {
-            const card = document.getElementById("credencial-card");
             const img = document.getElementById("credencial-qr-mini");
             const hint = document.getElementById("credencial-qr-mini-hint");
-            const code = document.getElementById("credencial-codigo");
-            if (!img || !code) return;
+            if (!img) return;
 
-            // El QR va en el cuadrito de la tarjeta de credencial. Si no hay
-            // credencial se muestra un marcador, no un hueco vacio.
             function sinCredencial(motivo) {
-                if (img) { img.removeAttribute("src"); img.style.visibility = "hidden"; }
+                img.removeAttribute("src");
+                img.style.visibility = "hidden";
                 if (hint) {
                     hint.style.display = "flex";
                     hint.querySelector("span").textContent = motivo;
                 }
-                if (code) code.textContent = "Sin credencial";
-                if (card) card.classList.remove("hidden");
             }
+            function conCredencial(urlVer) {
+                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" +
+                          encodeURIComponent(urlVer);
+                img.style.visibility = "visible";
+                if (hint) hint.style.display = "none";
+            }
+
             // window.SupabaseAPI es un envoltorio que puede no traer rpc(), asi
             // que no vale el || : se busca el primer cliente que si lo tenga.
             let cliente = null;
             for (const c of [window.SupabaseAPI, window.supabase]) {
                 if (c && typeof c.rpc === 'function') { cliente = c; break; }
             }
-            if (!cliente) {
-                sinCredencial("No disponible");
-                return;
-            }
-            const rpc = function(nombre) { return cliente.rpc(nombre); };
+            if (!cliente) { sinCredencial("No disponible"); return; }
 
-            async function pintar(res) {
-                if (!res || !res.data || !res.data.ok) return null;
-                code.textContent = res.data.credencial.codigo;
-                const urlVer = res.data.credencial.url_verificacion ||
-                    ("https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=" +
-                     res.data.credencial.codigo);
-                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" +
-                          encodeURIComponent(urlVer);
-                img.style.visibility = "visible";
-                if (hint) hint.style.display = "none";
-                if (card) card.classList.remove("hidden");
-                return res.data.credencial;
+            function urlDeTarjeta(cod) {
+                return "https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=" +
+                       encodeURIComponent(cod);
             }
 
             try {
-                // Primero se intenta leer; si no hay credencial, se emite una.
-                let res = await rpc("obtener_mi_credencial");
+                let res = await cliente.rpc("obtener_mi_credencial");
                 if (res && res.data && res.data.ok === false) {
-                    res = await rpc("crear_mi_credencial");
+                    res = await cliente.rpc("crear_mi_credencial");
                     if (res && res.data && res.data.ok === false) {
                         sinCredencial("Sin credencial");
                         return;
                     }
                 }
-                if (!(await pintar(res))) sinCredencial("Sin credencial");
+                const cred = res && res.data && res.data.credencial;
+                if (!cred) { sinCredencial("Sin credencial"); return; }
+                // El ID de tarjeta es el que va en el QR. Si la credencial es
+                // antigua y aun no lo tiene, se cae al codigo interno.
+                conCredencial(urlDeTarjeta(cred.codigo_tarjeta || cred.codigo));
             } catch (e) {
                 sinCredencial("Error");
                 console.warn("[Vente] Error al cargar credencial:", e);
-            }
-        }
-
-        async function copiarCodigoCredencial() {
-            const code = document.getElementById("credencial-codigo");
-            if (!code) return;
-            const texto = code.textContent || "";
-            if (!texto || texto === "Sin credencial" || texto === "Error") return;
-            try {
-                await navigator.clipboard.writeText(texto);
-                showNotification("Codigo copiado", "success");
-            } catch (e) {
-                showNotification("No se pudo copiar el codigo", "warning");
             }
         }
 
