@@ -4939,6 +4939,25 @@ function topicsEfectivos() {
     // Modal ver afiliado
     let adminSelectedUser = null;
 
+    // Campos que el admin puede corregir. El email y la cedula se dejan fuera
+    // a proposito: son la identidad de la persona y cambiarlos desde el panel
+    // rompe la relacion con la ficha de registro.
+    const ADMIN_CAMPOS = [
+      ['nombre', 'Nombre'],
+      ['apellido', 'Apellido'],
+      ['estado', 'Estado'],
+      ['municipio', 'Municipio'],
+      ['parroquia', 'Parroquia']
+    ];
+
+    function adminCampo(clave, etiqueta, valor) {
+      return `<div>
+        <label class="text-xs text-slate-400 block mb-1">${etiqueta}</label>
+        <input id="adm-${clave}" type="text" value="${escapeHtml(valor || '')}"
+               class="w-full px-2 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm">
+      </div>`;
+    }
+
     function adminOpenModal(userId) {
       const user = adminState.allUsers.find(u => u.id === userId);
       if (!user) return;
@@ -4949,24 +4968,71 @@ function topicsEfectivos() {
       const body = document.getElementById('admin-modal-body');
       const btnSave = document.getElementById('admin-btn-save');
 
-      title.textContent = 'Ver Afiliado';
-      if (btnSave) btnSave.classList.add('hidden');
+      title.textContent = 'Editar Afiliado';
+      // El boton guardar antes no tenia la funcion que lo atendia: el HTML lo
+      // llamaba y el navegador lanzaba ReferenceError al pulsarlo.
+      if (btnSave) btnSave.classList.remove('hidden');
 
       body.innerHTML = `
         <div class="grid grid-cols-2 gap-4">
-          <div><label class="text-xs text-slate-400">Nombre</label><div class="font-medium text-white">${escapeHtml(user.nombre)}</div></div>
-          <div><label class="text-xs text-slate-400">Apellido</label><div class="font-medium text-white">${escapeHtml(user.apellido)}</div></div>
-          <div><label class="text-xs text-slate-400">Email</label><div class="text-sm text-slate-300">${escapeHtml(user.email)}</div></div>
-          <div><label class="text-xs text-slate-400">Cédula</label><div class="font-mono text-sm text-slate-300">${escapeHtml(user.cedula || '-- ')}</div></div>
-          <div><label class="text-xs text-slate-400">Estado</label><div class="font-medium text-white">${escapeHtml(user.estado || '-- ')}</div></div>
-          <div><label class="text-xs text-slate-400">Municipio</label><div class="text-sm text-slate-300">${escapeHtml(user.municipio || '-- ')}</div></div>
-          <div class="col-span-2"><label class="text-xs text-slate-400">áreas</label><div class="flex flex-wrap gap-1.5">${(user.areas || []).map(a => `<span class="px-2 py-0.5 bg-sky-500/20 text-sky-400 text-xs rounded">${escapeHtml(a)}</span>`).join('') || '<span class="text-slate-500 text-xs">Sin áreas</span>'}</div></div>
+          ${ADMIN_CAMPOS.map(c => adminCampo(c[0], c[1], user[c[0]])).join('')}
+          <div><label class="text-xs text-slate-400">Email</label><div class="text-sm text-slate-400">${escapeHtml(user.email || '-- ')}</div></div>
+          <div><label class="text-xs text-slate-400">Cédula</label><div class="font-mono text-sm text-slate-400">${escapeHtml(user.cedula || '-- ')}</div></div>
+          <div class="col-span-2"><label class="text-xs text-slate-400">Áreas</label><div class="flex flex-wrap gap-1.5">${(user.areas || []).map(a => `<span class="px-2 py-0.5 bg-sky-500/20 text-sky-400 text-xs rounded">${escapeHtml(a)}</span>`).join('') || '<span class="text-slate-500 text-xs">Sin áreas</span>'}</div></div>
           <div class="col-span-2"><label class="text-xs text-slate-400">Fecha de afiliación</label><div class="font-mono text-sm text-slate-300">${user.created_at ? new Date(user.created_at).toLocaleString('es-VE') : '-- '}</div></div>
         </div>
       `;
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+    }
+
+    // Guarda los cambios del afiliado abierto en el modal.
+    // Quien autoriza la escritura es la politica afiliados_update_admin de
+    // Postgres (app_metadata.role = 'admin'); desde aqui solo se pide.
+    async function adminSaveUser() {
+      if (!adminSelectedUser) return;
+      const btn = document.getElementById('admin-btn-save');
+      const original = btn ? btn.textContent : '';
+
+      const cambios = {};
+      ADMIN_CAMPOS.forEach(function (c) {
+        const el = document.getElementById('adm-' + c[0]);
+        if (el) {
+          const v = el.value.trim();
+          if (v !== (adminSelectedUser[c[0]] || '')) cambios[c[0]] = v;
+        }
+      });
+
+      if (Object.keys(cambios).length === 0) {
+        showToast('Sin cambios', 'No modificaste ningún campo.');
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+
+      try {
+        const res = await supabase
+          .from('afiliados')
+          .update(cambios)
+          .eq('id', adminSelectedUser.id);
+
+        if (res.error) throw res.error;
+
+        // Se actualiza tambien la copia en memoria, para que la tabla muestre
+        // lo nuevo sin tener que recargarla a mano.
+        Object.assign(adminSelectedUser, cambios);
+        adminApplyFilters();
+        adminRenderTable();
+        adminOpenModal(adminSelectedUser.id);
+        showToast('Guardado', 'Ficha actualizada: ' +
+                  Object.keys(cambios).join(', '));
+      } catch (e) {
+        console.error('[Vente] Error guardando afiliado:', e);
+        showToast('Error', 'No se pudo guardar: ' +
+                  (e && e.message ? e.message : 'revisa que tu cuenta sea administradora'));
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = original; }
+      }
     }
 
     function closeAdminModal() {
