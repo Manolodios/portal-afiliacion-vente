@@ -1220,51 +1220,57 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         // timeline oficial de X responde 429 desde muchas redes, así que se muestran
         // publicaciones curadas y cada tarjeta enlaza al post original en X.
         // === FEED: publicaciones reales y recientes ===
-        // Descargadas de las cuentas oficiales el 14/10/2026 y respaldadas por RSS en
-        // vivo (RSS_FEEDS), que se anteponen a estas: el feed se actualiza solo.
+        // Actualizado automaticamente el 2026-10-14 desde las
+        // cuentas oficiales de Vente Venezuela, con estadisticas e imagenes reales.
+        // El RSS en vivo (RSS_FEEDS) se antepone a estas: el feed se actualiza solo.
         const FEED_POSTS = [
             // María Corina Machado
-            { id: "2110154527902929206", author: "MariaCorinaYA", text: "Los venezolanos elevamos nuestras oraciones por la pronta recuperación de Su Santidad el Papa León XIV @Pontifex.\nQue el cariño y la fe de los creyentes en todo el mundo le acompañen en estas horas y en su incansable labor pastoral. 🙏", date: "13 oct 2026", time: "23:43", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2110154527902929206" },
+            { id: "2110154527902929206", author: "MariaCorinaYA", text: "Los venezolanos elevamos nuestras oraciones por la pronta recuperación de Su Santidad el Papa León XIV @Pontifex.\nQue el cariño y la fe de los creyentes en todo el mundo le acompañen en estas horas y en su incansable labor pastoral. 🙏", date: "13 oct 2026", time: "23:43", replies: 109, reposts: 1260, likes: 6331, photos: [], link: "https://x.com/MariaCorinaYA/status/2110154527902929206" },
             // Vente Venezuela
-            { id: "2110112708477747585", author: "VenteVenezuela", text: "🔵 Poner la fecha de la elección, es poner la fecha de liberación.\n¡Cronograma para elecciones presidenciales YA!", date: "13 oct 2026", time: "20:57", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUieurpbYAApYJm.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2110112708477747585" },
-            { id: "2110070411249795363", author: "VenteVenezuela", text: "¡#SonLosMismos! ‼️\nDelcy Rodríguez: lidera el conglomerado criminal instalado en Venezuela.\nSu trayectoria política está ligada a Hugo Chávez y Nicolás Maduro, y a la estructura que ha sometido al país durante más de 25 años.\nHoy pueden intentar presentar un nuevo relato, pero los hechos permanecen.", date: "13 oct 2026", time: "18:09", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2110070411249795363" },
+            { id: "2110112708477747585", author: "VenteVenezuela", text: "🔵 Poner la fecha de la elección, es poner la fecha de liberación.\n¡Cronograma para elecciones presidenciales YA!", date: "13 oct 2026", time: "20:57", replies: 22, reposts: 276, likes: 438, photos: ["https://pbs.twimg.com/media/HUieurpbYAApYJm.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2110112708477747585" },
+            // Vente Distrito Capital
+            { id: "2110110576902803941", author: "VenteCcs", text: "¡El trabajo organizativo no para en la 📍Parroquia Sucre! 🌊\n​Con firmeza y convicción, nuestros Colegios Ciudadanos continúan sumando esfuerzos para consolidar la estructura y seguir creciendo junto a la gente.\n​¡Seguimos avanzando! 🇻🇪\n​#SomosVenteCcs", date: "13 oct 2026", time: "20:49", replies: 0, reposts: 2, likes: 7, photos: ["https://pbs.twimg.com/media/HUieWltWsAAqUzu.jpg?name=orig", "https://pbs.twimg.com/media/HUieXO9WEAAWDVq.jpg?name=orig", "https://pbs.twimg.com/media/HUieYAFW4AAdn1T.jpg?name=orig", "https://pbs.twimg.com/media/HUieYZZWwAASxFB.jpg?name=orig"], link: "https://x.com/VenteCcs/status/2110110576902803941" },
+            { id: "2109338018502877511", author: "VenteCcs", text: "\"Aquí te estamos esperando @MariaCorinaYA aquí estamos contigo\"\nDesde lo mas alto de 📍Carapita/Parroquia Antímano nuestra gente sigue organizandose para la Venezuela Tierra de Gracia que merecemos.", date: "11 oct 2026", time: "17:39", replies: 0, reposts: 5, likes: 3, photos: [], link: "https://x.com/VenteCcs/status/2109338018502877511" },
             // María Corina Machado
-            { id: "2109292221069410424", author: "MariaCorinaYA", text: "Por favor, lean esto. Un régimen capaz de apresar y torturar a niños.\nTodos los venezolanos lo sabemos, todos.\nQue el mundo también lo sepa.", date: "11 oct 2026", time: "14:37", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2109292221069410424" },
-            // Vente Venezuela
-            { id: "2109024559416430841", author: "VenteVenezuela", text: "🛵🇻🇪 ¡Portuguesa está en la calle por el futuro de Venezuela!\nDesde Acarigua, nuestra gente se moviliza con entusiasmo y compromiso, demostrando que seguimos organizados y unidos por el cambio que merece nuestro país.\n¡La ruta es la libertad!\n@PortuguesaVente | @mariaoropeza94 | @Carlosafg_", date: "10 oct 2026", time: "20:53", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUTCYEgWoAA2T-R.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2109024559416430841" },
-            { id: "2108971411343872507", author: "VenteVenezuela", text: "🇻🇪 ¡Las calles de Antímano lo tienen claro! 🗳️\n🗣️ @VenteCcs desplegado junto a la comunidad, escuchando el clamor popular y exigiendo lo que nos pertenece por derecho: ¡ELECCIONES PRESIDENCIALES YA!", date: "10 oct 2026", time: "17:22", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2108971411343872507" },
-            { id: "2108952855940055414", author: "VenteVenezuela", text: "📍 Desde Guanare hasta Antímano, la exigencia es una sola: ¡ELECCIONES PRESIDENCIALES YA! 🇻🇪\nUn país entero organizado y de pie por la libertad y el respeto a la voluntad ciudadana.\n#SetTheDate", date: "10 oct 2026", time: "16:08", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUR9TtAawAAsnyO.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2108952855940055414" },
-            { id: "2108932275329184064", author: "VenteVenezuela", text: "📸 #EnFotos | Así arranca la gira #ConNuestrasPropiasManos de @Carlosafg_ y @MariaOropeza13 en el estado Portuguesa. 🇻🇪\n¡Organizando cada municipio para consolidar la fuerza ciudadana!\n📸@jose_Fotograma", date: "10 oct 2026", time: "14:46", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HURuBMLbEAATL9n.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2108932275329184064" },
-            // María Corina Machado
-            { id: "2108728466950468011", author: "MariaCorinaYA", text: "Querido alcalde @Mayer, cuente con nosotros!\nTodos los venezolanos agradecemos tanto lo que ustedes han hecho por nuestro país. Una vez más, demostraremos nuestra generosidad con un pueblo hermano que ha sido tan solidario con nosotros.\nSumémonos todos a ayudar a Panamá!", date: "10 oct 2026", time: "01:16", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108728466950468011" },
-            { id: "2108708463727784350", author: "MariaCorinaYA", text: "Estimado Presidente @JoseRaulMulino , cuente con el apoyo de los venezolanos en Panamá, en Venezuela y en el mundo, en estas horas de angustia y dolor.\nPanamá ha sido generosa con nuestra gente en los momentos más oscuros; sepan que hoy estamos con este noble y querido pueblo.", date: "09 oct 2026", time: "23:57", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108708463727784350" },
-            { id: "2108650634543001767", author: "MariaCorinaYA", text: "Mi cariño y oraciones a todos los panameños que han sido afectados por el terremoto de esta tarde, y a todos mis queridos venezolanos que viven en este gran país.\nEn esta hora difícil veremos nuevamente la inmensa solidaridad y generosidad que caracteriza a nuestros pueblos.\nGracias por acogerme con tanto afecto; muchísima fuerza. 🙏", date: "09 oct 2026", time: "20:07", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108650634543001767" },
-            { id: "2107985247237296625", author: "MariaCorinaYA", text: "GRACIAS!\nGracias infinitas, gracias a cada uno por hacerme sentir tan cerca de todos…\nLos quiero con toda mi alma.", date: "08 oct 2026", time: "00:03", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUERVaIXYAAE5hO.jpg?name=orig"], link: "https://x.com/MariaCorinaYA/status/2107985247237296625" },
-            { id: "2107543937732718708", author: "MariaCorinaYA", text: "Gracias, querido @RepCarlos, por tu amistad y por acompañar durante tantos años la causa por la Libertad de Venezuela.\nRegresaré a mi país para estar junto a los venezolanos en esta etapa, fortalecer la organización de la gente y contribuir a facilitar la transición.\nTenemos una tarea por delante: construir una Venezuela libre y democrática, que sea el más confiable aliado de los Estados Unidos...", date: "06 oct 2026", time: "18:50", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2107543937732718708" },
-            { id: "2106907354897719789", author: "MariaCorinaYA", text: "Mi respeto y cariño al pueblo de Brasil por una jornada democrática ejemplar en la que pudieron ejercer con orgullo la soberanía popular a través del voto.\nMi reconocimiento a @FlavioBolsonaro, ganador de esta primera vuelta.\nLos latinoamericanos queremos vivir con libertad, democracia, prosperidad y justicia, y Brasil tiene un peso decisivo en el futuro de nuestra región.\nMuy pronto Venezuela...", date: "05 oct 2026", time: "00:40", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2106907354897719789" },
-            // Vente Venezuela
-            { id: "2105750189172814160", author: "VenteVenezuela", text: "¡Qué grande, Bolívar!\n🇻🇪 @ventebolivar, @HenryAlviarez, @omargonzalez6, @Carlosafg_, @JuanPabloGve y líderes de nuestro partido reciben a @rrsdouglas en un gran acto.\n¡Vamos #HastaElFinal!\nSeguimos, hasta que todos puedan volver a casa, en libertad.\n📸📹: José Altuve (@jose_Fotograma)", date: "01 oct 2026", time: "20:02", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2105750189172814160" },
-            { id: "2105727798874644949", author: "VenteVenezuela", text: "📍 ¡Caroní recibe a su líder con los brazos abiertos! 🇻🇪\nEl equipo de @ventebolivar recibió con entusiasmo a Douglas Rodríguez (@rrsdouglas) en un emotivo acto que marca el regreso de nuestro Coordinador Estadal a su tierra.", date: "01 oct 2026", time: "18:33", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HTkMRWeWQAE5rJQ.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2105727798874644949" }
+            { id: "2109292221069410424", author: "MariaCorinaYA", text: "Por favor, lean esto. Un régimen capaz de apresar y torturar a niños.\nTodos los venezolanos lo sabemos, todos.\nQue el mundo también lo sepa.", date: "11 oct 2026", time: "14:37", replies: 248, reposts: 6323, likes: 12548, photos: [], link: "https://x.com/MariaCorinaYA/status/2109292221069410424" },
+            { id: "2108728466950468011", author: "MariaCorinaYA", text: "Querido alcalde @Mayer, cuente con nosotros!\nTodos los venezolanos agradecemos tanto lo que ustedes han hecho por nuestro país. Una vez más, demostraremos nuestra generosidad con un pueblo hermano que ha sido tan solidario con nosotros.\nSumémonos todos a ayudar a Panamá!", date: "10 oct 2026", time: "01:16", replies: 86, reposts: 1423, likes: 4273, photos: [], link: "https://x.com/MariaCorinaYA/status/2108728466950468011" },
+            { id: "2108708463727784350", author: "MariaCorinaYA", text: "Estimado Presidente @JoseRaulMulino , cuente con el apoyo de los venezolanos en Panamá, en Venezuela y en el mundo, en estas horas de angustia y dolor.\nPanamá ha sido generosa con nuestra gente en los momentos más oscuros; sepan que hoy estamos con este noble y querido pueblo.", date: "09 oct 2026", time: "23:57", replies: 86, reposts: 1532, likes: 5033, photos: [], link: "https://x.com/MariaCorinaYA/status/2108708463727784350" },
+            { id: "2108650634543001767", author: "MariaCorinaYA", text: "Mi cariño y oraciones a todos los panameños que han sido afectados por el terremoto de esta tarde, y a todos mis queridos venezolanos que viven en este gran país.\nEn esta hora difícil veremos nuevamente la inmensa solidaridad y generosidad que caracteriza a nuestros pueblos.\nGracias por acogerme con tanto afecto; muchísima fuerza. 🙏", date: "09 oct 2026", time: "20:07", replies: 218, reposts: 2887, likes: 10331, photos: [], link: "https://x.com/MariaCorinaYA/status/2108650634543001767" },
+            { id: "2107985247237296625", author: "MariaCorinaYA", text: "GRACIAS!\nGracias infinitas, gracias a cada uno por hacerme sentir tan cerca de todos…\nLos quiero con toda mi alma.", date: "08 oct 2026", time: "00:03", replies: 1536, reposts: 4478, likes: 23745, photos: ["https://pbs.twimg.com/media/HUERVaIXYAAE5hO.jpg?name=orig"], link: "https://x.com/MariaCorinaYA/status/2107985247237296625" },
+            // Henry Alviarez
+            { id: "2107678427671056485", author: "HenryAlviarez", text: "El cambio pacífico y la restitución democrática que tanto merecemos se acercan en la medida en que permanezcamos firmes. Seguimos adelante con la fuerza de la verdad: ¡El amanecer de Venezuela está cerca! 🇻🇪\n📲 [PD: Los invito a ver la entrevista completa donde expongo cada uno de estos puntos en detalle].", date: "07 oct 2026", time: "03:44", replies: 0, reposts: 6, likes: 13, photos: [], link: "https://x.com/HenryAlviarez/status/2107678427671056485" },
+            { id: "2107678228919763242", author: "HenryAlviarez", text: "Su presencia en el país es el anhelo de millones, dentro y fuera de nuestras fronteras, pero sobre todo responde al reconocimiento de la voluntad soberana del 28J. Mantengámonos unidos y organizados para sostener los pilares que fijarán, muy pronto, una agenda electoral definitiva.", date: "07 oct 2026", time: "03:43", replies: 2, reposts: 3, likes: 9, photos: [], link: "https://x.com/HenryAlviarez/status/2107678228919763242" },
+            { id: "2107678224239009836", author: "HenryAlviarez", text: "Incluso voceros del régimen como Diosdado Cabello han tenido que salir a decir públicamente que no hay impedimentos para su retorno. La verdad es que, lo quieran o no, hoy les toca seguir órdenes, ceder ante la diplomacia internacional y permitirlo. Las garantías son irreversibles.", date: "07 oct 2026", time: "03:43", replies: 2, reposts: 10, likes: 26, photos: [], link: "https://x.com/HenryAlviarez/status/2107678224239009836" },
+            { id: "2107678216110403620", author: "HenryAlviarez", text: "Nuestra esperanza hoy no es un deseo abstracto; tiene fundamentos sólidos. Al analizar la coyuntura política, jurídica e internacional, las lecturas convergen: los movimientos estratégicos abren el camino para la pronta presencia de @MariaCorinaYA en la reconstrucción nacional.", date: "07 oct 2026", time: "03:43", replies: 1, reposts: 9, likes: 24, photos: [], link: "https://x.com/HenryAlviarez/status/2107678216110403620" },
+            { id: "2107678210720776418", author: "HenryAlviarez", text: "Hoy quiero hablarle a cada venezolano que vive la angustia de los cortes de luz prolongados y la falta de servicios básicos. Sé lo que es resistir en la penumbra de un hogar y compartir esa zozobra. Pero ni en la peor oscuridad han podido apagar la dignidad de nuestro pueblo.", date: "07 oct 2026", time: "03:43", replies: 17, reposts: 106, likes: 295, photos: [], link: "https://x.com/HenryAlviarez/status/2107678210720776418" },
+            // Carlos Alfonzo Guarín
+            { id: "2107217075249009063", author: "Carlosafg_", text: "¡Carabobo cuenta con su juventud!\nEstamos consolidando el movimiento juvenil más grande en la historia contemporánea de nuestro país.\n@VenteJoven está preparado para recibir a @MariaCorinaYA y para trabajar muy duro por las elecciones presidenciales el año que viene. 🫡🇻🇪", date: "05 oct 2026", time: "21:11", replies: 0, reposts: 14, likes: 46, photos: ["https://pbs.twimg.com/media/HT5WwgjWYAAiHZa.jpg?name=orig", "https://pbs.twimg.com/media/HT5WwgTXYAAfU0r.jpg?name=orig"], link: "https://x.com/Carlosafg_/status/2107217075249009063" },
+            { id: "2106441979953664507", author: "Carlosafg_", text: "¡NO HAY SITIOS PROHIBIDOS EN CARACAS!\nCatia, aquí estamos, recorriéndote. Lo estamos haciendo con todo el amor del mundo, estamos dejando la vida para conquistar nuestra libertad en unas elecciones presidenciales el año que viene.\n@MariaCorinaYA , ¡Estamos listos!🫡🇻🇪", date: "03 oct 2026", time: "17:51", replies: 9, reposts: 150, likes: 303, photos: ["https://pbs.twimg.com/media/HTuVz-nW4AAhszD.jpg?name=orig", "https://pbs.twimg.com/media/HTuVz-nWsAAiRfA.jpg?name=orig", "https://pbs.twimg.com/media/HTuVz-pXYAA1kxj.jpg?name=orig"], link: "https://x.com/Carlosafg_/status/2106441979953664507" }
         ];
 
-        // Líderes: solo Vente Venezuela
+        // Líderes y cuentas de Vente Venezuela
         const LEADERS = [
-            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" },
-            { handle: "VenteVenezuela", name: "Vente Venezuela", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
+            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "https://pbs.twimg.com/profile_images/2036047993653153792/rgPuORea.jpg", verified: true, party: "Presidente de Vente Venezuela" },
+            { handle: "VenteVenezuela", name: "Vente Venezuela", avatar: "https://pbs.twimg.com/profile_images/1399815997020946433/LTpbFGXB.jpg", verified: true, party: "Vente Venezuela" },
+            { handle: "Carlosafg_", name: "Carlos Alfonzo Guarín", avatar: "https://pbs.twimg.com/profile_images/1753555429353717760/9HrAvmny.jpg", verified: true, party: "Coordinador Nacional de Defensa" },
+            { handle: "VenteCcs", name: "Vente Distrito Capital", avatar: "https://pbs.twimg.com/profile_images/1651624066279936000/x83-_ARH.jpg", verified: true, party: "Vente Distrito Capital" },
+            { handle: "HenryAlviarez", name: "Henry Alviarez", avatar: "https://pbs.twimg.com/profile_images/866458504785276928/to3H4bQW.jpg", verified: true, party: "Coordinador Zulia" }
         ];
 
-        // Temas de Vente Venezuela. Todos aparecen en las publicaciones del feed: el
-        // filtro por tema busca el texto, asi que una etiqueta que no aparezca
-        // dejaria la vista "No hay publicaciones para este filtro".
-        const TOPICS = [
-            { tag: "Elecciones", label: "#Elecciones", count: 142000 },
-            { tag: "SetTheDate", label: "#SetTheDate", count: 131000 },
-            { tag: "HastaElFinal", label: "#HastaElFinal", count: 67000 },
-            { tag: "ConNuestrasPropiasManos", label: "#ConNuestrasPropiasManos", count: 64000 },
-            { tag: "SonLosMismos", label: "#SonLosMismos", count: 58000 },
-            { tag: "Libertad", label: "#Libertad", count: 156000 },
-            { tag: "EnFotos", label: "#EnFotos", count: 42000 },
-            { tag: "Venezuela", label: "Venezuela", count: 210000 }
+        // Temas de Vente Venezuela: lista base de la campaña + los hashtags que se
+        // detectan en las publicaciones que hay en ese momento. Se calculan sobre
+        // el contenido real (contarPorTema) porque una etiqueta fija que hoy no
+        // aparece en ninguna publicacion dejaria la vista vacia; ademas el RSS en
+        // vivo cambia las publicaciones y los hashtags con ellas.
+        const TOPICS_BASE = [
+            { tag: "Elecciones", label: "#Elecciones" },
+            { tag: "Elecciones Presidenciales", label: "#EleccionesPresidenciales" },
+            { tag: "Venezuela", label: "Venezuela" },
+            { tag: "Libertad", label: "#Libertad" },
+            { tag: "Organización", label: "Organización" },
+            { tag: "HastaElFinal", label: "#HastaElFinal" },
+            { tag: "SetTheDate", label: "#SetTheDate" },
+            { tag: "ConNuestrasPropiasManos", label: "#ConNuestrasPropiasManos" }
         ];
 
         // Estado de filtro actual
@@ -1283,7 +1289,10 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         ];
         const RSS_FEEDS = [
             { handle: "MariaCorinaYA", source: 'MariaCorinaYA', name: 'María Corina Machado' },
-            { handle: "VenteVenezuela", source: 'VenteVenezuela', name: 'Vente Venezuela' }
+            { handle: "VenteVenezuela", source: 'VenteVenezuela', name: 'Vente Venezuela' },
+            { handle: "Carlosafg_", source: 'Carlosafg_', name: 'Carlos Alfonzo Guarín' },
+            { handle: "VenteCcs", source: 'VenteCcs', name: 'Vente Distrito Capital' },
+            { handle: "HenryAlviarez", source: 'HenryAlviarez', name: 'Henry Alviarez' }
         ];
 
         const CACHE_KEY = 'vnte_rsshub_posts';
@@ -1375,9 +1384,33 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                      replies: 0, reposts: 0, likes: 0, photos: [], link: 'https://x.com/' + handle + '/status/' + m[1] };
         }
 
+        // Rellena likes/retweets/respuestas y fotos de las publicaciones que llegan por
+        // RSS. La API pública de fxtwitter devuelve la publicación completa sin
+        // necesidad de clave. Si falla, la tarjeta se queda como estaba.
+        async function completarEstadisticas(posts) {
+            var restantes = Math.min(posts.length, 12);
+            await Promise.all(posts.slice(0, restantes).map(async function(p) {
+                try {
+                    var r = await fetch('https://api.fxtwitter.com/status/' + p.id, { signal: AbortSignal.timeout(8000) });
+                    if (!r.ok) return;
+                    var d = await r.json();
+                    var tw = (d && d.tweet) || {};
+                    p.likes = tw.likes || 0;
+                    p.reposts = tw.retweets || 0;
+                    p.replies = tw.replies || 0;
+                    var fotos = (((tw.media || {}).all) || [])
+                        .filter(function(m) { return m.type === 'photo' && m.url; })
+                        .slice(0, 4)
+                        .map(function(m) { return String(m.url).replace(/&amp;/g, '&'); });
+                    if (fotos.length) p.photos = fotos;
+                } catch (e) { /* se deja como estaba */ }
+            }));
+            return posts;
+        }
+
         async function fetchRSSHubFeeds() {
             var cached = getCachedPosts();
-            if (cached && cached.length > 0) { console.log('[RSSHub] Usando posts cacheados:', cached.length); return cached; }
+            if (cached && cached.length > 0) { console.log('[RSS] Usando posts cacheados:', cached.length); return cached; }
             if (rsshubBloqueado()) return [];
             var controller = new AbortController();
             var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
@@ -1410,6 +1443,9 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                 if (unique.length > 0) {
                     // Ordenadas de más nueva a más antigua.
                     unique.sort(function(a, b) { return (b.date + b.time).localeCompare(a.date + a.time); });
+                    // El RSS no trae likes ni imágenes: se piden a fxtwitter para
+                    // que las tarjetas nuevas no salgan con 0/0/0 y sin foto.
+                    unique = await completarEstadisticas(unique);
                     setCachedPosts(unique);
                     console.log('[RSS] Posts frescos obtenidos:', unique.length);
                     return unique;
@@ -1471,38 +1507,89 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         };
 
 
-        // Render grid de líderes// Render grid de líderes
+        // Los contadores se calculan sobre las publicaciones disponibles en el feed, no
+// sobre cifras fijas: si el RSS en vivo trae posts nuevos, los numeros suben.
+function contarPorAutor(handle) {
+            return FEED_POSTS.filter(function(p) { return p.author === handle; }).length;
+        }
+
+        function contarPorTema(tag) {
+            var t = String(tag).toLowerCase();
+            return FEED_POSTS.filter(function(p) {
+                var x = (p.text || '').toLowerCase();
+                return x.indexOf('#' + t) >= 0 || x.indexOf(t) >= 0;
+            }).length;
+        }
+
+        // Render grid de líderes
         function renderLeadersGrid() {
             const grid = document.getElementById('leaders-grid');
             if (!grid) return;
+            const total = document.getElementById('leaders-count');
+            if (total) total.textContent = LEADERS.length + ' fuentes';
             grid.innerHTML = LEADERS.map(l => `
                 <button onclick="filterByLeader('${l.handle}')" class="group p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-sky-500/50 hover:bg-slate-800/50 transition-all text-left">
                     <div class="flex items-center gap-3 mb-2">
                         <div class="relative">
-                            <img src="${l.avatar}" alt="${l.name}" class="w-12 h-12 rounded-full object-cover ring-2 ${l.verified ? 'ring-sky-500' : 'ring-slate-700'}">
+                            <img src="${urlSegura(l.avatar)}" alt="${escapeHtml(l.name)}" class="w-12 h-12 rounded-full object-cover ring-2 ${l.verified ? 'ring-sky-500' : 'ring-slate-700'}" onerror="this.style.visibility='hidden'">
                             ${l.verified ? '<span class="absolute -bottom-1 -right-1 w-5 h-5 bg-sky-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></span>' : ''}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-bold text-white text-sm truncate">${l.name}</p>
-                            <p class="text-xs text-sky-400 truncate">@${l.handle}</p>
+                            <p class="font-bold text-white text-sm truncate">${escapeHtml(l.name)}</p>
+                            <p class="text-xs text-sky-400 truncate">@${escapeHtml(l.handle)}</p>
                         </div>
                     </div>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${l.party}</span>
+                    <div class="flex items-center justify-between gap-2 mt-2">
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 truncate">${escapeHtml(l.party)}</span>
+                        <span class="text-[10px] text-slate-500 shrink-0">${fmtNumber(contarPorAutor(l.handle))} posts</span>
+                    </div>
                 </button>
             `).join('');
+        }
+
+        // Devuelve la lista de temas efectiva: la base + hashtags hallados en el feed,
+// ordenados por número de publicaciones y sin repetir ni dejar vacíos.
+function topicsEfectivos() {
+            var vistos = {};
+            var out = [];
+            function push(tag, label) {
+                var t = String(tag).trim();
+                if (!t || vistos[t.toLowerCase()]) return;
+                var n = contarPorTema(t);
+                if (n <= 0) return;
+                vistos[t.toLowerCase()] = true;
+                out.push({ tag: t, label: label || (t.charAt(0) === '#' ? t : '#' + t), count: n });
+            }
+            TOPICS_BASE.forEach(function(t) { push(t.tag, t.label); });
+            // Hashtags literales de las publicaciones (p.ej. #SomosVenteCcs).
+            var encontrados = {};
+            FEED_POSTS.forEach(function(p) {
+                var m = (p.text || '').match(/#[\p{L}\p{N}_]{2,}/gu);
+                if (m) m.forEach(function(h) { encontrados[h] = (encontrados[h] || 0) + 1; });
+            });
+            Object.keys(encontrados)
+                .sort(function(a, b) { return encontrados[b] - encontrados[a]; })
+                .slice(0, 10)
+                .forEach(function(h) { push(h, h); });
+            return out.sort(function(a, b) { return b.count - a.count; });
         }
 
         // Render lista de temas
         function renderTopicsList() {
             const list = document.getElementById('topics-list');
             if (!list) return;
-            list.innerHTML = TOPICS.map(t => `
-                <button onclick="filterByTopic('${t.tag}')" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-sky-500/50 hover:bg-slate-800/50 transition-all flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
+            const temas = topicsEfectivos();
+            if (!temas.length) {
+                list.innerHTML = '<p class="text-sm text-slate-500 p-4">Sin temas en las publicaciones de ahora.</p>';
+                return;
+            }
+            list.innerHTML = temas.map(t => `
+                <button onclick="filterByTopic('${escapeHtml(t.tag)}')" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-sky-500/50 hover:bg-slate-800/50 transition-all flex items-center justify-between group">
+                    <div class="flex items-center gap-3 min-w-0">
                         <i class="fa-solid fa-hashtag text-sky-400 text-lg"></i>
-                        <span class="font-semibold text-white">${t.label}</span>
+                        <span class="font-semibold text-white truncate">${escapeHtml(t.label)}</span>
                     </div>
-                    <span class="text-xs text-slate-400 group-hover:text-sky-400 transition">${fmtNumber(t.count)} posts</span>
+                    <span class="text-xs text-slate-400 group-hover:text-sky-400 transition shrink-0 ml-2">${fmtNumber(t.count)} posts</span>
                 </button>
             `).join('');
         }
@@ -2095,6 +2182,9 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                         residencia:        datos.residencia       || 'Venezuela',
                         estado:            datos.estado           || null,
                         municipio:         datos.municipio        || null,
+                        // Sin esta linea la parroquia se exigia en el formulario
+                        // pero se descartaba al guardar (upsert sin la columna).
+                        parroquia:         datos.parroquia        || null,
                         pais:              datos.pais             || null,
                         areas:             datos.areas            || []
                     };
@@ -2280,6 +2370,9 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             set("ob-fnac", perfil && perfil.fecha_nacimiento);
             set("ob-estado", perfil && perfil.estado);
             set("ob-municipio", perfil && perfil.municipio);
+            // Sin esto, al volver a la ficha la parroquia aparecia vacia y
+            // habia que elegirla otra vez aunque ya estuviera guardada.
+            set("ob-parroquia", perfil && perfil.parroquia);
             set("ob-tipo", (perfil && perfil.tipo_documento) || "V");
             // Se marcan las areas conocidas y se avisa de las que no esten en la
             // lista, para no perderlas en silencio al guardar.
@@ -3256,7 +3349,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
           const badge = document.getElementById('filter-badge') || createFilterBadge();
           const label = currentFilter.type === 'leader'
             ? LEADERS.find(l => l.handle === currentFilter.value)?.name || currentFilter.value
-            : TOPICS.find(t => t.tag === currentFilter.value)?.label || currentFilter.value;
+            : (topicsEfectivos().find(t => t.tag === currentFilter.value) || {}).label || currentFilter.value;
           badge.querySelector('span').textContent = `Filtrado: ${label}`;
           badge.classList.remove('hidden');
         } else {
