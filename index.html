@@ -3055,10 +3055,13 @@ function topicsEfectivos() {
             const img = document.getElementById("credencial-qr");
             const code = document.getElementById("credencial-codigo");
             if (!card || !img || !code) return;
-            // DebeAccessed via window: dentro de un script clasico 'supabase'
-            // puede no ser resoluble, y .bind sobre undefined rompe.
-            const cliente = window.SupabaseAPI || window.supabase;
-            if (!cliente || typeof cliente.rpc !== 'function') {
+            // window.SupabaseAPI es un envoltorio que puede no traer rpc(), asi
+            // que no vale el || : se busca el primer cliente que si lo tenga.
+            let cliente = null;
+            for (const c of [window.SupabaseAPI, window.supabase]) {
+                if (c && typeof c.rpc === 'function') { cliente = c; break; }
+            }
+            if (!cliente) {
                 code.textContent = "No disponible";
                 card.classList.remove("hidden");
                 return;
