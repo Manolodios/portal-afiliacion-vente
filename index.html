@@ -3071,12 +3071,19 @@ function topicsEfectivos() {
             const l = lista(id);
             if (!l) return;
             l.innerHTML = '';
-            if (!texto.length) { l.classList.add('hidden'); return; }
 
-            if (max === 0) {
-                l.classList.remove('hidden');
-                l.innerHTML = '<div class="px-3 py-2 text-[11px] text-slate-400">'
-                            + '¿No está la tuya? Escríbela tal cual.</div>';
+            // OJO: con el campo vacio hay que pintar TODAS las opciones. Un
+            // desplegable que solo muestra resultados al teclear no sirve para
+            // descubrir que hay 21 municipios. El filtrado ya lo hizo el
+            // llamante, asi que aqui solo se pinta lo que llega en `max`.
+            if (!max || max.length === 0) {
+                if (texto) {
+                    l.classList.remove('hidden');
+                    l.innerHTML = '<div class="px-3 py-2 text-[11px] text-slate-400">'
+                                + '¿No está la tuya? Escríbela tal cual.</div>';
+                } else {
+                    l.classList.add('hidden');
+                }
                 return;
             }
 
