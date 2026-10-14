@@ -14,6 +14,30 @@ Prototipo de afiliación anónimo para el partido Vente Venezuela.
 
 Abrir con un servidor local (ej. Live Server en VS Code) apuntando a la raíz del repo.
 
+## Feed de publicaciones
+
+El feed muestra publicaciones reales de las cuentas oficiales de Vente Venezuela,
+con sus fotos y cifras (likes, retweets) obtenidas de `api.fxtwitter.com`. En vivo se
+actualiza por RSS mediante mirrors de Nitter; Twitter ya no ofrece RSS y RSSHub.app
+retiró las rutas de Twitter.
+
+Para reconstruirlo a mano, las herramientas están en [`tools/`](tools/README.md):
+
+```bash
+python tools/build_feed_wide.py
+python tools/clean_feed.py
+python tools/gen_feed_wide.py
+python tools/apply_feed.py
+node .github/scripts/validar-feed.mjs
+```
+
+En producción lo hace solo GitHub Actions cada 6 horas con
+`.github/scripts/actualizar-feed.mjs`.
+
+Antes de dar por buenos los datos, `tools/verificar_fechas.py` comprueba que la fecha
+de cada publicación cuadra con su id de snowflake (que codifica el instante real del
+post) y `tools/verificar_texto.py` busca restos de Twitter y HTML sin decodificar.
+
 ## Stack
 
 - HTML + Tailwind CSS (CDN)
