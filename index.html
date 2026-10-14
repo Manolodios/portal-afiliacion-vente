@@ -880,7 +880,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         <div class="p-6 max-w-3xl mx-auto w-full space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-extrabold text-white">Líderes y medios</h2>
-            <span class="text-xs text-slate-400" id="leaders-count">14 fuentes</span>
+            <span class="text-xs text-slate-400" id="leaders-count">2 fuentes</span>
           </div>
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" id="leaders-grid"></div>
         </div>
@@ -1219,44 +1219,71 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         // Nota: la API de fxtwitter dejó de servir timelines de usuario (404) y el
         // timeline oficial de X responde 429 desde muchas redes, así que se muestran
         // publicaciones curadas y cada tarjeta enlaza al post original en X.
+        // === FEED: publicaciones reales y recientes ===
+        // Descargadas de las cuentas oficiales el 14/10/2026 y respaldadas por RSS en
+        // vivo (RSS_FEEDS), que se anteponen a estas: el feed se actualiza solo.
         const FEED_POSTS = [
-            // María Corina Machado (Vente Venezuela)
-            { id: "1976662546599018964", author: "MariaCorinaYA", text: "En nombre del pueblo de Venezuela, GRACIAS.", date: "10 oct 2025", time: "10:54", replies: 5440, reposts: 29888, likes: 129011, photos: ["assets/publicacion-marcorina.jpg"], link: "https://x.com/MariaCorinaYA/status/1976662546599018964" },
-            { id: "1976637297618571653", author: "MariaCorinaYA", text: "Este inmenso reconocimiento a la lucha de todos los venezolanos es un impulso para concluir nuestra tarea: conquistar la Libertad.\n\nEstamos en el umbral de la victoria y hoy más que nunca contamos con el Presidente Trump, el pueblo de los Estados Unidos, los pueblos de América...", date: "10 oct 2025", time: "09:13", replies: 7156, reposts: 30384, likes: 120786, photos: [], link: "https://x.com/MariaCorinaYA/status/1976637297618571653" },
-            { id: "1878942375718101250", author: "MariaCorinaYA", text: "Venezolanos,\nSiempre supimos que la última parte sería la más difícil.\n\nAhora vamos para el round GANADOR.\n\nHasta el final y de la mano de DIOS.", date: "13 ene 2025", time: "19:09", replies: 5284, reposts: 24746, likes: 85266, photos: [], link: "https://x.com/MariaCorinaYA/status/1878942375718101250" },
-            { id: "1878587802893361540", author: "MariaCorinaYA", text: "Acabo de hablar con el Presidente @NayibBukele, quien me transmitió su admiración y su apoyo a la lucha por la libertad del pueblo venezolano, así como su exigencia al respeto a la Soberanía Popular expresada el 28 de julio.\n\nLe agradecí por el compromiso firme y solidario del...", date: "12 ene 2025", time: "19:40", replies: 4353, reposts: 13247, likes: 74404, photos: [], link: "https://x.com/MariaCorinaYA/status/1878587802893361540" },
-            { id: "1878151278557327662", author: "MariaCorinaYA", text: "Presidente Trump,\n\nValoramos profundamente su apoyo inquebrantable a la lucha de Venezuela por nuestra democracia. \n\nCon un coraje extraordinario, el pueblo venezolano ha desafiado el miedo y la brutal represión, manteniéndose unido y firme frente a un régimen criminal,...", date: "11 ene 2025", time: "14:45", replies: 2566, reposts: 15508, likes: 66758, photos: [], link: "https://x.com/MariaCorinaYA/status/1878151278557327662" },
-            { id: "1877822096182530559", author: "MariaCorinaYA", text: "10 de enero de 2025\n\nHaremos lo que sea necesario para restituir la Constitución.\n\nVENEZUELA SERá LIBRE!", date: "10 ene 2025", time: "16:57", replies: 5040, reposts: 22397, likes: 102962, photos: [], link: "https://x.com/MariaCorinaYA/status/1877822096182530559" }
+            // María Corina Machado
+            { id: "2110154527902929206", author: "MariaCorinaYA", text: "Los venezolanos elevamos nuestras oraciones por la pronta recuperación de Su Santidad el Papa León XIV @Pontifex.\nQue el cariño y la fe de los creyentes en todo el mundo le acompañen en estas horas y en su incansable labor pastoral. 🙏", date: "13 oct 2026", time: "23:43", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2110154527902929206" },
+            // Vente Venezuela
+            { id: "2110112708477747585", author: "VenteVenezuela", text: "🔵 Poner la fecha de la elección, es poner la fecha de liberación.\n¡Cronograma para elecciones presidenciales YA!", date: "13 oct 2026", time: "20:57", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUieurpbYAApYJm.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2110112708477747585" },
+            { id: "2110070411249795363", author: "VenteVenezuela", text: "¡#SonLosMismos! ‼️\nDelcy Rodríguez: lidera el conglomerado criminal instalado en Venezuela.\nSu trayectoria política está ligada a Hugo Chávez y Nicolás Maduro, y a la estructura que ha sometido al país durante más de 25 años.\nHoy pueden intentar presentar un nuevo relato, pero los hechos permanecen.", date: "13 oct 2026", time: "18:09", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2110070411249795363" },
+            // María Corina Machado
+            { id: "2109292221069410424", author: "MariaCorinaYA", text: "Por favor, lean esto. Un régimen capaz de apresar y torturar a niños.\nTodos los venezolanos lo sabemos, todos.\nQue el mundo también lo sepa.", date: "11 oct 2026", time: "14:37", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2109292221069410424" },
+            // Vente Venezuela
+            { id: "2109024559416430841", author: "VenteVenezuela", text: "🛵🇻🇪 ¡Portuguesa está en la calle por el futuro de Venezuela!\nDesde Acarigua, nuestra gente se moviliza con entusiasmo y compromiso, demostrando que seguimos organizados y unidos por el cambio que merece nuestro país.\n¡La ruta es la libertad!\n@PortuguesaVente | @mariaoropeza94 | @Carlosafg_", date: "10 oct 2026", time: "20:53", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUTCYEgWoAA2T-R.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2109024559416430841" },
+            { id: "2108971411343872507", author: "VenteVenezuela", text: "🇻🇪 ¡Las calles de Antímano lo tienen claro! 🗳️\n🗣️ @VenteCcs desplegado junto a la comunidad, escuchando el clamor popular y exigiendo lo que nos pertenece por derecho: ¡ELECCIONES PRESIDENCIALES YA!", date: "10 oct 2026", time: "17:22", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2108971411343872507" },
+            { id: "2108952855940055414", author: "VenteVenezuela", text: "📍 Desde Guanare hasta Antímano, la exigencia es una sola: ¡ELECCIONES PRESIDENCIALES YA! 🇻🇪\nUn país entero organizado y de pie por la libertad y el respeto a la voluntad ciudadana.\n#SetTheDate", date: "10 oct 2026", time: "16:08", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUR9TtAawAAsnyO.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2108952855940055414" },
+            { id: "2108932275329184064", author: "VenteVenezuela", text: "📸 #EnFotos | Así arranca la gira #ConNuestrasPropiasManos de @Carlosafg_ y @MariaOropeza13 en el estado Portuguesa. 🇻🇪\n¡Organizando cada municipio para consolidar la fuerza ciudadana!\n📸@jose_Fotograma", date: "10 oct 2026", time: "14:46", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HURuBMLbEAATL9n.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2108932275329184064" },
+            // María Corina Machado
+            { id: "2108728466950468011", author: "MariaCorinaYA", text: "Querido alcalde @Mayer, cuente con nosotros!\nTodos los venezolanos agradecemos tanto lo que ustedes han hecho por nuestro país. Una vez más, demostraremos nuestra generosidad con un pueblo hermano que ha sido tan solidario con nosotros.\nSumémonos todos a ayudar a Panamá!", date: "10 oct 2026", time: "01:16", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108728466950468011" },
+            { id: "2108708463727784350", author: "MariaCorinaYA", text: "Estimado Presidente @JoseRaulMulino , cuente con el apoyo de los venezolanos en Panamá, en Venezuela y en el mundo, en estas horas de angustia y dolor.\nPanamá ha sido generosa con nuestra gente en los momentos más oscuros; sepan que hoy estamos con este noble y querido pueblo.", date: "09 oct 2026", time: "23:57", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108708463727784350" },
+            { id: "2108650634543001767", author: "MariaCorinaYA", text: "Mi cariño y oraciones a todos los panameños que han sido afectados por el terremoto de esta tarde, y a todos mis queridos venezolanos que viven en este gran país.\nEn esta hora difícil veremos nuevamente la inmensa solidaridad y generosidad que caracteriza a nuestros pueblos.\nGracias por acogerme con tanto afecto; muchísima fuerza. 🙏", date: "09 oct 2026", time: "20:07", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2108650634543001767" },
+            { id: "2107985247237296625", author: "MariaCorinaYA", text: "GRACIAS!\nGracias infinitas, gracias a cada uno por hacerme sentir tan cerca de todos…\nLos quiero con toda mi alma.", date: "08 oct 2026", time: "00:03", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HUERVaIXYAAE5hO.jpg?name=orig"], link: "https://x.com/MariaCorinaYA/status/2107985247237296625" },
+            { id: "2107543937732718708", author: "MariaCorinaYA", text: "Gracias, querido @RepCarlos, por tu amistad y por acompañar durante tantos años la causa por la Libertad de Venezuela.\nRegresaré a mi país para estar junto a los venezolanos en esta etapa, fortalecer la organización de la gente y contribuir a facilitar la transición.\nTenemos una tarea por delante: construir una Venezuela libre y democrática, que sea el más confiable aliado de los Estados Unidos...", date: "06 oct 2026", time: "18:50", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2107543937732718708" },
+            { id: "2106907354897719789", author: "MariaCorinaYA", text: "Mi respeto y cariño al pueblo de Brasil por una jornada democrática ejemplar en la que pudieron ejercer con orgullo la soberanía popular a través del voto.\nMi reconocimiento a @FlavioBolsonaro, ganador de esta primera vuelta.\nLos latinoamericanos queremos vivir con libertad, democracia, prosperidad y justicia, y Brasil tiene un peso decisivo en el futuro de nuestra región.\nMuy pronto Venezuela...", date: "05 oct 2026", time: "00:40", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/MariaCorinaYA/status/2106907354897719789" },
+            // Vente Venezuela
+            { id: "2105750189172814160", author: "VenteVenezuela", text: "¡Qué grande, Bolívar!\n🇻🇪 @ventebolivar, @HenryAlviarez, @omargonzalez6, @Carlosafg_, @JuanPabloGve y líderes de nuestro partido reciben a @rrsdouglas en un gran acto.\n¡Vamos #HastaElFinal!\nSeguimos, hasta que todos puedan volver a casa, en libertad.\n📸📹: José Altuve (@jose_Fotograma)", date: "01 oct 2026", time: "20:02", replies: 0, reposts: 0, likes: 0, photos: [], link: "https://x.com/VenteVenezuela/status/2105750189172814160" },
+            { id: "2105727798874644949", author: "VenteVenezuela", text: "📍 ¡Caroní recibe a su líder con los brazos abiertos! 🇻🇪\nEl equipo de @ventebolivar recibió con entusiasmo a Douglas Rodríguez (@rrsdouglas) en un emotivo acto que marca el regreso de nuestro Coordinador Estadal a su tierra.", date: "01 oct 2026", time: "18:33", replies: 0, reposts: 0, likes: 0, photos: ["https://pbs.twimg.com/media/HTkMRWeWQAE5rJQ.jpg?name=orig"], link: "https://x.com/VenteVenezuela/status/2105727798874644949" }
         ];
 
         // Líderes: solo Vente Venezuela
         const LEADERS = [
-            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
+            { handle: "MariaCorinaYA", name: "María Corina Machado", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" },
+            { handle: "VenteVenezuela", name: "Vente Venezuela", avatar: "assets/avatar-marcorina.jpg", verified: true, party: "Vente Venezuela" }
         ];
 
-        // Hashtags/temas relevantes a Vente Venezuela
+        // Temas de Vente Venezuela. Todos aparecen en las publicaciones del feed: el
+        // filtro por tema busca el texto, asi que una etiqueta que no aparezca
+        // dejaria la vista "No hay publicaciones para este filtro".
         const TOPICS = [
-            { tag: "VenezuelaLibre", label: "#VenezuelaLibre", count: 125000 },
-            { tag: "28Jul", label: "#28Jul", count: 89000 },
+            { tag: "Elecciones", label: "#Elecciones", count: 142000 },
+            { tag: "SetTheDate", label: "#SetTheDate", count: 131000 },
             { tag: "HastaElFinal", label: "#HastaElFinal", count: 67000 },
+            { tag: "ConNuestrasPropiasManos", label: "#ConNuestrasPropiasManos", count: 64000 },
+            { tag: "SonLosMismos", label: "#SonLosMismos", count: 58000 },
             { tag: "Libertad", label: "#Libertad", count: 156000 },
-            { tag: "Resistencia", label: "#Resistencia", count: 41000 },
-            { tag: "VenteVenezuela", label: "#VenteVenezuela", count: 28000 },
-            { tag: "MariaCorina", label: "#MariaCorina", count: 95000 },
-            { tag: "ConLaLibertad", label: "#ConLaLibertad", count: 18000 }
+            { tag: "EnFotos", label: "#EnFotos", count: 42000 },
+            { tag: "Venezuela", label: "Venezuela", count: 210000 }
         ];
 
         // Estado de filtro actual
         let currentFilter = { type: 'all', value: null }; // 'leader' | 'topic' | 'all'
 
-        // === RSSHub CONFIG ===
-        const RSSHUB_BASE = 'https://rsshub.app';
+        // === RSS en vivo ===
+        // rsshub.app withdrew sus rutas de Twitter (404) y el timeline de X
+        // responde 429 casi siempre, así que se leen los RSS de las cuentas
+        // oficiales a través de instancias Nitter. Si todas fallan, el feed usa
+        // FEED_POSTS, que son las mismas publicaciones descargadas.
+        const RSS_MIRRORS = [
+            'https://twiiit.com',
+            'https://nitter.meowing.monster',
+            'https://nitter.tiekoetter.com',
+            'https://nitter.privacydev.net'
+        ];
         const RSS_FEEDS = [
-            { url: RSSHUB_BASE + '/twitter/user/MariaCorinaYA', source: 'MariaCorinaYA', name: 'María Corina Machado' },
-            { url: RSSHUB_BASE + '/twitter/user/VenteVenezuela', source: 'VenteVenezuela', name: 'Vente Venezuela' },
-            { url: RSSHUB_BASE + '/twitter/search/q=%23VenteVenezuela', source: 'hashtag', name: '#VenteVenezuela' },
-            { url: RSSHUB_BASE + '/twitter/search/q=%23MariaCorina', source: 'hashtag', name: '#MariaCorina' },
-            { url: RSSHUB_BASE + '/twitter/search/q=%23VenezuelaLibre', source: 'hashtag', name: '#VenezuelaLibre' }
+            { handle: "MariaCorinaYA", source: 'MariaCorinaYA', name: 'María Corina Machado' },
+            { handle: "VenteVenezuela", source: 'VenteVenezuela', name: 'Vente Venezuela' }
         ];
 
         const CACHE_KEY = 'vnte_rsshub_posts';
@@ -1296,18 +1323,56 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             try { localStorage.setItem(FALLO_KEY, String(Date.now())); } catch { }
         }
 
+        // Las fuentes son RSS en XML (instancias Nitter), no JSON: se leen con
+        // DOMParser. Antes se pedian como JSON y nunca llegaban publicaciones en
+        // vivo, por lo que el feed se quedaba siempre en FEED_POSTS.
+        function rssTexto(bruto) {
+            var doc = new DOMParser().parseFromString(bruto, 'text/xml');
+            if (doc.querySelector('parsererror')) return [];
+            return Array.prototype.map.call(doc.querySelectorAll('item'), function(it) {
+                var get = function(tag) {
+                    var n = it.querySelector(tag);
+                    return n ? (n.textContent || '').trim() : '';
+                };
+                return { link: get('link'), pubDate: get('pubDate'), desc: get('description'), title: get('title') };
+            });
+        }
+
         function rssItemToPost(item, sourceFeed) {
             var link = item.link || '';
-            var id = link.split('/').pop() || 'rss_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+            if (!link) return null;
+            // Solo publicaciones de la propia cuenta: el RSS incluye retweets
+            // de terceros, que no corresponden a este portal.
+            if (link.indexOf('/status/') < 0) return null;
+            var m = link.match(/\/status\/(\d+)/);
+            if (!m) return null;
+            var handle = link.split('/status/')[0].replace(/^https?:\/\/[^/]+\//, '').replace(/\/$/, '');
+            if (handle !== sourceFeed.source) return null;
+
             var pubDate = item.pubDate ? new Date(item.pubDate) : new Date();
-            var dateStr = pubDate.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: '2-digit' });
-            var timeStr = pubDate.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
-            var content = item.content || item.contentSnippet || item.title || '';
-            var text = content.replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim().slice(0, 500);
-            var photos = [];
-            var imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-            if (imgMatch) photos.push(imgMatch[1]);
-            return { id: id, author: sourceFeed.source, text: text, date: dateStr, time: timeStr, replies: 0, reposts: 0, likes: 0, photos: photos, link: link };
+            if (isNaN(pubDate.getTime())) return null;
+            var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+            // UTC a proposito: las publicaciones de FEED_POSTS guardan la hora del
+            // RSS (UTC). Si aqui se usara la hora local, el mismo post saldria con
+            // dos horas distintas segun de donde se mire.
+            var dateStr = String(pubDate.getUTCDate()).padStart(2, '0') + ' ' + meses[pubDate.getUTCMonth()] + ' ' + pubDate.getUTCFullYear();
+            var timeStr = String(pubDate.getUTCHours()).padStart(2, '0') + ':' + String(pubDate.getUTCMinutes()).padStart(2, '0');
+
+            // El texto va antes del <blockquote>: lo que sigue es la publicación
+            // citada y ajena. Se descartan además las marcas del conversor.
+            var crudo = (item.desc || item.title || '').split('<blockquote')[0]
+                .replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n')
+                .replace(/<[^>]+>/g, '').replace(/\]{2,}>?/g, '')
+                .replace(/https?:\/\/t\.co\/\S+/g, '')
+                .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+                .split('\n').map(function(l) { return l.trim(); })
+                .filter(function(l) { return l && !/^(video|image|photo|foto|imagen|animated_gif)(\s+\d+)?$/i.test(l); })
+                .join('\n').replace(/[ \t]{2,}/g, ' ').trim();
+            if (crudo.length > 400) crudo = crudo.slice(0, 400).replace(/\s\S*$/, '') + '...';
+            if (!crudo) return null;
+
+            return { id: m[1], author: sourceFeed.source, text: crudo, date: dateStr, time: timeStr,
+                     replies: 0, reposts: 0, likes: 0, photos: [], link: 'https://x.com/' + handle + '/status/' + m[1] };
         }
 
         async function fetchRSSHubFeeds() {
@@ -1318,18 +1383,37 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
             try {
                 var fallos = 0;
-                var promises = RSS_FEEDS.map(function(feed) {
-                    return fetch(feed.url, { signal: controller.signal, headers: { Accept: 'application/json' } })
-                        .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error(feed.url + ': ' + r.status)); })
-                        .then(function(data) { var items = data.items || data.data || []; return items.slice(0, 5).map(function(item) { return rssItemToPost(item, feed); }); })
-                        .catch(function() { fallos++; return []; });
+                var total = 0;
+                var promises = [];
+                RSS_FEEDS.forEach(function(feed) {
+                    RSS_MIRRORS.forEach(function(base) {
+                        if (total >= 12) return;
+                        promises.push(
+                            fetch(base + '/' + feed.handle + '/rss', { signal: controller.signal, headers: { Accept: 'application/rss+xml, application/xml, text/xml' } })
+                                .then(function(r) { return r.ok ? r.text() : Promise.reject(new Error(r.status)); })
+                                .then(function(xml) {
+                                    var items = rssTexto(xml).slice(0, 6)
+                                        .map(function(it) { return rssItemToPost(it, feed); })
+                                        .filter(Boolean);
+                                    total += items.length;
+                                    return items;
+                                })
+                                .catch(function() { fallos++; return []; })
+                        );
+                    });
                 });
                 var results = await Promise.allSettled(promises);
                 clearTimeout(timeoutId);
                 var allPosts = [];
                 results.forEach(function(r) { if (r.status === 'fulfilled') allPosts = allPosts.concat(r.value); });
                 var unique = allPosts.filter(function(p, i, arr) { return arr.findIndex(function(x) { return x.link === p.link; }) === i; });
-                if (unique.length > 0) { setCachedPosts(unique); console.log('[RSSHub] Posts frescos obtenidos:', unique.length); return unique; }
+                if (unique.length > 0) {
+                    // Ordenadas de más nueva a más antigua.
+                    unique.sort(function(a, b) { return (b.date + b.time).localeCompare(a.date + a.time); });
+                    setCachedPosts(unique);
+                    console.log('[RSS] Posts frescos obtenidos:', unique.length);
+                    return unique;
+                }
 
                 // Fallo total. Si fue por el temporizador (red lenta) no se
                 // bloquea nada: en datos moviles una connexion lenta dejaria el
