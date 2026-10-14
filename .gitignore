@@ -1,0 +1,6 @@
+# Material de trabajo de tools/ (feed, extracciones, pruebas)
+tools/_salida/
+__pycache__/
+*.pyc
+
+node_modules/
