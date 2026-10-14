@@ -792,6 +792,9 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             </div>
 
             <p id="profileViewBio" class="text-slate-300 text-sm max-w-xl leading-relaxed">
+              Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
+            </p>
+
             <!-- SECCION CREDENCIAL QR -->
             <div id="credencial-card" class="hidden w-full mt-4 bg-gradient-to-br from-emerald-900/40 to-sky-900/40 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-900/10">
               <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -810,8 +813,6 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                 </div>
               </div>
             </div>
-              Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
-            </p>
 
             <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
               <span id="profileViewLocation" class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-sky-400"></i><span id="profileViewLocationText">Cabimas, Zulia</span></span>
@@ -2956,6 +2957,11 @@ function topicsEfectivos() {
                 }
                 profileViewJoined.innerHTML = '<i class="fa-regular fa-calendar text-slate-500"></i> ' + fechaTxt;
             }
+            // La credencial se pide al entrar: antes la funcion existia pero
+            // no la llamaba nadie, asi que el QR nunca aparecia.
+            if (typeof window.mostrarMiCredencial === 'function') {
+                try { await mostrarMiCredencial(); } catch (e) { /* no interrumpe el panel */ }
+            }
             if (bigAvatarText) bigAvatarText.textContent = inicial;
             if (bigAvatarImg) {
                 if (fotoUrl) {
@@ -3042,24 +3048,44 @@ function topicsEfectivos() {
         };
 
         // ===== CREDENCIAL QR =====
+        // Muestra la credencial del afiliado. Si no tiene ninguna, se le emite
+        // una en el momento: el afiliado no tiene que pedirla a mano.
         async function mostrarMiCredencial() {
             const card = document.getElementById("credencial-card");
             const img = document.getElementById("credencial-qr");
             const code = document.getElementById("credencial-codigo");
             if (!card || !img || !code) return;
-            card.classList.remove("hidden");
+            const rpc = (window.SupabaseAPI || supabase).rpc.bind(window.SupabaseAPI || supabase);
+
+            async function pintar(res) {
+                if (!res || !res.data || !res.data.ok) return null;
+                code.textContent = res.data.credencial.codigo;
+                const urlVer = res.data.credencial.url_verificacion ||
+                    ("https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=" +
+                     res.data.credencial.codigo);
+                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" +
+                          encodeURIComponent(urlVer);
+                card.classList.remove("hidden");
+                return res.data.credencial;
+            }
+
             try {
-                const res = await (window.SupabaseAPI || supabase).rpc("obtener_mi_credencial");
-                if (!res || !res.ok || !res.credencial) {
-                    code.textContent = "Sin credencial";
-                    img.src = "";
-                    return;
+                // Primero se intenta leer; si no hay credencial, se emite una.
+                let res = await rpc("obtener_mi_credencial");
+                if (res && res.data && res.data.ok === false) {
+                    res = await rpc("crear_mi_credencial");
+                    if (res && res.data && res.data.ok === false) {
+                        code.textContent = "Sin credencial";
+                        img.src = "";
+                        card.classList.remove("hidden");
+                        return;
+                    }
                 }
-                code.textContent = res.credencial.codigo;
-                const urlVer = res.credencial.url_verificacion || ("https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=" + res.credencial.codigo);
-                img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" + encodeURIComponent(urlVer);
+                await pintar(res);
             } catch (e) {
                 code.textContent = "Error";
+                img.src = "";
+                card.classList.remove("hidden");
                 console.warn("[Vente] Error al cargar credencial:", e);
             }
         }
