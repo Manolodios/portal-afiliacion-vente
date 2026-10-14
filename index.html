@@ -795,21 +795,21 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
               Miembro oficial de Vente Cabimas. Apasionado por la innovación y el desarrollo en nuestra comunidad.
             </p>
 
-            <!-- SECCION CREDENCIAL QR -->
-            <div id="credencial-card" class="hidden w-full mt-4 bg-gradient-to-br from-emerald-900/40 to-sky-900/40 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-900/10">
-              <div class="flex flex-col sm:flex-row items-center gap-4">
-                <div class="bg-white/10 rounded-xl p-3 shadow-inner backdrop-blur-sm">
-                  <img id="credencial-qr" src="" alt="QR de la credencial" class="w-32 h-32 rounded-lg bg-white p-1">
+            <!-- SECCION CREDENCIAL: aqui solo el codigo y el boton de copiar. El QR va
+                 en el cuadrito de la tarjeta de credencial (#credencial-qr-mini),
+                 que es lo que el afiliado enseña; un QR grande en medio de la
+                 ficha rompia la estetica de la pagina. -->
+            <div id="credencial-card" class="hidden w-full mt-4 bg-gradient-to-br from-emerald-900/40 to-sky-900/40 border border-emerald-500/20 rounded-2xl p-5 shadow-xl shadow-emerald-900/10">
+              <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                  <h3 class="text-base font-extrabold text-emerald-300 mb-0.5">Tu Credencial de Afiliación</h3>
+                  <p class="text-[11px] text-slate-400">Escanea el QR de tu tarjeta o comunica este código</p>
                 </div>
-                <div class="flex-1 min-w-0 text-center sm:text-left">
-                  <h3 class="text-lg font-extrabold text-emerald-300 mb-1">Tu Credencial de Afiliación</h3>
-                  <p class="text-xs text-slate-400 mb-3">Presenta este código para confirmar tu afiliación</p>
-                  <div class="flex items-center gap-2 justify-center sm:justify-start">
-                    <code id="credencial-codigo" class="px-3 py-1.5 bg-slate-950/60 border border-emerald-500/30 rounded-lg text-emerald-300 font-mono text-sm tracking-widest select-all"></code>
-                    <button onclick="copiarCodigoCredencial()" class="text-xs text-slate-300 hover:text-white font-semibold px-2 py-1.5 rounded hover:bg-emerald-600/20 transition" aria-label="Copiar código">
-                      <i class="fa-regular fa-copy mr-1"></i> Copiar
-                    </button>
-                  </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <code id="credencial-codigo" class="px-3 py-1.5 bg-slate-950/60 border border-emerald-500/30 rounded-lg text-emerald-300 font-mono text-sm tracking-widest select-all"></code>
+                  <button onclick="copiarCodigoCredencial()" class="text-xs text-slate-300 hover:text-white font-semibold px-2 py-1.5 rounded hover:bg-emerald-600/20 transition" aria-label="Copiar código">
+                    <i class="fa-regular fa-copy mr-1"></i> Copiar
+                  </button>
                 </div>
               </div>
             </div>
@@ -856,8 +856,15 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                   <div class="text-[8px] uppercase tracking-wider text-slate-400">ID único</div>
                   <div class="text-xs font-mono font-bold text-vente-cyan tracking-wider" id="dash-user-code">VV-0000-0000</div>
                 </div>
-                <div class="w-8 h-8 bg-white p-1 rounded flex items-center justify-center">
-                  <i data-lucide="qr-code" class="w-full h-full text-slate-900"></i>
+                <!-- QR real de la credencial. Antes aqui habia un icono decorativo
+                     (data-lucide="qr-code"), que no leadia a nada. El tamano
+                     sube a 80px porque por debajo de eso ningun movil lo lee. -->
+                <img id="credencial-qr-mini" src="" alt="Código QR de la credencial"
+                     class="w-20 h-20 sm:w-24 sm:h-24 bg-white p-1.5 rounded-lg shrink-0 object-contain"
+                     onerror="this.style.visibility='hidden'">
+                <div id="credencial-qr-mini-hint" class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white/10 border border-dashed border-slate-600 flex flex-col items-center justify-center text-center px-1 shrink-0">
+                  <i data-lucide="qr-code" class="w-6 h-6 text-slate-500"></i>
+                  <span class="text-[7px] text-slate-500 mt-0.5 leading-tight">Sin credencial</span>
                 </div>
               </div>
             </div>
@@ -3052,9 +3059,22 @@ function topicsEfectivos() {
         // una en el momento: el afiliado no tiene que pedirla a mano.
         async function mostrarMiCredencial() {
             const card = document.getElementById("credencial-card");
-            const img = document.getElementById("credencial-qr");
+            const img = document.getElementById("credencial-qr-mini");
+            const hint = document.getElementById("credencial-qr-mini-hint");
             const code = document.getElementById("credencial-codigo");
-            if (!card || !img || !code) return;
+            if (!img || !code) return;
+
+            // El QR va en el cuadrito de la tarjeta de credencial. Si no hay
+            // credencial se muestra un marcador, no un hueco vacio.
+            function sinCredencial(motivo) {
+                if (img) { img.removeAttribute("src"); img.style.visibility = "hidden"; }
+                if (hint) {
+                    hint.style.display = "flex";
+                    hint.querySelector("span").textContent = motivo;
+                }
+                if (code) code.textContent = "Sin credencial";
+                if (card) card.classList.remove("hidden");
+            }
             // window.SupabaseAPI es un envoltorio que puede no traer rpc(), asi
             // que no vale el || : se busca el primer cliente que si lo tenga.
             let cliente = null;
@@ -3062,8 +3082,7 @@ function topicsEfectivos() {
                 if (c && typeof c.rpc === 'function') { cliente = c; break; }
             }
             if (!cliente) {
-                code.textContent = "No disponible";
-                card.classList.remove("hidden");
+                sinCredencial("No disponible");
                 return;
             }
             const rpc = function(nombre) { return cliente.rpc(nombre); };
@@ -3076,7 +3095,9 @@ function topicsEfectivos() {
                      res.data.credencial.codigo);
                 img.src = "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=" +
                           encodeURIComponent(urlVer);
-                card.classList.remove("hidden");
+                img.style.visibility = "visible";
+                if (hint) hint.style.display = "none";
+                if (card) card.classList.remove("hidden");
                 return res.data.credencial;
             }
 
@@ -3086,17 +3107,13 @@ function topicsEfectivos() {
                 if (res && res.data && res.data.ok === false) {
                     res = await rpc("crear_mi_credencial");
                     if (res && res.data && res.data.ok === false) {
-                        code.textContent = "Sin credencial";
-                        img.src = "";
-                        card.classList.remove("hidden");
+                        sinCredencial("Sin credencial");
                         return;
                     }
                 }
-                await pintar(res);
+                if (!(await pintar(res))) sinCredencial("Sin credencial");
             } catch (e) {
-                code.textContent = "Error";
-                img.src = "";
-                card.classList.remove("hidden");
+                sinCredencial("Error");
                 console.warn("[Vente] Error al cargar credencial:", e);
             }
         }
