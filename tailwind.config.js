@@ -18,7 +18,11 @@
  * original. Si algún día se quiere minificar, verificar los colores después.
  */
 module.exports = {
-  content: ['./index.html'],
+  // Se escanean TODAS las paginas html de la raiz, no solo index.html.
+  // verify.html (la verificacion publica del QR) usa clases que solo aparecen
+  // si se escanea, y al regenerar mirando unicamente index.html esa pagina se
+  // quedaba sin estilos. Con './*.html' ninguna pagina pierde nada.
+  content: ['./*.html'],
   theme: {
     extend: {
       fontFamily: { sans: ['Inter', 'sans-serif'] },
