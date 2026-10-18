@@ -499,7 +499,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         </div>
         <div>
           <label for="ob-apellido" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Apellido</label>
-          <input type="text" id="ob-apellido" autocomplete="family-name"
+          <input type="text" id="ob-apellido" autocomplete="family-name" required
                  class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
         </div>
       </div>
@@ -507,7 +507,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label for="ob-tipo" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Documento</label>
-          <select id="ob-tipo" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
+          <select id="ob-tipo" required class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
             <option value="V">V - Cédula</option>
             <option value="E">E - Extranjero</option>
           </select>
@@ -2171,11 +2171,23 @@ function topicsEfectivos() {
                         areas:             datos.areas            || []
                     };
                     if (!fila.nombre) return { ok: false, error: 'Falta el nombre.' };
+                    // Ultima linea de defensa: estas columnas son NOT NULL y sin
+                    // valor por defecto. Mandarles null hace que Postgres
+                    // rechace el INSERT entero con un error que no explica nada
+                    // al usuario, y el alta se pierde en silencio.
+                    if (!fila.apellido)   return { ok: false, error: 'Falta el apellido.' };
+                    if (!fila.cedula)     return { ok: false, error: 'Falta la cédula.' };
+                    if (!fila.tipo_documento) fila.tipo_documento = 'V';
+                    if (!fila.fecha_nacimiento) return { ok: false, error: 'Falta la fecha de nacimiento.' };
+                    if (!fila.residencia) fila.residencia = 'Venezuela';
 
                     const { error } = await supabase
                         .from('afiliados')
                         .upsert(fila, { onConflict: 'id' });
-                    if (error) return { ok: false, error: error.message };
+                    if (error) {
+                        console.error('[Vente] Error guardando ficha:', error);
+                        return { ok: false, error: error.message };
+                    }
                     return { ok: true, uid: user.id };
                 } catch (e) {
                     return { ok: false, error: e.message };
@@ -2348,6 +2360,16 @@ function topicsEfectivos() {
             const desdeGoogle = separarNombreGoogle(perfilActual);
             set("ob-nombre", perfil && perfil.nombre ? perfil.nombre : desdeGoogle.nombre);
             set("ob-apellido", perfil && perfil.apellido ? perfil.apellido : desdeGoogle.apellido);
+            // Google no siempre entrega full_name (cuentas de empresa, de
+            // escuela, o cuentas nuevas sin perfil completo). Cuando no llega,
+            // el campo aparece vacio y es obligatorio: sin este aviso el usuario
+            // pulse "Guardar" y solo ve un error de base de datos.
+            if (!perfil && !desdeGoogle.apellido) {
+                setTimeout(function () {
+                    showNotification(
+                        "Completa tu apellido: tu cuenta de Google no lo tiene.", "warning");
+                }, 600);
+            }
             set("ob-cedula", perfil && perfil.cedula);
             set("ob-fnac", perfil && perfil.fecha_nacimiento);
             set("ob-estado", perfil && perfil.estado);
@@ -2434,6 +2456,20 @@ function topicsEfectivos() {
             const areas = Array.from(document.querySelectorAll('input[name="ob-areas"]:checked')).map(function(c) { return c.value; });
 
             if (!nombre) { showNotification("Ingresa tu nombre.", "warning"); return; }
+            // affiliates.apellido es NOT NULL. Google no siempre entrega el nombre
+            // completo en user_metadata.full_name (sobre todo en cuentas de
+            // empresa o de escuela), asi que quien entra con Google puede dejar
+            // el apellido en blanco. Entonces el INSERT revienta con
+            // "null value in column apellido violates not-null constraint" y el
+            // alta se queda a medias sin explicacion: de ahi la queja de que
+            // "no se puede registrar con Google". Se valida aqui, donde el
+            // usuario todavia puede corregirlo.
+            const apellido = get("ob-apellido");
+            if (!apellido) {
+                showNotification("Ingresa tu apellido.", "warning");
+                const a = document.getElementById("ob-apellido"); if (a) a.focus();
+                return;
+            }
             if (!/^\d{6,10}$/.test(cedula)) {
                 showNotification("Cédula inválida: de 6 a 10 dígitos.", "warning");
                 const c = document.getElementById("ob-cedula"); if (c) c.focus();
@@ -2475,8 +2511,10 @@ function topicsEfectivos() {
             try {
                 const res = await window.SupabaseAPI.completarPerfil({
                     nombre: nombre,
-                    apellido: get("ob-apellido"),
-                    tipoDocumento: get("ob-tipo"),
+                    apellido: apellido,
+                    // tipo_documento es NOT NULL. El select trae "V" por
+                    // defecto, pero si alguien lo vacia el guardado falla.
+                    tipoDocumento: get("ob-tipo") || "V",
                     cedula: cedula,
                     fechaNacimiento: fnac,
                     residencia: "Venezuela",
@@ -2752,7 +2790,24 @@ function topicsEfectivos() {
             if (msg.includes("duplicate key") && msg.includes("cedula")) return "Esa cédula ya está registrada.";
             if (msg.includes("duplicate key") && msg.includes("email"))  return "Ese correo ya está registrado.";
             if (msg.includes("23505") || msg.includes("duplicate key")) return "Ya existe un registro con esos datos.";
-            if (msg.includes("23502") || msg.includes("null value in column")) return "Faltan datos por completar en tu ficha.";
+            // Cuando una columna NOT NULL llega vacia, se dice CUAL es. "Faltan
+            // datos por completar" no le dice a nadie qué tiene que rellenar, y
+            // es la diferencia entre que el alta avance o que la persona pida
+            // ayuda al seeing que no sabe qué campo falta.
+            if (msg.includes("23502") || msg.includes("null value in column")) {
+                const col = (msg.match(/column "([a-z_]+)"/) || [])[1];
+                const nombre = {
+                    nombre: 'tu nombre',
+                    apellido: 'tu apellido',
+                    cedula: 'tu cédula',
+                    fecha_nacimiento: 'tu fecha de nacimiento',
+                    tipo_documento: 'el tipo de documento',
+                    email: 'tu correo'
+                }[col];
+                return nombre
+                    ? 'Falta ' + nombre + ' para completar tu ficha.'
+                    : 'Faltan datos por completar en tu ficha.';
+            }
             if (msg.includes("database error saving new user") || msg.includes("database error")) {
                 return "No se pudo completar el registro ahora mismo. Espera unos minutos e inténtalo de nuevo.";
             }
