@@ -2007,6 +2007,12 @@ function topicsEfectivos() {
         const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith('PEGA_');
         window.CONFIGURADO = CONFIGURADO;
         window.VAPID_PUBLIC_KEY = VAPID_PUBLIC_KEY;
+        // La clave anon es publica por diseño y ya esta expuesta en el codigo
+        // fuente. Antes se usaba window.SUPABASE_ANON_KEY sin haberla asignado
+        // nunca, asi que el boton de "Notificar afiliados" mandaba
+        // "Bearer undefined" y la funcion de Supabase lo rechazaba.
+        window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+        window.SUPABASE_URL = SUPABASE_URL;
 
         let supabase = null;
 
@@ -3461,11 +3467,24 @@ function topicsEfectivos() {
             if (!t) { showNotification("Falta el titulo", "warning"); return; }
             if (!c) { showNotification("Falta el mensaje", "warning"); return; }
             try {
+                // La autorizacion va con el token de SESION del admin, no con la
+                // clave anon. La funcion comprueba que quien llama es el admin y
+                // la pasarela valida el JWT: mandar la clave anon ahi devolvia
+                // 403 aunque el resto de la llamada fuera correcta.
+                const { data: datosSesion } = await supabase.auth.getSession();
+                const token = datosSesion && datosSesion.session
+                    ? datosSesion.session.access_token
+                    : null;
+                if (!token) {
+                    showNotification("Tu sesión expiró. Vuelve a entrar.", "warning");
+                    return;
+                }
+
                 const res = await fetch("https://kgnajywtscxujwdmskbb.supabase.co/functions/v1/send-notification", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer " + window.SUPABASE_ANON_KEY,
+                        "Authorization": "Bearer " + token,
                         "apikey": window.SUPABASE_ANON_KEY,
                     },
                     body: JSON.stringify({
