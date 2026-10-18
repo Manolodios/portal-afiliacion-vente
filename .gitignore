@@ -9,5 +9,6 @@ node_modules/
 # persona con el enlace del repositorio podria escribir en el proyecto.
 GITHUB_PAT.txt
 .env
+.env.*
 *.token
 secrets*.txt
