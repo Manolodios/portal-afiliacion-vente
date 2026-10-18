@@ -545,6 +545,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">¿Dónde vives?</label>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
+            <label for="ob-estado" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Estado</label>
             <select id="ob-estado" onchange="reiniciarUbicacion()" class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan">
               <option value="">Selecciona un estado</option>
               <option value="Zulia">Zulia</option>
@@ -557,13 +558,13 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
               <option value="Otro">Otro</option>
             </select>
           </div>
-          <div>
+          <div class="relative">
             <label for="ob-municipio" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Municipio</label>
             <input type="text" id="ob-municipio" placeholder="Escribe para buscar"
                    autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list"
                    class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan"
                    oninput="buscarMunicipio(this.value)" onfocus="buscarMunicipio(this.value)">
-            <div id="ob-municipio-lista" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
+            <div id="ob-municipio-lista" style="max-height:14rem" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
             <p id="ob-municipio-nota" class="hidden mt-1 text-[11px] text-amber-400"></p>
           </div>
         </div>
@@ -576,7 +577,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
                  autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list"
                  class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-vente-cyan"
                  oninput="buscarParroquia(this.value)" onfocus="buscarParroquia(this.value)" disabled>
-          <div id="ob-parroquia-lista" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
+          <div id="ob-parroquia-lista" style="max-height:14rem" class="hidden absolute z-50 mt-1 w-full max-h-56 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 shadow-xl"></div>
           <p id="ob-parroquia-nota" class="hidden mt-1 text-[11px] text-amber-400"></p>
         </div>
       </div>
@@ -3238,6 +3239,11 @@ function topicsEfectivos() {
                 const b = document.createElement('button');
                 b.type = 'button';
                 b.className = 'block w-full text-left px-3 py-2 text-sm text-white hover:bg-sky-600/30 transition';
+                // `text-left` no esta en assets/tailwind.css, asi que el navegador
+                // aplicaba su estilo por defecto para <button> (centrado) y las
+                // opciones salian centradas en vez de pegadas a la izquierda.
+                // Se fija en linea para que no dependa de regenerar el CSS.
+                b.style.textAlign = 'left';
                 b.textContent = etiqueta;
                 b.setAttribute('role', 'option');
                 b.addEventListener('mousedown', function (ev) {
