@@ -38,6 +38,34 @@ Antes de dar por buenos los datos, `tools/verificar_fechas.py` comprueba que la 
 de cada publicación cuadra con su id de snowflake (que codifica el instante real del
 post) y `tools/verificar_texto.py` busca restos de Twitter y HTML sin decodificar.
 
+## Notificaciones push
+
+`sw.js` es el service worker del portal. Se registra desde `index.html` con la ruta
+**relativa** `sw.js`, no con `/sw.js`: el portal vive en `/portal-afiliacion-vente/`
+en GitHub Pages, así que una ruta absoluta pedía `manolodios.github.io/sw.js` y
+devolvía 404 sin que se notara (el fallo se tragaba un `.catch`).
+
+Dentro del worker, `BASE` se calcula desde `self.location` y todas las rutas de
+iconos y enlaces cuelgan de ahí, por el mismo motivo.
+
+El worker **no cachea nada**: no escucha el evento `fetch`. Es deliberado, para que
+activarlo no pueda servir una versión vieja de `index.html`.
+
+### Las notificaciones NO funcionan todavía
+
+El service worker es solo una pieza de la cadena. Faltan tres más:
+
+| Pieza | Estado |
+|---|---|
+| `sw.js` registrado | ✅ hecho |
+| Código que suscribe al usuario (`pushManager.subscribe` con la clave VAPID) | ❌ no existe en el portal |
+| Función `send-notification` desplegada | ❌ no desplegada (`supabase/functions/send-notification/`) |
+| Claves VAPID en los secretos de Supabase | ❌ no existen |
+
+Para completarlo: generar claves con `npx web-push generate-vapid-keys`, guardarlas
+como secretos `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` en Supabase, desplegar la
+función, y añadir al portal el botón de suscribirse con la clave pública.
+
 ## Stack
 
 - HTML + Tailwind CSS (CDN)
