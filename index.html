@@ -289,9 +289,26 @@ html.hay-sesion body { overflow: hidden; }
 </script>
 
 <script>
-// Service Worker para notificaciones push y cache offline
+// Service Worker para notificaciones push.
+//
+// La ruta es RELATIVA a proposito. El portal vive en /portal-afiliacion-vente/,
+// no en la raiz del dominio: con '/sw.js' el navegador pedia
+// manolodios.github.io/sw.js, que devolvia 404, y el registro fallaba en
+// silencio. Con 'sw.js' se resuelve junto al documento y el scope queda
+// acotado a la carpeta del portal, de modo que el worker no controla por
+// accidente otras paginas del mismo dominio.
+//
+// Este worker NO cachea nada (no escucha el evento 'fetch'), asi que activarlo
+// no puede servir una version vieja del portal.
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function() { /* silencioso */ });
+  navigator.serviceWorker.register('sw.js')
+    .then(function () { window.serviceWorkerRegistrado = true; })
+    .catch(function (err) {
+      // No se avisa al usuario: que falte el worker no debe interrumpir la
+      // navegacion. Se deja en consola para poder diagnosticarlo.
+      window.serviceWorkerRegistrado = false;
+      console.warn('[Vente] No se pudo registrar el service worker:', err);
+    });
 }
 </script>
 </head>
