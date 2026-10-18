@@ -3060,14 +3060,26 @@ function topicsEfectivos() {
             if (profileViewLocation) { const t = document.getElementById("profileViewLocationText"); if (t) t.textContent = userState.location || "Sin ubicación registrada."; }
             const profileViewLink = document.getElementById("profileViewLink");
             if (profileViewLink) { const t = document.getElementById("profileViewLinkText"); if (t) t.textContent = userState.parroquia || "Sin parroquia"; }
-            if (profileViewJoined) {
-                if (datos.created_at) {
-                    const d = new Date(datos.created_at);
-                    if (!isNaN(d.getTime())) {
-                        const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-                        fechaTxt = "Se unió en " + meses[d.getMonth()] + " " + d.getFullYear();
-                    }
+            // `fechaTxt` TIENE que existir siempre. Antes solo se asignaba si la
+            // ficha traia `created_at`; con `perfil = null` (el caso de todo
+            // usuario que acaba de llegar con Google) nunca se asignaba, y
+            // leerla lanzaba "fechaTxt is not defined". Esa excepcion abortaba
+            // pintarDashboard ANTES de abrir el panel, asi que el usuario volvia
+            // de Google, aterrizaba en la portada y no pasaba nada: no llegaba a
+            // ver el formulario de ficha ni el motivo.
+            // Mientras no haya ficha se usa la fecha REAL de la cuenta (Auth),
+            // que si existe desde el primer segundo.
+            const fechaUnion = datos.created_at
+                || (window.SESION_USUARIO && window.SESION_USUARIO.created_at);
+            let fechaTxt = "Se unió recientemente";
+            if (fechaUnion) {
+                const d = new Date(fechaUnion);
+                if (!isNaN(d.getTime())) {
+                    const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+                    fechaTxt = "Se unió en " + meses[d.getMonth()] + " " + d.getFullYear();
                 }
+            }
+            if (profileViewJoined) {
                 profileViewJoined.innerHTML = '<i class="fa-regular fa-calendar text-slate-500"></i> ' + fechaTxt;
             }
             // La credencial se pide al entrar: antes la funcion existia pero
