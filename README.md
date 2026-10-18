@@ -51,20 +51,26 @@ iconos y enlaces cuelgan de ahí, por el mismo motivo.
 El worker **no cachea nada**: no escucha el evento `fetch`. Es deliberado, para que
 activarlo no pueda servir una versión vieja de `index.html`.
 
-### Las notificaciones NO funcionan todavía
-
-El service worker es solo una pieza de la cadena. Faltan tres más:
+### Estado: falta un paso, en el panel de Supabase
 
 | Pieza | Estado |
 |---|---|
-| `sw.js` registrado | ✅ hecho |
-| Código que suscribe al usuario (`pushManager.subscribe` con la clave VAPID) | ❌ no existe en el portal |
-| Función `send-notification` desplegada | ❌ no desplegada (`supabase/functions/send-notification/`) |
-| Claves VAPID en los secretos de Supabase | ❌ no existen |
+| `sw.js` registrado | ✅ |
+| Botón de suscripción en el panel del afiliado | ✅ |
+| Suscripción guardada vía `upsert_push_subscription` | ✅ |
+| Función `send-notification` desplegada | ✅ (activa, `verify_jwt: true`) |
+| Claves VAPID en los secretos de Supabase | ⬜ **pendiente** |
 
-Para completarlo: generar claves con `npx web-push generate-vapid-keys`, guardarlas
-como secretos `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` en Supabase, desplegar la
-función, y añadir al portal el botón de suscribirse con la clave pública.
+Para terminar: en Supabase → **Edge Functions → send-notification → Secrets**, añadir
+`VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`. Los valores están en `.env.vapid`
+(ignorado por git). Sin ellos la función responde con un error explícito que lo dice,
+en vez de fallar en silencio.
+
+Después, un afiliado abre su panel, pulsa **Activar notificaciones** y acepta el
+permiso; queda suscrito y la notificación del seeing le llega.
+
+Las claves se generaron con `npx web-push generate-vapid-keys`. La **privada** no
+debe salir nunca de los secretos de Supabase ni del archivo local.
 
 ## Stack
 
