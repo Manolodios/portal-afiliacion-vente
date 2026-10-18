@@ -864,8 +864,19 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
           </div>
           <div class="flex gap-3 mt-4">
             <button type="button" onclick="copyAffiliationCode()" class="flex-1 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-sm transition-colors">Compartir Credencial</button>
-            <button type="button" onclick="downloadCredential()" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition-colors">Guardar PDF</button>
+            <button type="button" onclick="downloadCredential()" class="flex-1 py-3 bg-slate-700 text-white font-bold rounded-xl text-sm transition-colors">Guardar PDF</button>
           </div>
+          <!-- Boton de notificaciones push. El color va en estilo en linea
+               porque assets/tailwind.css no trae ninguna variante hover:*, asi
+               que una clase hover: aqui no aplicaria nada. -->
+          <button type="button" id="btn-notificaciones" onclick="alternarNotificaciones()"
+                  class="w-full mt-3 py-3 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+                  style="background:#334155"
+                  onmouseover="if(this.dataset.busy!=='1')this.style.background='#475569'"
+                  onmouseout="if(this.dataset.busy!=='1')this.style.background='#334155'">
+            <i class="fa-solid fa-bell" id="btn-notificaciones-icono"></i>
+            <span id="btn-notificaciones-texto">Activar notificaciones</span>
+          </button>
         </div>
 
       </div>
@@ -1988,8 +1999,14 @@ function topicsEfectivos() {
         const SUPABASE_URL      = 'https://kgnajywtscxujwdmskbb.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnbmFqeXd0c2N4dWp3ZG1za2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMjYzODgsImV4cCI6MjEwNTYwMjM4OH0.OMnquIl64Zvo1yhG2Qgy1CVH3U1BndgOW1_sk7EcHuU';
 
+        // Clave publica VAPID. Es publica por diseño: es lo mismo que una
+        // clave de API de solo lectura y va incrustada en el portal. Lo que
+        // NUNCA va aqui es la privada, que vive en los secretos de Supabase.
+        const VAPID_PUBLIC_KEY = 'BPHmvMjzoJJmbwNxn7aVCbkGNA3Tnbahn71UXtIHSHFSYpg3kLVJHCw8RxAqEbTg8XicsFNJ718icQ90j3PlDOo';
+
         const CONFIGURADO = !SUPABASE_ANON_KEY.startsWith('PEGA_');
         window.CONFIGURADO = CONFIGURADO;
+        window.VAPID_PUBLIC_KEY = VAPID_PUBLIC_KEY;
 
         let supabase = null;
 
@@ -2091,6 +2108,24 @@ function topicsEfectivos() {
 
         window.SupabaseAPI = {
             configurado: CONFIGURADO,
+
+            // Guarda la suscicion push del afiliado. El endpoint y las dos
+            // claves los entrega el navegador al suscribirse; `user_id` lo
+            // saca la propia funcion de auth.uid().
+            async guardarSuscripcionPush(sub) {
+                if (!CONFIGURADO) return { ok: false, error: 'Sin configuracion.' };
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return { ok: false, sinSesion: true };
+
+                const { error } = await supabase.rpc('upsert_push_subscription', {
+                    p_endpoint: sub.endpoint,
+                    p_p256dh: sub.keys.p256dh,
+                    p_auth: sub.keys.auth,
+                    p_user_agent: navigator.userAgent
+                });
+                if (error) return { ok: false, error: error.message };
+                return { ok: true };
+            },
 
             // Crea SOLO la cuenta de autenticacion. La fila de `afiliados` la
             // crea despues `completarPerfil()`, desde el formulario de ficha.
@@ -2933,6 +2968,17 @@ function topicsEfectivos() {
             renderEnCurso = true;
             try {
                 await pintarDashboard(perfil, sessionEmail);
+                // El boton de notificaciones tiene que reflejar si este
+                // navegador ya esta suscrito, no mostrar siempre "activar".
+                // Va fuera del try del panel: si esto falla, el resto de la
+                // ficha ya se ha pintado y no debe romperse por ello.
+                try {
+                    if (typeof window.refrescarEstadoNotificaciones === 'function') {
+                        await window.refrescarEstadoNotificaciones();
+                    }
+                } catch (e) {
+                    console.warn("[Vente] No se pudo leer el estado de notificaciones:", e);
+                }
             } finally {
                 renderEnCurso = false;
             }
@@ -3480,6 +3526,131 @@ function topicsEfectivos() {
                 showNotification("Sesión cerrada.", "info");
             }
         };
+
+        /* ---------- Notificaciones push ---------- */
+        // El usuario decide si las quiere. El navegador pide el permiso, el
+        // service worker entrega la suscripcion y se guarda para que la funcion
+        // de Supabase pueda enviarle avisos.
+        window.pintarBotonNotificaciones = function(estado, mensaje) {
+            const btn = document.getElementById("btn-notificaciones");
+            const txt = document.getElementById("btn-notificaciones-texto");
+            const ico = document.getElementById("btn-notificaciones-icono");
+            if (!btn || !txt) return;
+
+            if (estado === 'suspendido') {
+                btn.dataset.busy = '1';
+                btn.style.background = '#475569';
+                txt.textContent = mensaje || 'Procesando...';
+                if (ico) ico.className = 'fa-solid fa-spinner fa-spin';
+                return;
+            }
+
+            delete btn.dataset.busy;
+            if (estado === 'activo') {
+                btn.style.background = '#047857';
+                txt.textContent = mensaje || 'Notificaciones activadas';
+                if (ico) ico.className = 'fa-solid fa-bell';
+            } else if (estado === 'bloqueado') {
+                btn.style.background = '#7f1d1d';
+                txt.textContent = mensaje || 'Bloqueadas por el navegador';
+                if (ico) ico.className = 'fa-solid fa-bell-slash';
+            } else {
+                btn.style.background = '#334155';
+                txt.textContent = mensaje || 'Activar notificaciones';
+                if (ico) ico.className = 'fa-solid fa-bell';
+            }
+        };
+
+        window.refrescarEstadoNotificaciones = async function() {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                window.pintarBotonNotificaciones('no-soportado', 'No disponible en este navegador');
+                return;
+            }
+            if (!('Notification' in window)) return;
+
+            if (Notification.permission === 'denied') {
+                window.pintarBotonNotificaciones('bloqueado', 'Bloqueadas por el navegador');
+                return;
+            }
+            if (Notification.permission === 'default') {
+                window.pintarBotonNotificaciones('inactivo');
+                return;
+            }
+
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                const sub = await reg.pushManager.getSubscription();
+                window.pintarBotonNotificaciones(sub ? 'activo' : 'inactivo');
+            } catch (e) {
+                window.pintarBotonNotificaciones('inactivo');
+            }
+        };
+
+        window.alternarNotificaciones = async function() {
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                showNotification("Tu navegador no admite notificaciones.", "warning");
+                return;
+            }
+            if (!window.VAPID_PUBLIC_KEY) {
+                showNotification("Las notificaciones no están configuradas todavía.", "warning");
+                return;
+            }
+
+            window.pintarBotonNotificaciones('suspendido');
+
+            try {
+                const permiso = await Notification.requestPermission();
+                if (permiso !== 'granted') {
+                    window.pintarBotonNotificaciones('bloqueado', 'Permiso denegado');
+                    showNotification("No diste permiso para recibir notificaciones.", "warning");
+                    return;
+                }
+
+                const reg = await navigator.serviceWorker.ready;
+
+                // Si ya habia una suscripcion se reutiliza: pedir una nueva cada
+                // vez dejaria endpoints viejos acumulados en la tabla.
+                let sub = await reg.pushManager.getSubscription();
+                if (sub) {
+                    await sub.unsubscribe();
+                }
+
+                sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(window.VAPID_PUBLIC_KEY)
+                });
+
+                const res = await window.SupabaseAPI.guardarSuscripcionPush(sub.toJSON());
+                if (!res || !res.ok) {
+                    window.pintarBotonNotificaciones('inactivo');
+                    showNotification(
+                        "Se activaron las notificaciones, pero no se pudieron guardar. Avisa al seeing.",
+                        "warning"
+                    );
+                    return;
+                }
+
+                window.pintarBotonNotificaciones('activo');
+                showNotification("Listo. Recibirás avisos cuando haya novedades.", "success");
+            } catch (e) {
+                console.error("[Vente] Error al activar notificaciones:", e);
+                window.pintarBotonNotificaciones('inactivo');
+                showNotification(traducirError(e), "error");
+            }
+        };
+
+        // Convierte la clave VAPID (base64url) al Uint8Array que espera
+        // pushManager.subscribe(). Sin esto la suscripcion falla siempre.
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const raw = atob(base64);
+            const output = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; i++) {
+                output[i] = raw.charCodeAt(i);
+            }
+            return output;
+        }
 
         /* ---------- Acciones de credencial ---------- */
         window.copyAffiliationCode = async function() {
