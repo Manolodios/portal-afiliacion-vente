@@ -3441,9 +3441,10 @@ function topicsEfectivos() {
                 }
                 const cred = res && res.data && res.data.credencial;
                 if (!cred) { sinCredencial("Sin credencial"); return; }
-                // El ID de tarjeta es el que va en el QR. Si la credencial es
-                // antigua y aun no lo tiene, se cae al codigo interno.
-                conCredencial(urlDeTarjeta(cred.codigo_tarjeta || cred.codigo));
+                // En el QR va el codigo interno de 8 caracteres (32^8), no el
+                // numero de tarjeta (10^8), que se podia enumerar. Si la
+                // credencial es antigua y no trae codigo, se cae a la tarjeta.
+                conCredencial(urlDeTarjeta(cred.codigo || cred.codigo_tarjeta));
             } catch (e) {
                 sinCredencial("Error");
                 console.warn("[Vente] Error al cargar credencial:", e);

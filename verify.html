@@ -90,10 +90,10 @@ async function main() {
     return;
   }
 
-  showValid(data.afiliado, data.codigo || codigo);
+  showValid(data.afiliado, data.codigo || codigo, data.codigo_tarjeta);
 }
 
-function showValid(afiliado, codigo) {
+function showValid(afiliado, codigo, codigoTarjeta) {
   $('valid').classList.remove('hidden');
   $('v-nombre').textContent = afiliado.nombre_completo;
   $('v-estado').textContent = afiliado.estado || '—';
@@ -101,7 +101,9 @@ function showValid(afiliado, codigo) {
   $('v-parroquia').textContent = afiliado.parroquia || '—';
   $('v-areas').textContent = (afiliado.areas || []).join(', ') || '—';
   $('v-fecha').textContent = afiliado.fecha_afiliacion ? new Date(afiliado.fecha_afiliacion).toLocaleDateString('es-VE') : '—';
-  $('v-codigo').textContent = codigo || '—';
+  // Se muestra el numero de tarjeta (legible), pero el enlace y el QR usan
+  // siempre el codigo largo, que es el unico que verifica.
+  $('v-codigo').textContent = codigoTarjeta || codigo || '—';
 
   // QR Code con la URL de verificación
   const url = `https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=${codigo}`;
