@@ -28,7 +28,19 @@ function resolverDestino(bruto) {
   if (!u) return BASE;
   if (u.indexOf(BASE) === 0) return u;          // ya viene resuelta
   if (u.charAt(0) === '/') u = u.slice(1);      // '/algo' -> 'algo'
-  return new URL(u, BASE).href;
+
+  var destino;
+  try {
+    destino = new URL(u, BASE);
+  } catch (e) {
+    return BASE;
+  }
+
+  // Solo se navega dentro del portal. Asi una notificacion manipulada no
+  // puede abrir un dominio externo (phishing) al pulsarla.
+  if (destino.origin !== new URL(BASE).origin) return BASE;
+  if (destino.href.indexOf(BASE) !== 0) return BASE;
+  return destino.href;
 }
 
 self.addEventListener('push', function (event) {
