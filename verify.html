@@ -47,6 +47,10 @@ body { background:#0b1220; min-height:100vh; }
       </div>
     </div>
 
+    <p id="v-aviso" class="text-xs text-amber-300 text-center mb-3 hidden">
+      Este QR es del formato anterior. La credencial es válida; comparte el QR actualizado.
+    </p>
+
     <div class="text-center">
       <img id="qr-img" alt="Codigo QR de verificacion"
            class="qr-canvas mx-auto w-48 h-48 bg-white rounded-xl p-2" />
@@ -90,10 +94,10 @@ async function main() {
     return;
   }
 
-  showValid(data.afiliado, data.codigo || codigo, data.codigo_tarjeta);
+  showValid(data.afiliado, data.codigo || codigo, data.codigo_tarjeta, data.legacy);
 }
 
-function showValid(afiliado, codigo, codigoTarjeta) {
+function showValid(afiliado, codigo, codigoTarjeta, legacy) {
   $('valid').classList.remove('hidden');
   $('v-nombre').textContent = afiliado.nombre_completo;
   $('v-estado').textContent = afiliado.estado || '—';
@@ -104,6 +108,14 @@ function showValid(afiliado, codigo, codigoTarjeta) {
   // Se muestra el numero de tarjeta (legible), pero el enlace y el QR usan
   // siempre el codigo largo, que es el unico que verifica.
   $('v-codigo').textContent = codigoTarjeta || codigo || '—';
+
+  // Si el QR venia del formato anterior (numero de tarjeta), se avisa y se
+  // deja la URL canonica con el codigo largo: al compartirla ya va la nueva.
+  const aviso = $('v-aviso');
+  if (aviso) aviso.classList.toggle('hidden', !legacy);
+  if (legacy && codigo) {
+    history.replaceState(null, '', '?c=' + encodeURIComponent(codigo));
+  }
 
   // QR Code con la URL de verificación
   const url = `https://manolodios.github.io/portal-afiliacion-vente/verify.html?c=${codigo}`;
