@@ -2164,7 +2164,10 @@ function topicsEfectivos() {
                 }
 
                 const signUpOptions = {
-                    emailRedirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/verify.html'
+                    // La confirmacion vuelve al portal, no a verify.html (esa
+                    // pagina espera un codigo de credencial). Asi el cliente
+                    // canjea el ?code= y deja la sesion lista al llegar.
+                    emailRedirectTo: 'https://manolodios.github.io/portal-afiliacion-vente/'
                 };
                 // El token de Turnstile TENIA que enviarse aqui. El widget se
                 // resolvia en el navegador pero el token se descartaba, asi que
