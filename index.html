@@ -1747,16 +1747,10 @@ function topicsEfectivos() {
                 console.warn('[loadFeed] Sin feed.json:', e && e.message);
             }
 
-            // El RSS en vivo se pide despues: si responde se repinta con lo
-            // nuevo; si falla (CORS, mirrors caidos), el feed ya esta visible.
-            try {
-                var freshPosts = await fetchRSSHubFeeds();
-                if (freshPosts && freshPosts.length) {
-                    pintar(mergePosts(FEED_POSTS, freshPosts));
-                }
-            } catch (e) {
-                console.warn('[loadFeed] Sin RSS en vivo:', e && e.message);
-            }
+            // El RSS en vivo por Nitter se quito del navegador: las cuatro
+            // instancias responden sin cabecera CORS, asi que fallaban siempre
+            // y llenaban la consola de errores. Las publicaciones nuevas llegan
+            // por feed.json, que escribe el workflow cada 6 horas.
         };
 
         window.toggleCredential = function() {
