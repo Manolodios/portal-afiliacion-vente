@@ -77,6 +77,21 @@ for (const [marcador, nombre] of [
     ok(html.includes(marcador), nombre);
 }
 
+// 6. feed.json: lo escribe el scraper para que una pestaña abierta reciba
+//    publicaciones nuevas sin recargar. Si aun no existe (primera corrida)
+//    no se falla: index.html sigue siendo la fuente principal.
+if (fs.existsSync('feed.json')) {
+    try {
+        const fd = JSON.parse(fs.readFileSync('feed.json', 'utf8'));
+        ok(Array.isArray(fd.posts) && fd.posts.length > 0, 'feed.json tiene publicaciones (' + (fd.posts || []).length + ')');
+        ok((fd.posts || []).every(p => p && p.id && p.link && p.date && p.time), 'feed.json es coherente');
+    } catch (e) {
+        ok(false, 'feed.json es valido: ' + e.message);
+    }
+} else {
+    ok(true, 'feed.json aun no existe (se crea en la proxima actualizacion)');
+}
+
 if (fallos) {
     console.error(`\n${fallos} comprobaciones fallidas. No se publica.`);
     process.exit(1);

@@ -1407,10 +1407,10 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         // RSS. La API pública de fxtwitter devuelve la publicación completa sin
         // necesidad de clave. Si falla, la tarjeta se queda como estaba.
         async function completarEstadisticas(posts) {
-            var restantes = Math.min(posts.length, 12);
+            var restantes = Math.min(posts.length, 8);
             await Promise.all(posts.slice(0, restantes).map(async function(p) {
                 try {
-                    var r = await fetch('https://api.fxtwitter.com/status/' + p.id, { signal: AbortSignal.timeout(8000) });
+                    var r = await fetch('https://api.fxtwitter.com/status/' + p.id, { signal: AbortSignal.timeout(5000) });
                     if (!r.ok) return;
                     var d = await r.json();
                     var tw = (d && d.tweet) || {};
@@ -1427,12 +1427,26 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             return posts;
         }
 
+        // feed.json lo escribe el workflow cada 6 h. Es del mismo origen, asi
+        // que no sufre CORS: una pestaña ya abierta puede recibir las
+        // publicaciones nuevas sin recargar la pagina entera.
+        async function fetchFeedJSON() {
+            try {
+                var r = await fetch('feed.json?t=' + Date.now(), { cache: 'no-store' });
+                if (!r.ok) return [];
+                var d = await r.json();
+                return Array.isArray(d && d.posts) ? d.posts : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
         async function fetchRSSHubFeeds() {
             var cached = getCachedPosts();
             if (cached && cached.length > 0) { console.log('[RSS] Usando posts cacheados:', cached.length); return cached; }
             if (rsshubBloqueado()) return [];
             var controller = new AbortController();
-            var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
+            var timeoutId = setTimeout(function() { controller.abort(); }, 7000);
             try {
                 var fallos = 0;
                 var total = 0;
@@ -1488,10 +1502,27 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             }
         }
 
+        // Fecha de una publicacion en milisegundos (UTC), para ordenar. Los
+        // posts guardan "27 oct 2026" + "17:19" en UTC.
+        var MESES_FEED = { ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5, jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11 };
+        function fechaDePost(p) {
+            var m = String((p && p.date) || '').trim().match(/^(\d{1,2})\s+([a-z]{3})\.?\s+(\d{4})$/i);
+            if (!m) return 0;
+            var mes = MESES_FEED[m[2].toLowerCase()];
+            if (mes === undefined) return 0;
+            var h = String((p && p.time) || '').split(':');
+            return Date.UTC(Number(m[3]), mes, Number(m[1]), Number(h[0]) || 0, Number(h[1]) || 0);
+        }
+
         function mergePosts(staticPosts, freshPosts) {
             var freshLinks = new Set(freshPosts.map(function(p) { return p.link; }));
             var staticUnique = staticPosts.filter(function(p) { return !freshLinks.has(p.link); });
-            return freshPosts.concat(staticUnique);
+            // Ordenadas por fecha real: antes se anteponian los posts del RSS
+            // aunque fueran mas viejos, y un mirror con cache vieja tapaba las
+            // publicaciones nuevas que ya vienen en FEED_POSTS.
+            return freshPosts.concat(staticUnique).sort(function(a, b) {
+                return fechaDePost(b) - fechaDePost(a);
+            });
         }
 
         const escapeHtml = function(s) {
@@ -1654,10 +1685,12 @@ function topicsEfectivos() {
 
             container.innerHTML = '<div class="text-center py-10 text-slate-500 flex flex-col items-center gap-3"><div class="animate-spin rounded-full h-8 w-8 border-3 border-sky-500 border-t-transparent"></div><span>Cargando publicaciones...</span></div>';
 
-            try {
-                var freshPosts = await fetchRSSHubFeeds();
-                var posts = mergePosts(FEED_POSTS, freshPosts);
-
+            // Se pinta de inmediato lo que ya viene en el HTML. Antes se
+            // esperaba al RSS en vivo (hasta 15 s y bloqueado por CORS desde el
+            // navegador), asi que el feed se quedaba en "Cargando..." y quien
+            // dejaba el portal abierto seguia viendo las noticias del dia en
+            // que entro.
+            function pintar(posts) {
                 if (currentFilter.type === 'leader') {
                     posts = posts.filter(function(p) { return p.author === currentFilter.value; });
                 } else if (currentFilter.type === 'topic') {
@@ -1702,42 +1735,27 @@ function topicsEfectivos() {
 
                 container.innerHTML = cards;
                 lucide.createIcons();
+            }
+
+            pintar(mergePosts(FEED_POSTS, []));
+
+            // Primero el feed.json (rapido y sin CORS); luego el RSS en vivo.
+            try {
+                var jsonPosts = await fetchFeedJSON();
+                if (jsonPosts.length) pintar(mergePosts(FEED_POSTS, jsonPosts));
             } catch (e) {
-                console.error('[loadFeed] Error:', e);
-                container.innerHTML = '<div class="text-center py-10 text-rose-500">Error cargando publicaciones. Usando datos guardados.</div>';
-                var posts = FEED_POSTS;
-                if (currentFilter.type === 'leader') { posts = posts.filter(function(p) { return p.author === currentFilter.value; }); }
-                else if (currentFilter.type === 'topic') { var tag = currentFilter.value.toLowerCase(); posts = posts.filter(function(p) { return p.text.toLowerCase().includes('#' + tag) || p.text.toLowerCase().includes(tag); }); }
-                var cards = posts.map(function(p) {
-                    var leader = LEADERS.find(function(l) { return l.handle === p.author; }) || { name: p.author, avatar: 'assets/avatar-marcorina.jpg', verified: false };
-                    var photos = (p.photos || []).map(function(u) {
-                        return '<img src="' + escapeHtml(urlSegura(u)) + '" loading="lazy" alt="Imagen de la publicación" class="w-full h-auto max-h-96 object-cover rounded-xl mt-3 border border-slate-800">';
-                    }).join('');
-                    return '<article class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md hover:border-slate-700 transition">' +
-                        '<div class="flex gap-3">' +
-                            '<img src="' + leader.avatar + '" alt="' + leader.name + '" class="w-10 h-10 rounded-full object-cover flex-shrink-0 ring-2 ' + (leader.verified ? 'ring-sky-500' : 'ring-slate-700') + '">' +
-                            '<div class="flex-1 min-w-0">' +
-                                '<div class="flex items-start justify-between gap-2">' +
-                                    '<div class="min-w-0">' +
-                                        '<span class="font-bold text-slate-100 text-sm block truncate">' + leader.name + '</span>' +
-                                        '<span class="text-xs text-slate-500">@' + leader.handle + ' · ' + p.date + ' · ' + p.time + '</span>' +
-                                    '</div>' +
-                                    '<a href="' + escapeHtml(urlSegura(p.link)) + '" target="_blank" rel="noopener" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 whitespace-nowrap">Ver en X \u2197</a>' +
-                                '</div>' +
-                                '<p class="text-sm text-slate-200 mt-2 leading-relaxed whitespace-pre-line break-words">' + escapeHtml(p.text) + '</p>' +
-                                photos +
-                                '<div class="flex items-center gap-5 sm:gap-6 mt-4 text-slate-500 text-xs pt-3 border-t border-slate-800/60">' +
-                                    '<button class="hover:text-sky-400 flex items-center gap-1.5 transition"><i class="fa-regular fa-comment"></i> ' + fmtNumber(p.replies) + '</button>' +
-                                    '<button class="hover:text-emerald-400 flex items-center gap-1.5 transition"><i class="fa-solid fa-arrows-rotate"></i> ' + fmtNumber(p.reposts) + '</button>' +
-                                    '<button class="hover:text-rose-500 flex items-center gap-1.5 transition"><i class="fa-regular fa-heart"></i> ' + fmtNumber(p.likes) + '</button>' +
-                                    '<button aria-label="Guardar" class="hover:text-sky-400 flex items-center gap-1.5 transition ml-auto"><i class="fa-regular fa-bookmark"></i></button>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
-                    '</article>';
-                }).join('');
-                container.innerHTML = cards;
-                lucide.createIcons();
+                console.warn('[loadFeed] Sin feed.json:', e && e.message);
+            }
+
+            // El RSS en vivo se pide despues: si responde se repinta con lo
+            // nuevo; si falla (CORS, mirrors caidos), el feed ya esta visible.
+            try {
+                var freshPosts = await fetchRSSHubFeeds();
+                if (freshPosts && freshPosts.length) {
+                    pintar(mergePosts(FEED_POSTS, freshPosts));
+                }
+            } catch (e) {
+                console.warn('[loadFeed] Sin RSS en vivo:', e && e.message);
             }
         };
 
@@ -3838,6 +3856,17 @@ function topicsEfectivos() {
     });
 
     // VIEW SWITCHER
+    // El portal se queda abierto mucho tiempo y el feed solo se cargaba al
+    // entrar. Se refresca al volver a la pestaña y cada 10 minutos, para que no
+    // haga falta recargar para ver publicaciones nuevas.
+    function refrescarFeedVisible() {
+      if (document.hidden) return;
+      const vista = document.getElementById('view-feed');
+      if (vista && !vista.classList.contains('hidden') && typeof loadFeed === 'function') loadFeed();
+    }
+    document.addEventListener('visibilitychange', refrescarFeedVisible);
+    setInterval(refrescarFeedVisible, 10 * 60 * 1000);
+
     function switchView(viewName) {
       toggleSidebar(false); // al elegir una opción en móvil se cierra el menú
       const feedView = document.getElementById('view-feed');

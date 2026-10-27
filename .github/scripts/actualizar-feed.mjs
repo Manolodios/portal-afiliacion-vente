@@ -241,3 +241,12 @@ if (li2 >= 0 && lc2 >= 0) {
 
 fs.writeFileSync(ruta, html, 'utf8');
 console.log(`[feed] index.html actualizado (${html.length} bytes)`);
+
+// ------------------------------------------------------------- feed.json
+// La misma lista en un archivo aparte. index.html solo se puede actualizar
+// recargando, pero una pestaña ya abierta puede pedir feed.json cada cierto
+// tiempo (mismo origen, sin CORS) y mostrar las publicaciones nuevas sin que
+// el usuario tenga que refrescar. Sin marca de tiempo: si no hay posts nuevos
+// el archivo no cambia y el workflow no hace commit.
+fs.writeFileSync('feed.json', JSON.stringify({ posts: finales }, null, 2) + '\n', 'utf8');
+console.log(`[feed] feed.json actualizado (${finales.length} publicaciones)`);
